@@ -2,6 +2,7 @@ package su.foxogram.dtos.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import su.foxogram.models.Message;
 
 import java.util.List;
 
@@ -19,11 +20,11 @@ public class MessageDTO {
 
 	private List<String> attachments;
 
-	public MessageDTO(long id, String content, String authorUsername, String channelName, List<String> attachments) {
-		this.id = id;
-		this.content = content;
-		this.author = authorUsername;
-		this.channel = channelName;
-		this.attachments = attachments;
+	public MessageDTO(Message message) {
+		this.id = message.getId();
+		this.content = message.getContent();
+		this.author = message.getAuthor().getUser().getUsername();
+		this.channel = message.getChannel().getName();
+		this.attachments = message.getAttachments();
 	}
 }

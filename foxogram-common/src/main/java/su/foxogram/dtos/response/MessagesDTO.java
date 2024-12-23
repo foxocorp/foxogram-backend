@@ -13,7 +13,7 @@ public class MessagesDTO {
 
 	public MessagesDTO(List<Message> messages) {
 		for (Message message : messages) {
-			this.messages.add(new MessageDTO(message.getId(), message.getContent(), message.getAuthor().getUser().getUsername(), message.getChannel().getName(), message.getAttachments()));
+			this.messages.add(new MessageDTO(message));
 		}
 	}
 }

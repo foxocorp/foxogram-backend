@@ -42,13 +42,7 @@ public class MessagesService {
 
 		return messagesArray.stream()
 				.limit(limit)
-				.map(message -> new MessageDTO(
-						message.getId(),
-						message.getContent(),
-						message.getAuthor().getUser().getUsername(),
-						message.getChannel().getName(),
-						message.getAttachments()
-				))
+				.map(MessageDTO::new)
 				.collect(Collectors.toList());
 	}
 
