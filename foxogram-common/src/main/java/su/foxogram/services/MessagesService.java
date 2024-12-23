@@ -111,7 +111,6 @@ public class MessagesService {
 		try {
 			return storageService.uploadToMinio(attachment, StorageConstants.ATTACHMENTS_BUCKET);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new UploadFailedException();
 		}
 	}

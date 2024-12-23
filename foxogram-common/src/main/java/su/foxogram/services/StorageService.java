@@ -124,13 +124,9 @@ public class StorageService {
 			InputStream inputStream = new ByteArrayInputStream(byteArray);
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-			switch (fileType) {
-				case "image":
-					MetadataExtractor.removeMetadata(fileExtension, inputStream, outputStream);
-					inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-					break;
-				default:
-					break;
+			if (fileType.equals("image")) {
+				MetadataExtractor.removeMetadata(fileExtension, inputStream, outputStream);
+				inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 			}
 
 			minioClient.putObject(

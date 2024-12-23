@@ -46,7 +46,7 @@ public class ExceptionController {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
-		exception.printStackTrace();
+		log.error("Server exception stacktrace:", exception);
 		return buildErrorResponse(ExceptionsConstants.Unknown.ERROR.getValue(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
