@@ -30,12 +30,14 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 			return true;
 		}
 		else {
+			bucket.tryConsume(RateLimitConstants.RATE_LIMIT_CONSUME);
+
 			String unlockingDate = bucket.getUnlockingTime().toString();
 			long availableTokens = bucket.getAvailableTokens();
 			long msToRefill = bucket.getMsToRefill(RateLimitConstants.RATE_LIMIT_CONSUME);
 
 			log.info("Rate-limited client ({}, {}, {}, {}) successfully", clientRemoteAddr, availableTokens, msToRefill, unlockingDate);
-			throw new RateLimitExceededException(0);
+			throw new RateLimitExceededException(msToRefill);
 		}
 	}
 
