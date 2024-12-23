@@ -40,7 +40,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 	}
 
 	private PenaltyBucket createNewBucket(String clientRemoteAddr) {
-		Bandwidth bandwidth = Bandwidth.builder().capacity(RateLimitConstants.RATE_LIMIT_CAPACITY).refillIntervally(RateLimitConstants.RATE_LIMIT_REFILL, Duration.ofSeconds(5)).build();
+		Bandwidth bandwidth = Bandwidth.builder().capacity(RateLimitConstants.RATE_LIMIT_CAPACITY).refillIntervally(RateLimitConstants.RATE_LIMIT_REFILL, Duration.ofMinutes(1)).build();
 
 		Bucket bucket = Bucket.builder()
 				.addLimit(bandwidth)

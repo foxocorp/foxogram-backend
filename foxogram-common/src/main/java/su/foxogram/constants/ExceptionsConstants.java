@@ -75,10 +75,20 @@ public class ExceptionsConstants {
 	}
 
 	public enum API {
-		RATE_LIMIT_EXCEEDED;
+		RATE_LIMIT_EXCEEDED,
+		EMPTY_BODY,
+		VALIDATION_ERROR;
 
 		public int getValue() {
 			return API_ERROR + this.ordinal();
+		}
+	}
+
+	public enum Unknown {
+		ERROR;
+
+		public int getValue() {
+			return UNKNOWN_ERROR + this.ordinal();
 		}
 	}
 }

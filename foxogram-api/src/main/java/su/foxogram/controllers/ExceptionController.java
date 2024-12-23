@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import su.foxogram.constants.ExceptionsConstants;
 import su.foxogram.dtos.response.ExceptionDTO;
 import su.foxogram.exceptions.BaseException;
 
@@ -29,7 +30,7 @@ public class ExceptionController {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ExceptionDTO> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
-		return buildErrorResponse(999, "Request body cannot be empty.", HttpStatus.BAD_REQUEST);
+		return buildErrorResponse(ExceptionsConstants.API.EMPTY_BODY.getValue(), "Request body cannot be empty.", HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -38,12 +39,12 @@ public class ExceptionController {
 				.map(DefaultMessageSourceResolvable::getDefaultMessage)
 				.collect(Collectors.joining(", "));
 
-		return buildErrorResponse(1001, message, HttpStatus.BAD_REQUEST);
+		return buildErrorResponse(ExceptionsConstants.API.VALIDATION_ERROR.getValue(), message, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
 		exception.printStackTrace();
-		return buildErrorResponse(999, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return buildErrorResponse(ExceptionsConstants.Unknown.ERROR.getValue(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
