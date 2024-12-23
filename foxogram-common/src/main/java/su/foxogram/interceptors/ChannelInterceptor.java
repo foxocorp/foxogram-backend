@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import su.foxogram.constants.AttributesConstants;
-import su.foxogram.exceptions.ChannelNotFoundException;
+import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.services.ChannelsService;
 
 import java.util.Collections;

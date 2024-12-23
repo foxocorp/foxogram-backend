@@ -3,8 +3,8 @@ package su.foxogram.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import su.foxogram.configs.APIConfig;
-import su.foxogram.exceptions.CodeExpiredException;
-import su.foxogram.exceptions.CodeIsInvalidException;
+import su.foxogram.exceptions.code.CodeExpiredException;
+import su.foxogram.exceptions.code.CodeIsInvalidException;
 import su.foxogram.models.Code;
 import su.foxogram.repositories.CodeRepository;
 

@@ -9,8 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constants.AttributesConstants;
-import su.foxogram.exceptions.UserEmailNotVerifiedException;
-import su.foxogram.exceptions.UserUnauthorizedException;
+import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
+import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.User;
 import su.foxogram.services.AuthenticationService;
 

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constants.AttributesConstants;
-import su.foxogram.exceptions.ChannelNotFoundException;
+import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;

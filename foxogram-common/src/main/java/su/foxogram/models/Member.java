@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.constants.MemberConstants;
-import su.foxogram.exceptions.MissingPermissionsException;
+import su.foxogram.exceptions.member.MissingPermissionsException;
 
 @Setter
 @Getter

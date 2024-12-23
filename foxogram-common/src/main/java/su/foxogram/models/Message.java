@@ -3,7 +3,7 @@ package su.foxogram.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import su.foxogram.exceptions.MissingPermissionsException;
+import su.foxogram.exceptions.member.MissingPermissionsException;
 
 import java.util.List;
 

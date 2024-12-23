@@ -12,7 +12,11 @@ import su.foxogram.constants.AttributesConstants;
 import su.foxogram.dtos.request.*;
 import su.foxogram.dtos.response.OkDTO;
 import su.foxogram.dtos.response.TokenDTO;
-import su.foxogram.exceptions.*;
+import su.foxogram.exceptions.code.CodeExpiredException;
+import su.foxogram.exceptions.code.CodeIsInvalidException;
+import su.foxogram.exceptions.code.NeedToWaitBeforeResendException;
+import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
+import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.models.User;
 import su.foxogram.services.AuthenticationService;
 

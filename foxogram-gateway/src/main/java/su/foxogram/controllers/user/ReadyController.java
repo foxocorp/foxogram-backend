@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.*;
-import su.foxogram.models.User;
-import su.foxogram.exceptions.UserUnauthorizedException;
 import su.foxogram.dtos.ReadyPayload;
+import su.foxogram.exceptions.user.UserUnauthorizedException;
+import su.foxogram.models.User;
 import su.foxogram.services.AuthenticationService;
 
 import java.util.List;
