@@ -24,6 +24,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws RateLimitExceededException {
 		String clientRemoteAddr = request.getHeader("X-Forwarded-For");
+		if (clientRemoteAddr == null) clientRemoteAddr = request.getRemoteAddr();
 		PenaltyBucket bucket = clients.computeIfAbsent(clientRemoteAddr, this::createNewBucket);
 
 		if (bucket.tryConsume(RateLimitConstants.RATE_LIMIT_CONSUME)) {
@@ -42,7 +43,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 	}
 
 	private PenaltyBucket createNewBucket(String clientRemoteAddr) {
-		Bandwidth bandwidth = Bandwidth.builder().capacity(RateLimitConstants.RATE_LIMIT_CAPACITY).refillIntervally(RateLimitConstants.RATE_LIMIT_REFILL, Duration.ofMinutes(1)).build();
+		Bandwidth bandwidth = Bandwidth.builder().capacity(RateLimitConstants.RATE_LIMIT_CAPACITY).refillIntervally(RateLimitConstants.RATE_LIMIT_REFILL, Duration.ofMinutes(RateLimitConstants.RATE_LIMIT_DURATION)).build();
 
 		Bucket bucket = Bucket.builder()
 				.addLimit(bandwidth)
