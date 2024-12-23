@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 public class ExceptionController {
 
 	private ResponseEntity<ExceptionDTO> buildErrorResponse(int errorCode, String message, HttpStatus status) {
+		if (message == null) message = "Unknown error occurred.";
+
 		log.error("Server exception ({}, {}, {}) occurred!", errorCode, status, message);
 		return ResponseEntity.status(status).body(new ExceptionDTO(false, errorCode, message));
 	}
