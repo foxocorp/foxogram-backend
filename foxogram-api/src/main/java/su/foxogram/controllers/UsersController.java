@@ -10,6 +10,7 @@ import su.foxogram.constants.AttributesConstants;
 import su.foxogram.dtos.request.CodeDTO;
 import su.foxogram.dtos.request.UserDeleteDTO;
 import su.foxogram.dtos.request.UserEditDTO;
+import su.foxogram.dtos.response.ChannelDTO;
 import su.foxogram.dtos.response.OkDTO;
 import su.foxogram.dtos.response.UserDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
@@ -56,6 +57,12 @@ public class UsersController {
 		}
 
 		return new UserDTO(usersService.getUser(username), null, false, false);
+	}
+
+	@Operation(summary = "Get user channels")
+	@GetMapping("/@me/channels")
+	public List<ChannelDTO> getUserChannels(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser) {
+		return usersService.getChannels(authenticatedUser);
 	}
 
 	@Operation(summary = "Edit user")

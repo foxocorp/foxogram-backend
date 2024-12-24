@@ -10,6 +10,7 @@ import su.foxogram.constants.EmailConstants;
 import su.foxogram.constants.StorageConstants;
 import su.foxogram.constants.UserConstants;
 import su.foxogram.dtos.request.UserEditDTO;
+import su.foxogram.dtos.response.ChannelDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.code.CodeExpiredException;
 import su.foxogram.exceptions.code.CodeIsInvalidException;
@@ -17,10 +18,15 @@ import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Code;
+import su.foxogram.models.Member;
 import su.foxogram.models.User;
+import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.CodeGenerator;
 import su.foxogram.util.Encryptor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,12 +39,15 @@ public class UsersService {
 
 	private final StorageService storageService;
 
+	private final MemberRepository memberRepository;
+
 	@Autowired
-	public UsersService(UserRepository userRepository, EmailService emailService, CodeService codeService, StorageService storageService) {
+	public UsersService(UserRepository userRepository, EmailService emailService, CodeService codeService, StorageService storageService, MemberRepository memberRepository) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.codeService = codeService;
 		this.storageService = storageService;
+		this.memberRepository = memberRepository;
 	}
 
 	public User getUser(String username) throws UserNotFoundException {
@@ -47,6 +56,14 @@ public class UsersService {
 		if (user == null) throw new UserNotFoundException();
 
 		return user;
+	}
+
+	public List<ChannelDTO> getChannels(User user) {
+		return memberRepository.findAllByUserId(user.getId())
+				.stream()
+				.map(Member::getChannel)
+				.map(ChannelDTO::new)
+				.collect(Collectors.toList());
 	}
 
 	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException {
