@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class NeedToWaitBeforeResendException extends BaseException {
 
 	public NeedToWaitBeforeResendException() {
-		super("You need to wait 1 minute to resend code again", NeedToWaitBeforeResendException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Code.WAIT_TO_RESEND.getValue());
+		super(ExceptionsConstants.Messages.NEED_TO_WAIT.getValue(), NeedToWaitBeforeResendException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Code.WAIT_TO_RESEND.getValue());
 	}
 }

@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UserCredentialsIsInvalidException extends BaseException {
 
 	public UserCredentialsIsInvalidException() {
-		super("Invalid password or email", UserCredentialsIsInvalidException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.CREDENTIALS_IS_INVALID.getValue());
+		super(ExceptionsConstants.Messages.USER_CREDENTIALS_IS_INVALID.getValue(), UserCredentialsIsInvalidException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.CREDENTIALS_IS_INVALID.getValue());
 	}
 }

@@ -17,6 +17,39 @@ public class ExceptionsConstants {
 
 	private static final int UNKNOWN_ERROR = 900;
 
+	public enum Messages {
+		SERVER_EXCEPTION("Server exception ({}, {}, {}) occurred"),
+		UNKNOWN_ERROR("Unknown error occurred"),
+		REQUEST_BODY_EMPTY("Request body cannot be empty"),
+		SERVER_EXCEPTION_STACKTRACE("Server exception stacktrace:"),
+		RATE_LIMIT_EXCEEDED("Rate-limit exceeded. "),
+		UPLOAD_FAILED("Image upload failed"),
+		CHANNEL_ALREADY_EXIST("Channel with this name already exist"),
+		CHANNEL_NOT_FOUND("Unknown channel"),
+		CODE_EXPIRED("Code has expired"),
+		CODE_IS_INVALID("Code is invalid"),
+		NEED_TO_WAIT("You need to wait 1 minute to resend code again"),
+		MEMBER_ALREADY_EXIST("You've already joined this channel"),
+		MEMBER_NOT_FOUND("Can't find member in this channel"),
+		MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
+		MESSAGE_NOT_FOUND("Unable to find message(s) for this channel or matching these parameters"),
+		USER_CREDENTIALS_DUPLICATE("User with this username/email already exist"),
+		USER_CREDENTIALS_IS_INVALID("Invalid password or email"),
+		USER_EMAIL_VERIFIED("You need to verify your email first"),
+		USER_NOT_FOUND("Unknown user"),
+		USER_UNAUTHORIZED("You need to authorize first");
+
+		private final String message;
+
+		Messages(String message) {
+			this.message = message;
+		}
+
+		public String getValue() {
+			return message;
+		}
+	}
+
 	public enum User {
 		NOT_FOUND,
 		EMAIL_NOT_VERIFIED,

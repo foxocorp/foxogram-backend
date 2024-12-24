@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class MissingPermissionsException extends BaseException {
 
 	public MissingPermissionsException() {
-		super("You don't have enough permissions to perform this action", MissingPermissionsException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.MISSING_PERMISSIONS.getValue());
+		super(ExceptionsConstants.Messages.MISSING_PERMISSIONS.getValue(), MissingPermissionsException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.MISSING_PERMISSIONS.getValue());
 	}
 }

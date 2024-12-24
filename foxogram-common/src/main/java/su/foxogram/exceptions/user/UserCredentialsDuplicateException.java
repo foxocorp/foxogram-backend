@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UserCredentialsDuplicateException extends BaseException {
 
 	public UserCredentialsDuplicateException() {
-		super("User with this username/email already exist.", UserCredentialsDuplicateException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.CREDENTIALS_DUPLICATE.getValue());
+		super(ExceptionsConstants.Messages.USER_CREDENTIALS_DUPLICATE.getValue(), UserCredentialsDuplicateException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.CREDENTIALS_DUPLICATE.getValue());
 	}
 }

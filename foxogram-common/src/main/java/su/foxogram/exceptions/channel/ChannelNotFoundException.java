@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class ChannelNotFoundException extends BaseException {
 
 	public ChannelNotFoundException() {
-		super("Unknown channel", ChannelNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Channel.NOT_FOUND.getValue());
+		super(ExceptionsConstants.Messages.CHANNEL_NOT_FOUND.getValue(), ChannelNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Channel.NOT_FOUND.getValue());
 	}
 }

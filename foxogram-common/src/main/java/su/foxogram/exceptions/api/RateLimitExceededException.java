@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class RateLimitExceededException extends BaseException {
 
 	public RateLimitExceededException(long estimateAbilityToConsumeInMs) {
-		super("Rate-limit exceeded! " + estimateAbilityToConsumeInMs / 1000 + "s", RateLimitExceededException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.API.RATE_LIMIT_EXCEEDED.getValue());
+		super(ExceptionsConstants.Messages.RATE_LIMIT_EXCEEDED.getValue() + estimateAbilityToConsumeInMs / 1000 + "s", RateLimitExceededException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.API.RATE_LIMIT_EXCEEDED.getValue());
 	}
 }

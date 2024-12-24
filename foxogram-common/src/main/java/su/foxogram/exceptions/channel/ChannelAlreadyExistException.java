@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class ChannelAlreadyExistException extends BaseException {
 
 	public ChannelAlreadyExistException() {
-		super("Channel with this name already exist", ChannelAlreadyExistException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Channel.ALREADY_EXIST.getValue());
+		super(ExceptionsConstants.Messages.CHANNEL_ALREADY_EXIST.getValue(), ChannelAlreadyExistException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Channel.ALREADY_EXIST.getValue());
 	}
 }

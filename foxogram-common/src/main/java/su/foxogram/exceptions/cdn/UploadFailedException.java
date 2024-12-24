@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UploadFailedException extends BaseException {
 
 	public UploadFailedException() {
-		super("Image upload failed", UploadFailedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.CDN.UPLOAD_FAILED.getValue());
+		super(ExceptionsConstants.Messages.UPLOAD_FAILED.getValue(), UploadFailedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.CDN.UPLOAD_FAILED.getValue());
 	}
 }

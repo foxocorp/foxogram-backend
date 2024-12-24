@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class CodeIsInvalidException extends BaseException {
 
 	public CodeIsInvalidException() {
-		super("Code is invalid!", CodeIsInvalidException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Code.IS_INVALID.getValue());
+		super(ExceptionsConstants.Messages.CODE_IS_INVALID.getValue(), CodeIsInvalidException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Code.IS_INVALID.getValue());
 	}
 }

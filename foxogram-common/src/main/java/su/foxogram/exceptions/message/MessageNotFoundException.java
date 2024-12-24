@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class MessageNotFoundException extends BaseException {
 
 	public MessageNotFoundException() {
-		super("Unable to find message(s) for this channel or matching these parameters", MessageNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Message.NOT_FOUND.getValue());
+		super(ExceptionsConstants.Messages.MESSAGE_NOT_FOUND.getValue(), MessageNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Message.NOT_FOUND.getValue());
 	}
 }

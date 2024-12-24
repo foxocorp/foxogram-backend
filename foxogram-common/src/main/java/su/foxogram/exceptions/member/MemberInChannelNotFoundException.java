@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class MemberInChannelNotFoundException extends BaseException {
 
 	public MemberInChannelNotFoundException() {
-		super("Can't find member in this channel", MemberInChannelNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.NOT_FOUND.getValue());
+		super(ExceptionsConstants.Messages.MEMBER_NOT_FOUND.getValue(), MemberInChannelNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.NOT_FOUND.getValue());
 	}
 }

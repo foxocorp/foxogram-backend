@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class MemberAlreadyInChannelException extends BaseException {
 
 	public MemberAlreadyInChannelException() {
-		super("You've already joined this channel.", MemberAlreadyInChannelException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.ALREADY_EXIST.getValue());
+		super(ExceptionsConstants.Messages.MEMBER_ALREADY_EXIST.getValue(), MemberAlreadyInChannelException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.Member.ALREADY_EXIST.getValue());
 	}
 }

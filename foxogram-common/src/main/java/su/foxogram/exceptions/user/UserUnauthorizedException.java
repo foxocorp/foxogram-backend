@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UserUnauthorizedException extends BaseException {
 
 	public UserUnauthorizedException() {
-		super("You need to authorize first.", UserUnauthorizedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.UNAUTHORIZED.getValue());
+		super(ExceptionsConstants.Messages.USER_UNAUTHORIZED.getValue(), UserUnauthorizedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.UNAUTHORIZED.getValue());
 	}
 }

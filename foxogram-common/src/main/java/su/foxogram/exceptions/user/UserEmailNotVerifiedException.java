@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UserEmailNotVerifiedException extends BaseException {
 
 	public UserEmailNotVerifiedException() {
-		super("You need to verify your email first", UserEmailNotVerifiedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.EMAIL_NOT_VERIFIED.getValue());
+		super(ExceptionsConstants.Messages.USER_EMAIL_VERIFIED.getValue(), UserEmailNotVerifiedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.EMAIL_NOT_VERIFIED.getValue());
 	}
 }

@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class ExceptionController {
 
 	private ResponseEntity<ExceptionDTO> buildErrorResponse(int errorCode, String message, HttpStatus status) {
-		if (message == null) message = "Unknown error occurred.";
+		if (message == null) message = ExceptionsConstants.Messages.UNKNOWN_ERROR.getValue();
 
-		log.error("Server exception ({}, {}, {}) occurred!", errorCode, status, message);
+		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION.getValue(), errorCode, status, message);
 		return ResponseEntity.status(status).body(new ExceptionDTO(false, errorCode, message));
 	}
 
@@ -32,7 +32,7 @@ public class ExceptionController {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ExceptionDTO> handleHttpMessageNotReadable(HttpMessageNotReadableException exception) {
-		return buildErrorResponse(ExceptionsConstants.API.EMPTY_BODY.getValue(), "Request body cannot be empty.", HttpStatus.BAD_REQUEST);
+		return buildErrorResponse(ExceptionsConstants.API.EMPTY_BODY.getValue(), ExceptionsConstants.Messages.REQUEST_BODY_EMPTY.getValue(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -46,7 +46,7 @@ public class ExceptionController {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
-		log.error("Server exception stacktrace:", exception);
+		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), exception);
 		return buildErrorResponse(ExceptionsConstants.Unknown.ERROR.getValue(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

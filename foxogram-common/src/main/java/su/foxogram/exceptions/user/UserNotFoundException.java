@@ -9,6 +9,6 @@ import su.foxogram.exceptions.BaseException;
 public class UserNotFoundException extends BaseException {
 
 	public UserNotFoundException() {
-		super("Unknown user.", UserNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.NOT_FOUND.getValue());
+		super(ExceptionsConstants.Messages.USER_NOT_FOUND.getValue(), UserNotFoundException.class.getAnnotation(ResponseStatus.class).value(), ExceptionsConstants.User.NOT_FOUND.getValue());
 	}
 }
