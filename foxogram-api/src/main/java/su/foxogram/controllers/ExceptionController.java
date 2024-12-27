@@ -26,8 +26,6 @@ public class ExceptionController {
 	}
 
 	private ResponseEntity<ExceptionDTO> buildErrorResponse(int errorCode, String message, HttpStatus status) {
-		if (!apiConfig.isDevelopment()) message = ExceptionsConstants.Messages.INTERNAL_ERROR.getValue();
-
 		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION.getValue(), errorCode, status, message);
 		return ResponseEntity.status(status).body(new ExceptionDTO(false, errorCode, message));
 	}
@@ -53,7 +51,10 @@ public class ExceptionController {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
+		String message = exception.getMessage();
+		if (!apiConfig.isDevelopment()) message = ExceptionsConstants.Messages.INTERNAL_ERROR.getValue();
+
 		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), exception);
-		return buildErrorResponse(ExceptionsConstants.Unknown.ERROR.getValue(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return buildErrorResponse(ExceptionsConstants.Unknown.ERROR.getValue(), message, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
