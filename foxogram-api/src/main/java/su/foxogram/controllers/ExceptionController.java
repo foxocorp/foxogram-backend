@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.ExceptionsConstants;
 import su.foxogram.dtos.response.ExceptionDTO;
 import su.foxogram.exceptions.BaseException;
@@ -18,8 +19,14 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionController {
 
+	private final APIConfig apiConfig;
+
+	public ExceptionController(APIConfig apiConfig) {
+		this.apiConfig = apiConfig;
+	}
+
 	private ResponseEntity<ExceptionDTO> buildErrorResponse(int errorCode, String message, HttpStatus status) {
-		if (message == null) message = ExceptionsConstants.Messages.UNKNOWN_ERROR.getValue();
+		if (!apiConfig.isDevelopment()) message = ExceptionsConstants.Messages.INTERNAL_ERROR.getValue();
 
 		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION.getValue(), errorCode, status, message);
 		return ResponseEntity.status(status).body(new ExceptionDTO(false, errorCode, message));

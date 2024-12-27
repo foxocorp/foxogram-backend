@@ -19,7 +19,7 @@ public class ExceptionsConstants {
 
 	public enum Messages {
 		SERVER_EXCEPTION("Server exception ({}, {}, {}) occurred"),
-		UNKNOWN_ERROR("Unknown error occurred"),
+		INTERNAL_ERROR("An internal server error has occurred"),
 		REQUEST_BODY_EMPTY("Request body cannot be empty"),
 		SERVER_EXCEPTION_STACKTRACE("Server exception stacktrace:"),
 		RATE_LIMIT_EXCEEDED("Rate-limit exceeded. "),
