@@ -4,6 +4,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioAsyncClient;
 import io.minio.PutObjectArgs;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,93 +55,68 @@ public class StorageService {
 		this.messageRepository = messageRepository;
 	}
 
-	public String uploadToMinio(MultipartFile file, String bucketName) throws RuntimeException, IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException {
-		byte[] byteArray = file.getBytes();
-		String fileName = file.getOriginalFilename();
-		assert fileName != null;
-		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-		String fileContentType = file.getContentType();
-		assert fileContentType != null;
-		String fileType = fileContentType.substring(0, fileContentType.indexOf("/"));
-		String fileHash = getHash(byteArray);
-		log.info("Uploading file ({}, {}, {}, {}) to bucket ({})", fileName, fileExtension, fileType, fileContentType, bucketName);
+	private static String getFileHash(byte[] imageBytes) throws NoSuchAlgorithmException {
+		MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
+		byte[] hashBytes = messageDigest.digest(imageBytes);
+		StringBuilder hexString = new StringBuilder();
 
-		if (isHashExists(fileHash)) {
-			log.info("Duplicate file ({}) found. Skipping upload...", fileHash);
-			return fileHash;
+		for (byte b : hashBytes) {
+			hexString.append(String.format("%02x", b));
 		}
 
-		if (!isBucketExists(bucketName).get()) createBucket(bucketName);
+		return hexString.toString();
+	}
 
-		uploadFile(byteArray, fileHash, fileExtension, fileType, fileContentType, bucketName);
+	public String uploadToMinio(MultipartFile file, String bucketName) throws RuntimeException, IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException {
+		byte[] byteArray = file.getBytes();
+		FileData fileData = new FileData(file);
 
-		return fileHash;
+		log.info("Uploading file ({}, {}, {}, {}) to bucket ({})", fileData.getName(), fileData.getExtension(), fileData.getType(), fileData.getContentType(), bucketName);
+
+		if (isHashExists(fileData.getHash())) {
+			log.info("Duplicate file ({}) found. Skipping upload...", fileData.getHash());
+			return fileData.getHash();
+		}
+
+		ensureBucketExists(bucketName);
+		uploadFile(byteArray, fileData, bucketName);
+
+		return fileData.getHash();
 	}
 
 	public String uploadIdentityImage(MultipartFile file, String bucketName) throws IOException, NoSuchAlgorithmException, ExecutionException, InterruptedException, InvalidFileFormatException {
 		byte[] byteArray = file.getBytes();
-		String fileName = file.getOriginalFilename();
-		assert fileName != null;
-		String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-		String fileContentType = file.getContentType();
-		assert fileContentType != null;
-		String fileType = fileContentType.substring(0, fileContentType.indexOf("/"));
-		String fileHash = getHash(byteArray);
+		FileData fileData = new FileData(file);
 
-		log.info("Uploading file ({}, {}, {}, {}) to bucket ({})", fileName, fileExtension, fileType, fileContentType, bucketName);
+		log.info("Uploading file ({}, {}, {}, {}) to bucket ({})", fileData.getName(), fileData.getExtension(), fileData.getType(), fileData.getContentType(), bucketName);
 
-		if (fileType.equals("image")) throw new InvalidFileFormatException();
+		if (fileData.getType().equals("image")) throw new InvalidFileFormatException();
 
-		if (isHashExists(fileHash)) {
-			log.info("Duplicate file ({}) found. Skipping upload...", fileHash);
-			return fileHash;
+		if (isHashExists(fileData.getHash())) {
+			log.info("Duplicate file ({}) found. Skipping upload...", fileData.getHash());
+			return fileData.getHash();
 		}
 
-		if (!isBucketExists(bucketName).get()) createBucket(bucketName);
+		ensureBucketExists(bucketName);
 
 		try (InputStream inputStream = new ByteArrayInputStream(byteArray)) {
-
 			minioClient.putObject(
-					PutObjectArgs.builder().bucket(bucketName).object(fileHash + ".png").stream(
+					PutObjectArgs.builder().bucket(bucketName).object(fileData.getHash() + ".png").stream(
 									inputStream, inputStream.available(), -1)
 							.contentType(CONTENT_TYPE_PNG)
 							.build());
 
-			log.info("Image ({}) in PNG uploaded to bucket ({}) to CDN successfully", fileHash, bucketName);
+			log.info("Image ({}) in PNG uploaded to bucket ({}) to CDN successfully", fileData.getHash(), bucketName);
 
 			minioClient.putObject(
-					PutObjectArgs.builder().bucket(bucketName).object(fileHash + ".webp").stream(
+					PutObjectArgs.builder().bucket(bucketName).object(fileData.getHash() + ".webp").stream(
 									inputStream, inputStream.available(), -1)
 							.contentType(CONTENT_TYPE_WEBP)
 							.build());
 
-			log.info("Image ({}) in WEBP uploaded to bucket ({}) to CDN successfully", fileHash, bucketName);
+			log.info("Image ({}) in WEBP uploaded to bucket ({}) to CDN successfully", fileData.getHash(), bucketName);
 
-			return fileHash;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private void uploadFile(byte[] byteArray, String fileHash, String fileExtension, String fileType, String fileContentType, String bucketName) {
-		try {
-			InputStream inputStream = new ByteArrayInputStream(byteArray);
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-			if (fileType.equals("image")) {
-				MetadataExtractor.removeMetadata(fileExtension, inputStream, outputStream);
-				inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-			}
-
-			minioClient.putObject(
-					PutObjectArgs.builder()
-							.bucket(bucketName)
-							.object(fileHash + fileExtension)
-							.stream(inputStream, inputStream.available(), -1)
-							.contentType(fileContentType)
-							.build());
-
-			log.info("File ({}, {}, {}) uploaded to bucket ({}) to CDN successfully", fileHash, fileExtension, fileContentType, bucketName);
+			return fileData.getHash();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -152,6 +128,30 @@ public class StorageService {
 		List<String> attachments = getAllAttachments();
 
 		return user != null || channel != null || attachments.contains(hash);
+	}
+
+	private void uploadFile(byte[] byteArray, FileData fileData, String bucketName) {
+		try {
+			InputStream inputStream = new ByteArrayInputStream(byteArray);
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+			if (fileData.getType().equals("image")) {
+				MetadataExtractor.removeMetadata(fileData.getExtension(), inputStream, outputStream);
+				inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+			}
+
+			minioClient.putObject(
+					PutObjectArgs.builder()
+							.bucket(bucketName)
+							.object(fileData.getHash() + fileData.getExtension())
+							.stream(inputStream, inputStream.available(), -1)
+							.contentType(fileData.getContentType())
+							.build());
+
+			log.info("File ({}, {}, {}) uploaded to bucket ({}) to CDN successfully", fileData.getHash(), fileData.getExtension(), fileData.getContentType(), bucketName);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void createBucket(String bucketName) {
@@ -170,16 +170,8 @@ public class StorageService {
 		}
 	}
 
-	private String getHash(byte[] imageBytes) throws NoSuchAlgorithmException {
-		MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
-		byte[] hashBytes = messageDigest.digest(imageBytes);
-		StringBuilder hexString = new StringBuilder();
-
-		for (byte b : hashBytes) {
-			hexString.append(String.format("%02x", b));
-		}
-
-		return hexString.toString();
+	private void ensureBucketExists(String bucketName) throws ExecutionException, InterruptedException {
+		if (!isBucketExists(bucketName).get()) createBucket(bucketName);
 	}
 
 	private List<String> getAllAttachments() {
@@ -192,5 +184,31 @@ public class StorageService {
 		}
 
 		return attachments;
+	}
+
+	@Getter
+	public static class FileData {
+		private final String name;
+
+		private final byte[] byteArray;
+
+		private final String extension;
+
+		private final String type;
+
+		private final String hash;
+
+		private final String contentType;
+
+		public FileData(MultipartFile file) throws IOException, NoSuchAlgorithmException {
+			this.name = file.getOriginalFilename();
+			this.byteArray = file.getBytes();
+			assert name != null;
+			this.extension = name.substring(name.lastIndexOf("."));
+			this.hash = getFileHash(this.byteArray);
+			this.contentType = file.getContentType();
+			assert this.contentType != null;
+			this.type = this.contentType.substring(0, this.contentType.indexOf("/"));
+		}
 	}
 }
