@@ -24,6 +24,7 @@ public class ExceptionsConstants {
 		SERVER_EXCEPTION_STACKTRACE("Server exception stacktrace:"),
 		RATE_LIMIT_EXCEEDED("Rate-limit exceeded. "),
 		UPLOAD_FAILED("Image upload failed"),
+		INVALID_FILE_FORMAT("Invalid file format"),
 		CHANNEL_ALREADY_EXIST("Channel with this name already exist"),
 		CHANNEL_NOT_FOUND("Unknown channel"),
 		CODE_EXPIRED("Code has expired"),
@@ -100,7 +101,8 @@ public class ExceptionsConstants {
 	}
 
 	public enum CDN {
-		UPLOAD_FAILED;
+		UPLOAD_FAILED,
+		INVALID_FILE_FORMAT;
 
 		public int getValue() {
 			return CDN_ERROR + this.ordinal();

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import su.foxogram.exceptions.cdn.InvalidFileFormatException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
@@ -76,7 +77,7 @@ public class StorageService {
 		return fileHash;
 	}
 
-	public String uploadIdentityImage(MultipartFile file, String bucketName) throws IOException, NoSuchAlgorithmException, ExecutionException, InterruptedException {
+	public String uploadIdentityImage(MultipartFile file, String bucketName) throws IOException, NoSuchAlgorithmException, ExecutionException, InterruptedException, InvalidFileFormatException {
 		byte[] byteArray = file.getBytes();
 		String fileName = file.getOriginalFilename();
 		assert fileName != null;
@@ -87,6 +88,8 @@ public class StorageService {
 		String fileHash = getHash(byteArray);
 
 		log.info("Uploading file ({}, {}, {}, {}) to bucket ({})", fileName, fileExtension, fileType, fileContentType, bucketName);
+
+		if (fileType.equals("image")) throw new InvalidFileFormatException();
 
 		if (isHashExists(fileHash)) {
 			log.info("Duplicate file ({}) found. Skipping upload...", fileHash);
