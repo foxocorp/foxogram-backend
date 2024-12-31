@@ -38,7 +38,9 @@ public class ExceptionsConstants {
 		USER_CREDENTIALS_IS_INVALID("Invalid password or email"),
 		USER_EMAIL_VERIFIED("You need to verify your email first"),
 		USER_NOT_FOUND("Unknown user"),
-		USER_UNAUTHORIZED("You need to authorize first");
+		USER_UNAUTHORIZED("You need to authorize first"),
+		ROUTE_NOT_FOUND("Route not found"),
+		;
 
 		private final String message;
 
@@ -112,7 +114,8 @@ public class ExceptionsConstants {
 	public enum API {
 		RATE_LIMIT_EXCEEDED,
 		EMPTY_BODY,
-		VALIDATION_ERROR;
+		VALIDATION_ERROR,
+		ROUTE_NOT_FOUND;
 
 		public int getValue() {
 			return API_ERROR + this.ordinal();
