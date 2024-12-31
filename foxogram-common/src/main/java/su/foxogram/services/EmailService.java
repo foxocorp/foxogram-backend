@@ -84,7 +84,7 @@ public class EmailService {
 
 	private String readHTML() throws IOException {
 		String templateName = "email";
-		Resource resource = resourceLoader.getResource("classpath:email/templates/" + templateName + ".html");
+		Resource resource = resourceLoader.getResource("classpath:templates/" + templateName + ".html");
 
 		if (!resource.exists()) {
 			log.error("Template not found: {}", templateName);
