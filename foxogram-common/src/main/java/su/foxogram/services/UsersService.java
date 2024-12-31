@@ -100,6 +100,8 @@ public class UsersService {
 
 		log.info("User ({}, {}) deleted successfully", user.getUsername(), user.getEmail());
 
+		if (code == null) return; // is dev
+
 		codeService.deleteCode(code);
 	}
 
