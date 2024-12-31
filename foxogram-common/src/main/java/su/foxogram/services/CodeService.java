@@ -22,9 +22,9 @@ public class CodeService {
 	}
 
 	public Code validateCode(String pathCode) throws CodeIsInvalidException, CodeExpiredException {
-		Code code = codeRepository.findByValue(pathCode);
-
 		if (apiConfig.isDevelopment()) return null;
+
+		Code code = codeRepository.findByValue(pathCode);
 
 		if (code == null)
 			throw new CodeIsInvalidException();

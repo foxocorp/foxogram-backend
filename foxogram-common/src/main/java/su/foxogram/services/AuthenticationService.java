@@ -130,6 +130,8 @@ public class AuthenticationService {
 		userRepository.save(user);
 		log.info("User ({}, {}) email verified successfully", user.getUsername(), user.getEmail());
 
+		if (code == null) return; // is dev
+
 		codeService.deleteCode(code);
 	}
 
