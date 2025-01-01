@@ -1,9 +1,4 @@
 rootProject.name = 'foxogram-backend'
 include 'foxogram-common'
 include 'foxogram-gateway'
-include 'foxogram-gateway:src:main:foxogram-api'
-findProject(':foxogram-gateway:src:main:foxogram-api')?.name = 'foxogram-api'
-include 'foxogram-media-proxy'
-include 'foxogram-gateway'
 include 'foxogram-api'
-
