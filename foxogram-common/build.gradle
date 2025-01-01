@@ -11,10 +11,6 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    aspectjweaver
-}
-
 java {
     sourceCompatibility = '21'
 }
@@ -45,6 +41,6 @@ dependencies {
 
 tasks.named('bootRun') {
     doFirst {
-        jvmArgs = ["-javaagent:${configurations.aspectjweaver.singleFile} -Dspring.output.ansi.enabled=ALWAYS -XX:+UseShenandoahGC"]
+        jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS -XX:+UseShenandoahGC"]
     }
 }
