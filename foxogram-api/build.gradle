@@ -17,11 +17,13 @@ repositories {
 
 dependencies {
     implementation project(path: ':foxogram-common')
+    implementation 'org.jetbrains:annotations:26.0.1'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.bucket4j:bucket4j_jdk17-core:8.14.0'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
