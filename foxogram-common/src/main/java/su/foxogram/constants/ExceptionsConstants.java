@@ -39,8 +39,7 @@ public class ExceptionsConstants {
 		USER_EMAIL_VERIFIED("You need to verify your email first"),
 		USER_NOT_FOUND("Unknown user"),
 		USER_UNAUTHORIZED("You need to authorize first"),
-		ROUTE_NOT_FOUND("Route not found"),
-		;
+		ROUTE_NOT_FOUND("Route not found");
 
 		private final String message;
 
