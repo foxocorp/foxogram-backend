@@ -18,6 +18,8 @@ repositories {
 dependencies {
     implementation project(path: ':foxogram-common')
     implementation 'org.jetbrains:annotations:26.0.1'
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'// v0.12.6 has no parserBuilder()
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
