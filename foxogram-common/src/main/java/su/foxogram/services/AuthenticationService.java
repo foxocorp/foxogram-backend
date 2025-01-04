@@ -11,8 +11,8 @@ import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.CodesConstants;
 import su.foxogram.constants.EmailConstants;
 import su.foxogram.constants.UserConstants;
-import su.foxogram.dtos.request.UserResetPasswordConfirmDTO;
-import su.foxogram.dtos.request.UserResetPasswordDTO;
+import su.foxogram.dtos.api.request.UserResetPasswordConfirmDTO;
+import su.foxogram.dtos.api.request.UserResetPasswordDTO;
 import su.foxogram.exceptions.code.CodeExpiredException;
 import su.foxogram.exceptions.code.CodeIsInvalidException;
 import su.foxogram.exceptions.code.NeedToWaitBeforeResendException;
@@ -52,14 +52,18 @@ public class AuthenticationService {
 		this.apiConfig = apiConfig;
 	}
 
-	public User getUser(String header, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+	public User getUser(String header, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		long userId;
 
 		try {
+			String claims = header.substring(7);
+
+			if (ignoreBearer) claims = header;
+
 			Jws<Claims> claimsJws = Jwts.parserBuilder()
 					.setSigningKey(jwtService.getSigningKey())
 					.build()
-					.parseClaimsJws(header.substring(7));
+					.parseClaimsJws(claims);
 
 			userId = Long.parseLong(claimsJws.getBody().getId());
 		} catch (Exception e) {
@@ -177,5 +181,15 @@ public class AuthenticationService {
 
 		codeService.deleteCode(code);
 		log.info("User ({}, {}) password reset successfully", user.getUsername(), user.getEmail());
+	}
+
+	public User authUser(String accessToken, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+		if (accessToken == null)
+			throw new UserUnauthorizedException();
+
+		if (accessToken.startsWith("Bearer ") && !ignoreBearer)
+			throw new UserUnauthorizedException();
+
+		return getUser(accessToken, ignoreEmailVerification, ignoreBearer);
 	}
 }
