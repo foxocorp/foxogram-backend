@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.ExceptionsConstants;
-import su.foxogram.dtos.response.ExceptionDTO;
+import su.foxogram.dtos.api.response.ExceptionDTO;
 import su.foxogram.exceptions.BaseException;
 
 import java.util.stream.Collectors;

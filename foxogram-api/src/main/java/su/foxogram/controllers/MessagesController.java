@@ -1,5 +1,6 @@
 package su.foxogram.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -9,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
-import su.foxogram.dtos.request.MessageCreateDTO;
-import su.foxogram.dtos.response.MessageDTO;
-import su.foxogram.dtos.response.MessagesDTO;
-import su.foxogram.dtos.response.OkDTO;
+import su.foxogram.dtos.api.request.MessageCreateDTO;
+import su.foxogram.dtos.api.response.MessageDTO;
+import su.foxogram.dtos.api.response.MessagesDTO;
+import su.foxogram.dtos.api.response.OkDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.MessageNotFoundException;
@@ -53,7 +54,7 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{name}")
-	public OkDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException {
+	public OkDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
 		messagesService.addMessage(channel, user, body, attachments);
 
 		return new OkDTO(true);
