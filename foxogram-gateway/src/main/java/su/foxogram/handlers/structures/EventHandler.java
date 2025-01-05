@@ -35,7 +35,7 @@ public class EventHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(@NonNull WebSocketSession session) {
 		log.info("Connection for session ({}) established", session.getId());
-		sessions.put(session.getId(), new Session(session.getId(), 0, session));
+		sessions.put(session.getId(), new Session(0, session));
 	}
 
 	@Override

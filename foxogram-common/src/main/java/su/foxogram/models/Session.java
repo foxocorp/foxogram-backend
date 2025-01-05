@@ -8,14 +8,11 @@ import org.springframework.web.socket.WebSocketSession;
 @Setter
 public class Session {
 
-	private String id;
-
 	private long userId;
 
 	private WebSocketSession webSocketSession;
 
-	public Session(String id, long userId, WebSocketSession webSocketSession) {
-		this.id = id;
+	public Session(long userId, WebSocketSession webSocketSession) {
 		this.userId = userId;
 		this.webSocketSession = webSocketSession;
 	}
