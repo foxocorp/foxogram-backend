@@ -1,4 +1,4 @@
-package su.foxogram.dtos.request;
+package su.foxogram.dtos.api.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

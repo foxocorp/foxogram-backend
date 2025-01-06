@@ -1,4 +1,4 @@
-package su.foxogram.dtos.response;
+package su.foxogram.dtos.api.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ public class MessageDTO {
 
 	private String content;
 
-	private String author;
+	private long author;
 
 	private String channel;
 
@@ -23,7 +23,7 @@ public class MessageDTO {
 	public MessageDTO(Message message) {
 		this.id = message.getId();
 		this.content = message.getContent();
-		this.author = message.getAuthor().getUser().getUsername();
+		this.author = message.getAuthor().getId();
 		this.channel = message.getChannel().getName();
 		this.attachments = message.getAttachments();
 	}

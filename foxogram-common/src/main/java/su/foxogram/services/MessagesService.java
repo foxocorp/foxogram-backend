@@ -1,13 +1,15 @@
 package su.foxogram.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import su.foxogram.constants.GatewayEventsConstants;
 import su.foxogram.constants.MemberConstants;
 import su.foxogram.constants.StorageConstants;
-import su.foxogram.dtos.request.MessageCreateDTO;
-import su.foxogram.dtos.response.MessageDTO;
+import su.foxogram.dtos.api.request.MessageCreateDTO;
+import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.MessageNotFoundException;
@@ -15,6 +17,7 @@ import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
+import su.foxogram.repositories.ChannelRepository;
 import su.foxogram.repositories.MessageRepository;
 
 import java.util.ArrayList;
@@ -29,10 +32,16 @@ public class MessagesService {
 
 	private final StorageService storageService;
 
+	private final ProducerKafkaService producerKafkaService;
+
+	private final ChannelRepository channelRepository;
+
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, StorageService storageService) {
+	public MessagesService(MessageRepository messageRepository, StorageService storageService, ProducerKafkaService producerKafkaService, ChannelRepository channelRepository) {
 		this.messageRepository = messageRepository;
 		this.storageService = storageService;
+		this.producerKafkaService = producerKafkaService;
+		this.channelRepository = channelRepository;
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
@@ -56,13 +65,15 @@ public class MessagesService {
 		return message;
 	}
 
-	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException {
+	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
 		long authorId = user.getId();
 		long timestamp = System.currentTimeMillis();
 		List<String> uploadedAttachments = new ArrayList<>();
 		String content = body.getContent();
 
 		try {
+			if (!attachments.isEmpty()) return;
+
 			uploadedAttachments = attachments.stream()
 					.map(attachment -> {
 						try {
@@ -78,6 +89,12 @@ public class MessagesService {
 			Message message = new Message(0, channel, content, authorId, timestamp, uploadedAttachments);
 			messageRepository.save(message);
 
+			channel = channelRepository.findById(channel.getId()).get();
+			List<Long> recipients = channel.getMembers().stream()
+					.map(Member::getId)
+					.collect(Collectors.toList());
+
+			producerKafkaService.send(GatewayEventsConstants.Message.CREATED.getValue(), recipients, new MessageDTO(message));
 			log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 		}
 	}
