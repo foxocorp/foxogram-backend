@@ -5,6 +5,7 @@ services:
     restart: always
     networks:
       - db_network
+      - kafka_network
       - minio_network
       - traefik
     labels:
@@ -15,6 +16,8 @@ services:
 
 networks:
   db_network:
+    external: true
+  kafka_network:
     external: true
   minio_network:
     external: true

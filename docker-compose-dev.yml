@@ -4,7 +4,8 @@ services:
       context: ./foxogram-api
     restart: always
     networks:
-      - db_dev_network
+      - db_network
+      - kafka_network
       - minio_network
       - traefik
     labels:
@@ -14,7 +15,9 @@ services:
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
 
 networks:
-  db_dev_network:
+  db_network:
+    external: true
+  kafka_network:
     external: true
   minio_network:
     external: true
