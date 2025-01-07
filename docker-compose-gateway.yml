@@ -1,0 +1,34 @@
+services:
+  foxogram-gateway:
+    container_name: foxogram-gateway
+    build:
+      context: ./foxogram-gateway
+    restart: always
+    networks:
+      - kafka_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-api.rule: Host(`gateway.foxogram.su`)
+      traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
+
+  foxogram-gateway-dev:
+    container_name: foxogram-gateway-dev
+    build:
+      context: ./foxogram-gateway
+    restart: always
+    networks:
+      - kafka_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-api-dev.rule: Host(`gateway.dev.foxogram.su`)
+      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
+
+networks:
+  kafka_network:
+    external: true
+  traefik:
+    external: true

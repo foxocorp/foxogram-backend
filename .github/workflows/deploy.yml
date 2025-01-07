@@ -54,5 +54,11 @@ jobs:
       - name: Build Foxogram API
         run: ./gradlew :foxogram-api:build
 
+      - name: Build Foxogram Gateway
+        run: ./gradlew :foxogram-gateway:build
+
       - name: Run Foxogram API
-        run: docker compose -f docker-compose-${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'dev' }}.yml up -d --build
+        run: docker compose -f docker-compose-api.yml up foxogram-api${{ github.ref_name == 'dev' && '-dev' || '' }} -d --build
+
+      - name: Run Foxogram Gateway
+        run: docker compose -f docker-compose-gateway.yml up foxogram-gateway${{ github.ref_name == 'dev' && '-dev' || '' }} -d --build

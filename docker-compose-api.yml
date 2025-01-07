@@ -1,5 +1,6 @@
 services:
   foxogram-api:
+    container_name: foxogram-api
     build:
       context: ./foxogram-api
     restart: always
@@ -13,6 +14,22 @@ services:
       traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
       traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
+
+  foxogram-api-dev:
+    container_name: foxogram-api-dev
+    build:
+      context: ./foxogram-api
+    restart: always
+    networks:
+      - db_network
+      - kafka_network
+      - minio_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
+      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
 
 networks:
   db_network:
