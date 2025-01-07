@@ -5,6 +5,7 @@ services:
       context: ./foxogram-gateway
     restart: always
     networks:
+      - db_network
       - kafka_network
       - traefik
     labels:
@@ -19,6 +20,7 @@ services:
       context: ./foxogram-gateway
     restart: always
     networks:
+      - db_network
       - kafka_network
       - traefik
     labels:
@@ -28,6 +30,8 @@ services:
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
 
 networks:
+  db_network:
+    external: true
   kafka_network:
     external: true
   traefik:
