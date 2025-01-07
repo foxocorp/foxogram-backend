@@ -187,7 +187,7 @@ public class AuthenticationService {
 		if (accessToken == null)
 			throw new UserUnauthorizedException();
 
-		if (accessToken.startsWith("Bearer ") && !ignoreBearer)
+		if (accessToken.startsWith("Bearer ") && ignoreBearer)
 			throw new UserUnauthorizedException();
 
 		return getUser(accessToken, ignoreEmailVerification, ignoreBearer);
