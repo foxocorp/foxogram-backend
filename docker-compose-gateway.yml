@@ -10,9 +10,9 @@ services:
       - traefik
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-api.rule: Host(`gateway.foxogram.su`)
-      traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-gateway.rule: Host(`gateway.foxogram.su`)
+      traefik.http.routers.foxogram-gateway.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-gateway.loadbalancer.server.port: 8080
 
   foxogram-gateway-dev:
     container_name: foxogram-gateway-dev
@@ -25,9 +25,9 @@ services:
       - traefik
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-api-dev.rule: Host(`gateway.dev.foxogram.su`)
-      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-gateway-dev.rule: Host(`gateway.dev.foxogram.su`)
+      traefik.http.routers.foxogram-gateway-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-gateway-dev.loadbalancer.server.port: 8080
 
 networks:
   db_network:
