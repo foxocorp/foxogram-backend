@@ -4,14 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.dtos.gateway.OpcodeDTO;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class OkDTO extends OpcodeDTO {
 
-	private boolean ok;
+	private Map<String, Integer> d;
 
-	public OkDTO(int opcode, boolean ok) {
+	public OkDTO(int opcode) {
 		super(opcode);
-		this.ok = ok;
+		this.d = Map.of("heartbeat_interval", 30000);
 	}
 }

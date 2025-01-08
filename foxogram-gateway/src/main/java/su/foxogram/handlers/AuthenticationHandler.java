@@ -1,6 +1,7 @@
 package su.foxogram.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,6 +18,7 @@ import su.foxogram.services.AuthenticationService;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 public class AuthenticationHandler implements BaseHandler {
 
@@ -40,7 +42,9 @@ public class AuthenticationHandler implements BaseHandler {
 		User user = authenticationService.authUser(accessToken, false, true);
 		Session userSession = sessions.get(session.getId());
 		userSession.setUserId(user.getId());
+		userSession.setLastPingTimestamp(System.currentTimeMillis());
 
-		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new OkDTO(GatewayEventsConstants.Auth.OK.getValue(), true))));
+		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new OkDTO(GatewayEventsConstants.Auth.OK.getValue()))));
+		log.info("Authenticated session ({}) with user id {}", session.getId(), user.getId());
 	}
 }

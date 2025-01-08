@@ -15,7 +15,11 @@ import su.foxogram.dtos.gateway.GatewayEventDTO;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.Session;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -30,6 +34,30 @@ public class EventHandler extends TextWebSocketHandler {
 
 	public EventHandler(EventHandlerRegistry handlerRegistry) {
 		this.handlerRegistry = handlerRegistry;
+
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
+
+		Runnable task = () -> {
+			log.info("Checking heartbeat intervals...");
+
+			sessions.values().forEach(session -> {
+				long lastPingTimestamp = session.getLastPingTimestamp();
+
+				if (lastPingTimestamp < (System.currentTimeMillis() - 33_000)) {
+					try {
+						session.getWebSocketSession().close(CloseCodesConstants.HEARTBEAT_TIMEOUT);
+						log.info("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
+					} catch (IOException e) {
+						log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
+						throw new RuntimeException(e);
+					}
+				}
+			});
+
+			log.info("Done checking heartbeat intervals");
+		};
+
+		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
 	}
 
 	@Override

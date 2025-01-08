@@ -2,7 +2,7 @@ package su.foxogram.constants;
 
 public class GatewayEventsConstants {
 
-	private final static int AUTH_EVENT = 0;
+	private final static int GATEWAY_EVENT = 0;
 
 	private final static int USER_EVENT = 10;
 
@@ -16,10 +16,11 @@ public class GatewayEventsConstants {
 
 	public enum Auth {
 		HELLO,
-		OK;
+		OK,
+		PING;
 
 		public int getValue() {
-			return AUTH_EVENT + this.ordinal();
+			return GATEWAY_EVENT + this.ordinal();
 		}
 	}
 

@@ -10,10 +10,13 @@ public class Session {
 
 	private long userId;
 
+	private long lastPingTimestamp;
+
 	private WebSocketSession webSocketSession;
 
 	public Session(long userId, WebSocketSession webSocketSession) {
 		this.userId = userId;
+		this.lastPingTimestamp = System.currentTimeMillis();
 		this.webSocketSession = webSocketSession;
 	}
 
