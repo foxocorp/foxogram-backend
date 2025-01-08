@@ -9,10 +9,10 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import su.foxogram.constants.CloseCodesConstants;
 import su.foxogram.constants.ExceptionsConstants;
-import su.foxogram.constants.GatewayEventsConstants;
 import su.foxogram.dtos.gateway.GatewayEventDTO;
-import su.foxogram.dtos.gateway.response.ExceptionDTO;
+import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.Session;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,10 +55,13 @@ public class EventHandler extends TextWebSocketHandler {
 			if (handler != null) {
 				handler.handle(session, sessions, payload);
 			}
+		} catch (UserUnauthorizedException e) {
+			log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
+
+			session.close(CloseCodesConstants.UNAUTHORIZED);
 		} catch (Exception e) {
 			log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
 			log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), e);
-			session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new ExceptionDTO(GatewayEventsConstants.Common.EXCEPTION.getValue(), e.getMessage()))));
 		}
 	}
 }
