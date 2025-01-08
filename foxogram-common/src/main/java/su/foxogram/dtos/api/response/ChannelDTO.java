@@ -8,6 +8,8 @@ import su.foxogram.models.Channel;
 @Setter
 public class ChannelDTO {
 
+	private long id;
+
 	private String displayName;
 
 	private String name;
@@ -21,6 +23,7 @@ public class ChannelDTO {
 	private long createdAt;
 
 	public ChannelDTO(Channel channel) {
+		this.id = channel.getId();
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
 		this.icon = channel.getIcon();

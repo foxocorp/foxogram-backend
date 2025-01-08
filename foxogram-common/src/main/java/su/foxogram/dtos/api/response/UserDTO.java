@@ -11,6 +11,8 @@ import java.util.List;
 @Setter
 public class UserDTO {
 
+	private long id;
+
 	private String avatar;
 
 	private String displayName;
@@ -30,6 +32,7 @@ public class UserDTO {
 	private long createdAt;
 
 	public UserDTO(User user, List<String> channels, boolean includeEmail, boolean includeChannels) {
+		this.id = user.getId();
 		this.avatar = user.getAvatar();
 		this.displayName = user.getDisplayName();
 		this.username = user.getUsername();
