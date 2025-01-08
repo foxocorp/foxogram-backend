@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OkDTO {
+
 	private boolean ok;
 
 	public OkDTO(boolean ok) {

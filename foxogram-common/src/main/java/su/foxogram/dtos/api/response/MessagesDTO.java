@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MessagesDTO {
+
 	private List<MessageDTO> messages;
 
 	public MessagesDTO(List<Message> messages) {
