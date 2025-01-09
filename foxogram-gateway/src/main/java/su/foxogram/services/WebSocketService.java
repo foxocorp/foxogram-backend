@@ -35,7 +35,7 @@ public class WebSocketService {
 		for (Session session : sessions.values()) {
 			if (session != null) {
 				if (!userIds.contains(session.getUserId())) return;
-
+				session.increaseSequence();
 				WebSocketSession wsSession = session.getWebSocketSession();
 
 				if (wsSession.isOpen()) return;

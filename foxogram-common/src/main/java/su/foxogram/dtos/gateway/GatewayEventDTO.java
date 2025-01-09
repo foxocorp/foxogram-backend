@@ -13,11 +13,14 @@ public class GatewayEventDTO {
 
 	private Map<String, String> d;
 
+	private int s;
+
 	public GatewayEventDTO() {
 	}
 
-	public GatewayEventDTO(int opcode, Map<String, String> data) {
+	public GatewayEventDTO(int opcode, Map<String, String> data, int sequence) {
 		this.op = opcode;
 		this.d = data;
+		this.s = sequence;
 	}
 }
