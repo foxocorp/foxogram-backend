@@ -28,11 +28,9 @@ public class KafkaListener {
 		log.info(record.value());
 		KafkaDTO dto = objectMapper.readValue(record.value(), KafkaDTO.class);
 
-		int opcode = dto.getOpcode();
+		int opcode = dto.getOp();
 		List<Long> recipients = dto.getRecipients();
-		Object data = dto.getData();
-
-		log.info("{} - {}", opcode, data.toString());
+		Object data = dto.getD();
 
 		String message = objectMapper.writeValueAsString(new KafkaDTO(opcode, null, data, false));
 
