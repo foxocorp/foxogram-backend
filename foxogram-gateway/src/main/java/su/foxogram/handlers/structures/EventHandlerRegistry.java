@@ -13,7 +13,7 @@ public class EventHandlerRegistry {
 
 	public EventHandlerRegistry(List<BaseHandler> handlers) {
 		for (BaseHandler handler : handlers) {
-			this.handlers.put(handler.getEvent(), handler);
+			this.handlers.put(handler.getOpcode(), handler);
 		}
 	}
 

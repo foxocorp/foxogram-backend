@@ -27,7 +27,7 @@ public class ProducerKafkaService {
 		this.topic = kafkaConfig.getTopic();
 	}
 
-	public void send(int opcode, List<Long> recipients, Object data) throws JsonProcessingException {
-		kafkaTemplate.send(topic, objectMapper.writeValueAsString(new KafkaDTO(opcode, recipients, data, true)));
+	public void send(List<Long> recipients, Object data, String event) throws JsonProcessingException {
+		kafkaTemplate.send(topic, objectMapper.writeValueAsString(new KafkaDTO(recipients, data, event)));
 	}
 }

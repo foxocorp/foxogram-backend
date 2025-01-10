@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public interface BaseHandler {
 
-	int getEvent();
+	int getOpcode();
 
 	void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, GatewayEventDTO payload) throws Exception;
 }

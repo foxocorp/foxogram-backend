@@ -76,9 +76,9 @@ public class EventHandler extends TextWebSocketHandler {
 	protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
 		try {
 			GatewayEventDTO payload = objectMapper.readValue(message.getPayload(), GatewayEventDTO.class);
-			int event = payload.getOp();
+			int opcode = payload.getOp();
 
-			BaseHandler handler = handlerRegistry.getHandler(event);
+			BaseHandler handler = handlerRegistry.getHandler(opcode);
 
 			if (handler != null) {
 				handler.handle(session, sessions, payload);

@@ -9,20 +9,18 @@ import java.util.List;
 @Setter
 public class KafkaDTO {
 
-	private int op;
-
 	private List<Long> recipients;
 
-	private Object d;
+	private Object data;
+
+	private String type;
 
 	public KafkaDTO() {
 	}
 
-	public KafkaDTO(int opcode, List<Long> recipients, Object data, boolean includeRecipients) {
-		this.op = opcode;
-		if (includeRecipients) {
-			this.recipients = recipients;
-		}
-		this.d = data;
+	public KafkaDTO(List<Long> recipients, Object data, String type) {
+		this.recipients = recipients;
+		this.data = data;
+		this.type = type;
 	}
 }

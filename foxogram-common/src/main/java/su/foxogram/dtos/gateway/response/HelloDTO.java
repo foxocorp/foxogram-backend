@@ -2,18 +2,20 @@ package su.foxogram.dtos.gateway.response;
 
 import lombok.Getter;
 import lombok.Setter;
-import su.foxogram.dtos.gateway.OpcodeDTO;
+import su.foxogram.constants.GatewayConstants;
 
 import java.util.Map;
 
 @Getter
 @Setter
-public class OkDTO extends OpcodeDTO {
+public class HelloDTO {
+
+	private int op;
 
 	private Map<String, Integer> d;
 
-	public OkDTO(int opcode) {
-		super(opcode);
+	public HelloDTO() {
+		this.op = GatewayConstants.Opcode.HELLO.ordinal();
 		this.d = Map.of("heartbeat_interval", 30000);
 	}
 }

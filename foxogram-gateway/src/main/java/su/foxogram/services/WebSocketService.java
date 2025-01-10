@@ -1,13 +1,16 @@
 package su.foxogram.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import su.foxogram.dtos.gateway.GatewayEventDTO;
 import su.foxogram.handlers.structures.EventHandler;
 import su.foxogram.models.Session;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -15,32 +18,40 @@ public class WebSocketService {
 
 	private final EventHandler webSocketHandler;
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	@Autowired
 	public WebSocketService(EventHandler webSocketHandler) {
 		this.webSocketHandler = webSocketHandler;
 	}
 
-	public void sendMessageToAll(String message) throws Exception {
+	public void sendMessageToAll(int opcode, Map<String, Object> data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
 		for (Session session : sessions.values()) {
 			WebSocketSession wsSession = session.getWebSocketSession();
-			if (wsSession.isOpen()) {
-				wsSession.sendMessage(new TextMessage(message));
-			}
+
+			int seqNumber = session.getSequence();
+			session.increaseSequence();
+
+			if (!wsSession.isOpen()) return;
+
+			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new GatewayEventDTO(opcode, data, seqNumber, type))));
 		}
 	}
 
-	public void sendMessageToSessions(List<Long> userIds, String message) throws Exception {
+	public void sendMessageToSessions(List<Long> userIds, int opcode, Map<String, Object> data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
 		for (Session session : sessions.values()) {
 			if (session != null) {
 				if (!userIds.contains(session.getUserId())) return;
+
+				int seqNumber = session.getSequence();
 				session.increaseSequence();
 				WebSocketSession wsSession = session.getWebSocketSession();
 
-				if (wsSession.isOpen()) return;
+				if (!wsSession.isOpen()) return;
 
-				wsSession.sendMessage(new TextMessage(message));
+				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new GatewayEventDTO(opcode, data, seqNumber, type))));
 			}
 		}
 	}
