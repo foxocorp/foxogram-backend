@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import su.foxogram.constants.GatewayEventsConstants;
+import su.foxogram.constants.GatewayConstants;
 import su.foxogram.constants.MemberConstants;
 import su.foxogram.constants.StorageConstants;
 import su.foxogram.dtos.api.request.MessageCreateDTO;
@@ -22,6 +22,7 @@ import su.foxogram.repositories.MessageRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -89,17 +90,12 @@ public class MessagesService {
 			Message message = new Message(0, channel, content, authorId, timestamp, uploadedAttachments);
 			messageRepository.save(message);
 
-			channel = channelRepository.findById(channel.getId()).get();
-			List<Long> recipients = channel.getMembers().stream()
-					.map(Member::getId)
-					.collect(Collectors.toList());
-
-			producerKafkaService.send(GatewayEventsConstants.Message.CREATED.getValue(), recipients, new MessageDTO(message));
+			producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 			log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 		}
 	}
 
-	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException {
+	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 
 		if (message == null) throw new MessageNotFoundException();
@@ -107,10 +103,11 @@ public class MessagesService {
 		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES);
 
 		messageRepository.delete(message);
+		producerKafkaService.send(getRecipients(channel), Map.of("id", id), GatewayConstants.Event.MESSAGE_DELETE.getValue());
 		log.info("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
 	}
 
-	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException {
+	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 		String content = body.getContent();
 
@@ -119,6 +116,8 @@ public class MessagesService {
 
 		message.setContent(content);
 		messageRepository.save(message);
+
+		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
 		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;
@@ -130,5 +129,12 @@ public class MessagesService {
 		} catch (Exception e) {
 			throw new UploadFailedException();
 		}
+	}
+
+	private List<Long> getRecipients(Channel channel) {
+		channel = channelRepository.findById(channel.getId()).get();
+		return channel.getMembers().stream()
+				.map(Member::getId)
+				.collect(Collectors.toList());
 	}
 }

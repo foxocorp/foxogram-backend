@@ -1,14 +1,17 @@
 package su.foxogram.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import su.foxogram.constants.GatewayConstants;
 import su.foxogram.constants.MemberConstants;
 import su.foxogram.constants.StorageConstants;
 import su.foxogram.dtos.api.request.ChannelCreateDTO;
 import su.foxogram.dtos.api.request.ChannelEditDTO;
+import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.MemberDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.channel.ChannelAlreadyExistException;
@@ -24,6 +27,8 @@ import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,12 +41,15 @@ public class ChannelsService {
 
 	private final StorageService storageService;
 
+	private final ProducerKafkaService producerKafkaService;
+
 	@Autowired
-	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, StorageService storageService) {
+	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, StorageService storageService, ProducerKafkaService producerKafkaService) {
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.userRepository = userRepository;
 		this.storageService = storageService;
+		this.producerKafkaService = producerKafkaService;
 	}
 
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
@@ -72,7 +80,7 @@ public class ChannelsService {
 		return channel;
 	}
 
-	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException {
+	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException, JsonProcessingException {
 		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_CHANNEL);
 
 		try {
@@ -85,20 +93,22 @@ public class ChannelsService {
 			throw new ChannelAlreadyExistException();
 		}
 
+		producerKafkaService.send(getRecipients(channel), new ChannelDTO(channel), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
 		log.info("Channel ({}) edited successfully", channel.getName());
 		return channel;
 	}
 
-	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException {
+	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException {
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
 		member.hasAnyPermission(MemberConstants.Permissions.ADMIN);
 
 		channelRepository.delete(channel);
+		producerKafkaService.send(getRecipients(channel), Map.of("id", channel.getId()), GatewayConstants.Event.CHANNEL_DELETE.getValue());
 		log.info("Channel ({}) deleted successfully", channel.getName());
 	}
 
-	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException {
+	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
 		Member member = memberRepository.findByChannelAndUsername(channel, user.getUsername());
 
 		if (member != null) throw new MemberAlreadyInChannelException();
@@ -107,16 +117,18 @@ public class ChannelsService {
 
 		member = new Member(user, channel, 0);
 		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
+		producerKafkaService.send(getRecipients(channel), new MemberDTO(member), GatewayConstants.Event.MEMBER_ADD.getValue());
 		return memberRepository.save(member);
 	}
 
-	public void leaveUser(Channel channel, User user) throws MemberInChannelNotFoundException {
+	public void leaveUser(Channel channel, User user) throws MemberInChannelNotFoundException, JsonProcessingException {
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
 		if (member == null) throw new MemberInChannelNotFoundException();
 
 		member = memberRepository.findByChannelAndUser(channel, user);
 		memberRepository.delete(member);
+		producerKafkaService.send(getRecipients(channel), new MemberDTO(member), GatewayConstants.Event.MEMBER_REMOVE.getValue());
 		log.info("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 	}
 
@@ -140,5 +152,12 @@ public class ChannelsService {
 		}
 
 		channel.setIcon(hash);
+	}
+
+	private List<Long> getRecipients(Channel channel) {
+		channel = channelRepository.findById(channel.getId()).get();
+		return channel.getMembers().stream()
+				.map(Member::getId)
+				.collect(Collectors.toList());
 	}
 }
