@@ -1,5 +1,6 @@
 package su.foxogram.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -52,7 +53,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Edit channel")
 	@PatchMapping("/{name}")
-	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException {
+	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException, JsonProcessingException {
 		channel = channelsService.editChannel(member, channel, body);
 
 		return new ChannelDTO(channel);
@@ -60,7 +61,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Delete channel")
 	@DeleteMapping("/{name}")
-	public OkDTO deleteChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MissingPermissionsException {
+	public OkDTO deleteChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MissingPermissionsException, JsonProcessingException {
 		channelsService.deleteChannel(channel, user);
 
 		return new OkDTO(true);
@@ -68,7 +69,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Join channel")
 	@PutMapping("/{name}/members/@me")
-	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberAlreadyInChannelException {
+	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberAlreadyInChannelException, JsonProcessingException {
 		Member member = channelsService.joinUser(channel, user);
 
 		return new MemberDTO(member);
@@ -76,7 +77,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Leave channel")
 	@DeleteMapping("/{name}/members/@me")
-	public OkDTO leaveChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberInChannelNotFoundException {
+	public OkDTO leaveChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberInChannelNotFoundException, JsonProcessingException {
 		channelsService.leaveUser(channel, user);
 
 		return new OkDTO(true);

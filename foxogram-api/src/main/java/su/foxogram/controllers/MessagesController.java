@@ -62,7 +62,7 @@ public class MessagesController {
 
 	@Operation(summary = "Delete message")
 	@DeleteMapping("/channel/{name}/{id}")
-	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) throws MessageNotFoundException, MissingPermissionsException {
+	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		messagesService.deleteMessage(id, member, channel);
 
 		return new OkDTO(true);
@@ -70,7 +70,7 @@ public class MessagesController {
 
 	@Operation(summary = "Edit message")
 	@PatchMapping("/channel/{name}/{id}")
-	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @RequestBody MessageCreateDTO body, @PathVariable long id) throws MessageNotFoundException, MissingPermissionsException {
+	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @RequestBody MessageCreateDTO body, @PathVariable long id) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		List<Message> message = List.of(messagesService.editMessage(id, channel, member, body));
 
 		return new MessagesDTO(message);
