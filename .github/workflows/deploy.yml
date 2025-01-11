@@ -29,6 +29,7 @@ jobs:
           spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer\n
           spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer\n
           spring.kafka.consumer.group-id=0\n
+          spring.jackson.property-naming-strategy=SNAKE_CASE\n
           kafka.topic=${{ vars.KAFKA_TOPIC }}\n
           smtp.host=${{ secrets.SMTP_HOSTNAME }}\n
           smtp.port=${{ secrets.SMTP_PORT }}\n

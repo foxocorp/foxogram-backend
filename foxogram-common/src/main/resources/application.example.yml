@@ -18,6 +18,8 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: 0
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 kafka:
   topic: events
