@@ -67,39 +67,36 @@ public class MessagesService {
 	}
 
 	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
-		long authorId = user.getId();
-		long timestamp = System.currentTimeMillis();
 		List<String> uploadedAttachments = new ArrayList<>();
-		String content = body.getContent();
 
-		try {
-			if (!attachments.isEmpty()) return;
-
-			uploadedAttachments = attachments.stream()
-					.map(attachment -> {
-						try {
-							return uploadAttachment(attachment);
-						} catch (UploadFailedException e) {
-							throw new RuntimeException(e);
-						}
-					})
-					.collect(Collectors.toList());
-		} catch (Exception e) {
-			throw new UploadFailedException();
-		} finally {
-			Message message = new Message(0, channel, content, authorId, timestamp, uploadedAttachments);
-			messageRepository.save(message);
-
-			producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
-			log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
+		if (!attachments.isEmpty()) {
+			try {
+				uploadedAttachments = attachments.stream()
+						.map(attachment -> {
+							try {
+								return uploadAttachment(attachment);
+							} catch (UploadFailedException e) {
+								throw new RuntimeException(e);
+							}
+						})
+						.collect(Collectors.toList());
+			} catch (Exception e) {
+				throw new UploadFailedException();
+			}
 		}
+
+		Message message = new Message(channel, body.getContent(), user.getId(), uploadedAttachments);
+		messageRepository.save(message);
+
+		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
+		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 	}
 
 	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 
 		if (message == null) throw new MessageNotFoundException();
-		message.isAuthor(member);
+		if (!message.isAuthor(member)) throw new MissingPermissionsException();
 		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES);
 
 		messageRepository.delete(message);
@@ -112,7 +109,7 @@ public class MessagesService {
 		String content = body.getContent();
 
 		if (message == null) throw new MessageNotFoundException();
-		message.isAuthor(member);
+		if (!message.isAuthor(member)) throw new MissingPermissionsException();
 
 		message.setContent(content);
 		messageRepository.save(message);

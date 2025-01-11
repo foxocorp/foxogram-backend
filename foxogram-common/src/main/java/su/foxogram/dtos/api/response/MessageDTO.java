@@ -16,15 +16,18 @@ public class MessageDTO {
 
 	private long author;
 
-	private String channel;
+	private long channel;
 
 	private List<String> attachments;
+
+	private long createdAt;
 
 	public MessageDTO(Message message) {
 		this.id = message.getId();
 		this.content = message.getContent();
 		this.author = message.getAuthor().getId();
-		this.channel = message.getChannel().getName();
+		this.channel = message.getChannel().getId();
 		this.attachments = message.getAttachments();
+		this.createdAt = message.getTimestamp();
 	}
 }

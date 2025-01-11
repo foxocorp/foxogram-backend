@@ -23,7 +23,7 @@ public class UserDTO {
 	private String email;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<String> channels;
+	private List<Long> channels;
 
 	private long flags;
 
@@ -31,7 +31,7 @@ public class UserDTO {
 
 	private long createdAt;
 
-	public UserDTO(User user, List<String> channels, boolean includeEmail, boolean includeChannels) {
+	public UserDTO(User user, List<Long> channels, boolean includeEmail, boolean includeChannels) {
 		this.id = user.getId();
 		this.avatar = user.getAvatar();
 		this.displayName = user.getDisplayName();

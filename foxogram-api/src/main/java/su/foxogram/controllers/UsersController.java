@@ -47,10 +47,10 @@ public class UsersController {
 	@GetMapping("/{username}")
 	public UserDTO getUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @PathVariable String username) throws UserNotFoundException {
 		if (Objects.equals(username, "@me")) {
-			List<String> channels = memberRepository.findAllByUserId(authenticatedUser.getId())
+			List<Long> channels = memberRepository.findAllByUserId(authenticatedUser.getId())
 					.stream()
 					.map(Member::getChannel)
-					.map(Channel::getName)
+					.map(Channel::getId)
 					.collect(Collectors.toList());
 
 			return new UserDTO(authenticatedUser, channels, true, true);

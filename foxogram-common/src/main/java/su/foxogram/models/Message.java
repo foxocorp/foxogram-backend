@@ -3,7 +3,6 @@ package su.foxogram.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import su.foxogram.exceptions.member.MissingPermissionsException;
 
 import java.util.List;
 
@@ -42,17 +41,15 @@ public class Message {
 	public Message() {
 	}
 
-	public Message(long id, Channel channel, String content, long authorId, long timestamp, List<String> attachments) {
-		this.id = id;
+	public Message(Channel channel, String content, long authorId, List<String> attachments) {
 		this.channel = channel;
 		this.author = new Member(authorId);
 		this.content = content;
-		this.timestamp = timestamp;
+		this.timestamp = System.currentTimeMillis();
 		this.attachments = attachments;
 	}
 
-	public void isAuthor(Member member) throws MissingPermissionsException {
-		if (!author.getUser().getEmail().equals(member.getUser().getUsername()))
-			throw new MissingPermissionsException();
+	public boolean isAuthor(Member member) {
+		return author.getUser().getEmail().equals(member.getUser().getUsername());
 	}
 }
