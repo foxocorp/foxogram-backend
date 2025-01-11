@@ -1,5 +1,6 @@
 package su.foxogram.dtos.api.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,7 @@ import su.foxogram.constants.ValidationConstants;
 
 @Getter
 @Setter
+@Schema(name = "UserResetPasswordConfirm")
 public class UserResetPasswordConfirmDTO {
 	@NotNull(message = "Email" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.EMAIL, message = ValidationConstants.Messages.EMAIL_WRONG_LENGTH)

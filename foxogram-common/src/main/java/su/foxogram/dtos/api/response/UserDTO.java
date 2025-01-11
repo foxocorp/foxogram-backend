@@ -1,6 +1,7 @@
 package su.foxogram.dtos.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.models.User;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Schema(name = "User")
 public class UserDTO {
 
 	private long id;

@@ -1,5 +1,6 @@
 package su.foxogram.dtos.api.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,7 @@ import su.foxogram.constants.ValidationConstants;
 
 @Setter
 @Getter
+@Schema(name = "UserSignUp")
 public class UserSignUpDTO {
 	@NotNull(message = "Username" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.USERNAME, message = ValidationConstants.Messages.USERNAME_WRONG_LENGTH)

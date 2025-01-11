@@ -1,5 +1,6 @@
 package su.foxogram.dtos.api.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Setter
 @Getter
+@Schema(name = "MessageCreate")
 public class MessageCreateDTO {
 	@NotNull(message = "Content" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	@Size(min = 1, max = ValidationConstants.Lengths.MESSAGE_CONTENT, message = ValidationConstants.Messages.MESSAGE_WRONG_LENGTH)

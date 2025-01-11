@@ -1,5 +1,6 @@
 package su.foxogram.dtos.api.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import su.foxogram.constants.ValidationConstants;
 
 @Getter
 @Setter
+@Schema(name = "UserEdit")
 public class UserEditDTO {
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.DISPLAY_NAME, message = ValidationConstants.Messages.DISPLAY_NAME_WRONG_LENGTH)
 	@Pattern(regexp = ValidationConstants.Regex.USERNAME_REGEX, message = ValidationConstants.Messages.DISPLAY_NAME_INCORRECT)

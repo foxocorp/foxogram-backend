@@ -1,11 +1,13 @@
 package su.foxogram.dtos.api.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.models.Member;
 
 @Getter
 @Setter
+@Schema(name = "Member")
 public class MemberDTO {
 
 	private long id;
