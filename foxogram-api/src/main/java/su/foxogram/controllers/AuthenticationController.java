@@ -35,11 +35,11 @@ public class AuthenticationController {
 	@Operation(summary = "Register")
 	@SecurityRequirements()
 	@PostMapping("/register")
-	public TokenDTO register(@Valid @RequestBody UserSignUpDTO body) throws UserCredentialsDuplicateException {
+	public TokenDTO register(@Valid @RequestBody UserRegisterDTO body) throws UserCredentialsDuplicateException {
 		String username = body.getUsername();
 		String email = body.getEmail();
 		String password = body.getPassword();
-		String accessToken = authenticationService.userSignUp(username, email, password);
+		String accessToken = authenticationService.userRegister(username, email, password);
 
 		return new TokenDTO(accessToken);
 	}

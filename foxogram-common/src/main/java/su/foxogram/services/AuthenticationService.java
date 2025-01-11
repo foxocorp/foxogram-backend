@@ -78,7 +78,7 @@ public class AuthenticationService {
 		return userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
 	}
 
-	public String userSignUp(String username, String email, String password) throws UserCredentialsDuplicateException {
+	public String userRegister(String username, String email, String password) throws UserCredentialsDuplicateException {
 		User user = createUser(username, email, password);
 		try {
 			userRepository.save(user);
