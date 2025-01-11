@@ -1,5 +1,8 @@
 package su.foxogram.configs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -16,8 +19,11 @@ import java.util.List;
 public class OpenAPIConfig {
 	private final APIConfig apiConfig;
 
-	public OpenAPIConfig(APIConfig apiConfig) {
+	private final ObjectMapper objectMapper;
+
+	public OpenAPIConfig(APIConfig apiConfig, ObjectMapper objectMapper) {
 		this.apiConfig = apiConfig;
+		this.objectMapper = objectMapper;
 	}
 
 	@Bean
@@ -34,6 +40,8 @@ public class OpenAPIConfig {
 						.type(SecurityScheme.Type.HTTP)
 						.scheme("bearer")
 						.bearerFormat("JWT"));
+
+		ModelConverters.getInstance().addConverter(new ModelResolver(objectMapper));
 
 		return new OpenAPI()
 				.info(info)
