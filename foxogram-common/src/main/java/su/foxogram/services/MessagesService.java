@@ -69,7 +69,7 @@ public class MessagesService {
 	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
 		List<String> uploadedAttachments = new ArrayList<>();
 
-		if (!attachments.isEmpty()) {
+		if (attachments.isEmpty()) {
 			try {
 				uploadedAttachments = attachments.stream()
 						.map(attachment -> {
@@ -87,6 +87,10 @@ public class MessagesService {
 
 		Message message = new Message(channel, body.getContent(), user.getId(), uploadedAttachments);
 		messageRepository.save(message);
+
+		channel = channelRepository.findById(channel.getId()).get();
+		channel.setLastMessage(message);
+		channelRepository.save(channel);
 
 		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());

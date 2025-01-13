@@ -24,12 +24,16 @@ public class ChannelDTO {
 
 	private long createdAt;
 
+	private MessageDTO lastMessage;
+
 	public ChannelDTO(Channel channel) {
 		this.id = channel.getId();
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
 		this.icon = channel.getIcon();
 		this.type = channel.getType();
+		if (channel.getLastMessage() != null) this.lastMessage = new MessageDTO(channel.getLastMessage());
+		else this.lastMessage = null;
 		this.owner = channel.getOwner();
 		this.createdAt = channel.getCreatedAt();
 	}
