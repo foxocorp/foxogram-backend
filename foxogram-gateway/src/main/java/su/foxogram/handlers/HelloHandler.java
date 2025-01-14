@@ -38,7 +38,7 @@ public class HelloHandler implements BaseHandler {
 	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, GatewayEventDTO payload) throws UserEmailNotVerifiedException, UserUnauthorizedException, IOException {
 		String accessToken = (String) payload.getD().get("token");
 
-		User user = authenticationService.authUser(accessToken, false, true);
+		User user = authenticationService.authUser(accessToken, true, true);
 		Session userSession = sessions.get(session.getId());
 		userSession.setUserId(user.getId());
 		userSession.setLastPingTimestamp(System.currentTimeMillis());
