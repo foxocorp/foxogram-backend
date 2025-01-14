@@ -75,8 +75,8 @@ public class AuthenticationController {
 	@Operation(summary = "Reset password")
 	@SecurityRequirements()
 	@PostMapping("/reset-password")
-	public OkDTO resetPassword(@RequestAttribute(value = AttributesConstants.ACCESS_TOKEN) String accessToken, @RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
-		authenticationService.resetPassword(accessToken, body);
+	public OkDTO resetPassword(@RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
+		authenticationService.resetPassword(body);
 
 		return new OkDTO(true);
 	}
@@ -84,7 +84,7 @@ public class AuthenticationController {
 	@Operation(summary = "Confirm reset password")
 	@SecurityRequirements()
 	@PostMapping("/reset-password/confirm")
-	public OkDTO confirmResetPassword(@RequestAttribute(value = AttributesConstants.ACCESS_TOKEN) String accessToken, @RequestBody UserResetPasswordConfirmDTO body) throws CodeExpiredException, CodeIsInvalidException, UserCredentialsIsInvalidException {
+	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws CodeExpiredException, CodeIsInvalidException, UserCredentialsIsInvalidException {
 		authenticationService.confirmResetPassword(body);
 
 		return new OkDTO(true);

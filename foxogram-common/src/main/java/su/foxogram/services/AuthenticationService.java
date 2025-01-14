@@ -158,7 +158,7 @@ public class AuthenticationService {
 		emailService.sendEmail(user.getEmail(), user.getId(), code.getType(), user.getUsername(), code.getValue(), System.currentTimeMillis(), code.getExpiresAt(), accessToken);
 	}
 
-	public void resetPassword(String accessToken, UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
+	public void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 
 		String type = EmailConstants.Type.EMAIL_VERIFY.getValue();
@@ -168,7 +168,7 @@ public class AuthenticationService {
 
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
-		emailService.sendEmail(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, accessToken);
+		emailService.sendEmail(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, null);
 		log.info("User ({}, {}) reset password requested successfully", user.getUsername(), user.getEmail());
 	}
 
