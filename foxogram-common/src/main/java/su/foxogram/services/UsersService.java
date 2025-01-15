@@ -61,8 +61,7 @@ public class UsersService {
 	public List<ChannelDTO> getChannels(User user) {
 		return memberRepository.findAllByUserId(user.getId())
 				.stream()
-				.map(Member::getChannel)
-				.map(ChannelDTO::new)
+				.map(Member::getChannel).map(channel -> new ChannelDTO(channel, true))
 				.collect(Collectors.toList());
 	}
 

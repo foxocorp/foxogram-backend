@@ -94,7 +94,7 @@ public class ChannelsService {
 			throw new ChannelAlreadyExistException();
 		}
 
-		producerKafkaService.send(getRecipients(channel), new ChannelDTO(channel), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
+		producerKafkaService.send(getRecipients(channel), new ChannelDTO(channel, false), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
 		log.info("Channel ({}) edited successfully", channel.getName());
 		return channel;
 	}

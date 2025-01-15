@@ -42,13 +42,13 @@ public class ChannelsController {
 	public ChannelDTO createChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
 		Channel channel = channelsService.createChannel(user, body);
 
-		return new ChannelDTO(channel);
+		return new ChannelDTO(channel, false);
 	}
 
 	@Operation(summary = "Get channel")
 	@GetMapping("/{name}")
 	public ChannelDTO getChannel(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) {
-		return new ChannelDTO(channel);
+		return new ChannelDTO(channel, false);
 	}
 
 	@Operation(summary = "Edit channel")
@@ -56,7 +56,7 @@ public class ChannelsController {
 	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException, JsonProcessingException {
 		channel = channelsService.editChannel(member, channel, body);
 
-		return new ChannelDTO(channel);
+		return new ChannelDTO(channel, false);
 	}
 
 	@Operation(summary = "Delete channel")
