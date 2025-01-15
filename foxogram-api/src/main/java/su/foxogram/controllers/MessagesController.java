@@ -40,7 +40,7 @@ public class MessagesController {
 
 	@Operation(summary = "Get messages")
 	@GetMapping("/channel/{name}")
-	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestParam(required = false, defaultValue = "0") long before, @RequestParam(required = false, defaultValue = "0") int limit) {
+	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestParam(required = false, defaultValue = "0") long before, @RequestParam(required = false, defaultValue = "25") int limit) {
 		return messagesService.getMessages(before, limit, channel);
 	}
 
