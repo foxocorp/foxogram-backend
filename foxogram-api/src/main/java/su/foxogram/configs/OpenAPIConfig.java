@@ -40,13 +40,13 @@ public class OpenAPIConfig {
 						.scheme("bearer")
 						.bearerFormat("JWT"));
 
-		ObjectMapper swaggerObjectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		swaggerObjectMapper.setVisibility(swaggerObjectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+		objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
 						.withCreatorVisibility(JsonAutoDetect.Visibility.NONE))
 				.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
-		ModelConverters.getInstance().addConverter(new ModelResolver(swaggerObjectMapper));
+		ModelConverters.getInstance().addConverter(new ModelResolver(objectMapper));
 
 		return new OpenAPI()
 				.info(info)
