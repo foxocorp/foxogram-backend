@@ -37,7 +37,7 @@ public class Channel {
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Member> members;
 
-	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Message> messages;
 
 	@Column()
