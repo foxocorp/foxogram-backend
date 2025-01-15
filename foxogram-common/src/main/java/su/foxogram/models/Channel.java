@@ -39,9 +39,6 @@ public class Channel {
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Message> messages;
 
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-	private Message lastMessage;
-
 	@Column()
 	public long createdAt;
 

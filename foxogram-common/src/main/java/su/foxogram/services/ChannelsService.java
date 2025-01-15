@@ -28,6 +28,7 @@ import su.foxogram.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -101,7 +102,7 @@ public class ChannelsService {
 	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException {
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
-		member.hasAnyPermission(MemberConstants.Permissions.ADMIN);
+		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN)) throw new MissingPermissionsException();
 
 		channelRepository.delete(channel);
 		producerKafkaService.send(getRecipients(channel), Map.of("id", channel.getId()), GatewayConstants.Event.CHANNEL_DELETE.getValue());
@@ -155,7 +156,10 @@ public class ChannelsService {
 	}
 
 	private List<Long> getRecipients(Channel channel) {
-		channel = channelRepository.findById(channel.getId()).get();
+		Optional<Channel> optChannel = channelRepository.findById(channel.getId());
+
+		if (optChannel.isPresent()) channel = optChannel.get();
+
 		return channel.getMembers().stream()
 				.map(Member::getId)
 				.collect(Collectors.toList());

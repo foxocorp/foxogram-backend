@@ -32,9 +32,10 @@ public class ChannelDTO {
 		this.name = channel.getName();
 		this.icon = channel.getIcon();
 		this.type = channel.getType();
-		if (channel.getLastMessage() != null) this.lastMessage = new MessageDTO(channel.getLastMessage());
+		if (channel.getMessages() != null && !channel.getMessages().isEmpty())
+			this.lastMessage = new MessageDTO(channel.getMessages().getLast());
 		else this.lastMessage = null;
-		this.owner = channel.getOwner();
+		this.owner = channel.getOwner(); // TODO: change to owner id
 		this.createdAt = channel.getCreatedAt();
 	}
 }

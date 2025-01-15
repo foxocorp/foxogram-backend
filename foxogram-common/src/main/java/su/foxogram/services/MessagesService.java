@@ -18,6 +18,7 @@ import su.foxogram.models.Member;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
 import su.foxogram.repositories.ChannelRepository;
+import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.MessageRepository;
 
 import java.util.ArrayList;
@@ -37,12 +38,15 @@ public class MessagesService {
 
 	private final ChannelRepository channelRepository;
 
+	private final MemberRepository memberRepository;
+
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, StorageService storageService, ProducerKafkaService producerKafkaService, ChannelRepository channelRepository) {
+	public MessagesService(MessageRepository messageRepository, StorageService storageService, ProducerKafkaService producerKafkaService, ChannelRepository channelRepository, MemberRepository memberRepository) {
 		this.messageRepository = messageRepository;
 		this.storageService = storageService;
 		this.producerKafkaService = producerKafkaService;
 		this.channelRepository = channelRepository;
+		this.memberRepository = memberRepository;
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
@@ -68,6 +72,7 @@ public class MessagesService {
 
 	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
 		List<String> uploadedAttachments = new ArrayList<>();
+		Member member = memberRepository.findByChannelAndUser(channel, user);
 
 		if (attachments.isEmpty()) {
 			try {
@@ -85,12 +90,8 @@ public class MessagesService {
 			}
 		}
 
-		Message message = new Message(channel, body.getContent(), user.getId(), uploadedAttachments);
+		Message message = new Message(channel, body.getContent(), member.getId(), uploadedAttachments);
 		messageRepository.save(message);
-
-		channel = channelRepository.findById(channel.getId()).get();
-		channel.setLastMessage(message);
-		channelRepository.save(channel);
 
 		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
@@ -100,8 +101,8 @@ public class MessagesService {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 
 		if (message == null) throw new MessageNotFoundException();
-		if (!message.isAuthor(member)) throw new MissingPermissionsException();
-		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES);
+		if (!message.isAuthor(member) && !member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES))
+			throw new MissingPermissionsException();
 
 		messageRepository.delete(message);
 		producerKafkaService.send(getRecipients(channel), Map.of("id", id), GatewayConstants.Event.MESSAGE_DELETE.getValue());
