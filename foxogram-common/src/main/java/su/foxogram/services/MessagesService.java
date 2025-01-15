@@ -90,7 +90,7 @@ public class MessagesService {
 			}
 		}
 
-		Message message = new Message(channel, body.getContent(), member.getId(), uploadedAttachments);
+		Message message = new Message(channel, body.getContent(), member, uploadedAttachments);
 		messageRepository.save(message);
 
 		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());

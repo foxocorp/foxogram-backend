@@ -41,15 +41,15 @@ public class Message {
 	public Message() {
 	}
 
-	public Message(Channel channel, String content, long authorId, List<String> attachments) {
+	public Message(Channel channel, String content, Member member, List<String> attachments) {
 		this.channel = channel;
-		this.author = new Member(authorId);
+		this.author = member;
 		this.content = content;
 		this.timestamp = System.currentTimeMillis();
 		this.attachments = attachments;
 	}
 
 	public boolean isAuthor(Member member) {
-		return author.getUser().getEmail().equals(member.getUser().getUsername());
+		return author.getUser().getUsername().equals(member.getUser().getUsername());
 	}
 }

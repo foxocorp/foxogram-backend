@@ -73,7 +73,7 @@ public class ChannelsController {
 	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
 		Member member = channelsService.joinUser(channel, user);
 
-		return new MemberDTO(member);
+		return new MemberDTO(member, true);
 	}
 
 	@Operation(summary = "Leave channel")
@@ -95,7 +95,7 @@ public class ChannelsController {
 
 		if (member == null) throw new MemberInChannelNotFoundException();
 
-		return new MemberDTO(member);
+		return new MemberDTO(member, true);
 	}
 
 	@Operation(summary = "Get members")

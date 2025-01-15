@@ -113,7 +113,7 @@ public class ChannelsService {
 
 		member = new Member(user, channel, 0);
 		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
-		producerKafkaService.send(getRecipients(channel), new MemberDTO(member), GatewayConstants.Event.MEMBER_ADD.getValue());
+		producerKafkaService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
 		return memberRepository.save(member);
 	}
 
@@ -124,13 +124,13 @@ public class ChannelsService {
 
 		member = memberRepository.findByChannelAndUser(channel, user);
 		memberRepository.delete(member);
-		producerKafkaService.send(getRecipients(channel), new MemberDTO(member), GatewayConstants.Event.MEMBER_REMOVE.getValue());
+		producerKafkaService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_REMOVE.getValue());
 		log.info("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 	}
 
 	public List<MemberDTO> getMembers(Channel channel) {
 		return memberRepository.findAllByChannel(channel).stream()
-				.map(MemberDTO::new)
+				.map(member -> new MemberDTO(member, false))
 				.toList();
 	}
 

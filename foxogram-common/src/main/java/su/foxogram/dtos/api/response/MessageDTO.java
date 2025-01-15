@@ -27,7 +27,7 @@ public class MessageDTO {
 	public MessageDTO(Message message) {
 		this.id = message.getId();
 		this.content = message.getContent();
-		this.author = new MemberDTO(message.getAuthor());
+		this.author = new MemberDTO(message.getAuthor(), false);
 		this.channel = new ChannelDTO(message.getChannel(), false);
 		this.attachments = message.getAttachments();
 		this.createdAt = message.getTimestamp();
