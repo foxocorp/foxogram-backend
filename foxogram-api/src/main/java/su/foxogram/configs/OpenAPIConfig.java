@@ -1,6 +1,8 @@
 package su.foxogram.configs;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.models.Components;
@@ -19,11 +21,8 @@ import java.util.List;
 public class OpenAPIConfig {
 	private final APIConfig apiConfig;
 
-	private final ObjectMapper objectMapper;
-
-	public OpenAPIConfig(APIConfig apiConfig, ObjectMapper objectMapper) {
+	public OpenAPIConfig(APIConfig apiConfig) {
 		this.apiConfig = apiConfig;
-		this.objectMapper = objectMapper;
 	}
 
 	@Bean
@@ -41,7 +40,13 @@ public class OpenAPIConfig {
 						.scheme("bearer")
 						.bearerFormat("JWT"));
 
-		ModelConverters.getInstance().addConverter(new ModelResolver(objectMapper));
+		ObjectMapper swaggerObjectMapper = new ObjectMapper();
+
+		swaggerObjectMapper.setVisibility(swaggerObjectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+						.withCreatorVisibility(JsonAutoDetect.Visibility.NONE))
+				.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+		ModelConverters.getInstance().addConverter(new ModelResolver(swaggerObjectMapper));
 
 		return new OpenAPI()
 				.info(info)
