@@ -21,7 +21,7 @@ public class ChannelDTO {
 
 	private int type;
 
-	private String owner;
+	private UserDTO owner;
 
 	private long createdAt;
 
@@ -39,7 +39,7 @@ public class ChannelDTO {
 				this.lastMessage = new MessageDTO(channel.getMessages().getLast());
 			else this.lastMessage = null;
 		}
-		this.owner = channel.getOwner(); // TODO: change to owner id
+		this.owner = new UserDTO(channel.getOwner(), null, false, false);
 		this.createdAt = channel.getCreatedAt();
 	}
 }

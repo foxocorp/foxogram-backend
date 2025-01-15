@@ -30,8 +30,9 @@ public class Channel {
 	@Column()
 	public int type;
 
-	@Column()
-	public String owner;
+	@ManyToOne()
+	@JoinColumn(name = "user_id", nullable = false)
+	public User owner;
 
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Member> members;
@@ -45,7 +46,7 @@ public class Channel {
 	public Channel() {
 	}
 
-	public Channel(long id, String displayName, String name, int type, String owner) {
+	public Channel(long id, String displayName, String name, int type, User owner) {
 		this.id = id;
 		this.displayName = displayName;
 		this.name = name;

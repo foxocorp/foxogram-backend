@@ -44,9 +44,9 @@ public class UsersController {
 	}
 
 	@Operation(summary = "Get user")
-	@GetMapping("/{username}")
-	public UserDTO getUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @PathVariable String username) throws UserNotFoundException {
-		if (Objects.equals(username, "@me")) {
+	@GetMapping("/{idOrUsername}")
+	public UserDTO getUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @PathVariable String idOrUsername) throws UserNotFoundException {
+		if (Objects.equals(idOrUsername, "@me")) {
 			List<Long> channels = memberRepository.findAllByUserId(authenticatedUser.getId())
 					.stream()
 					.map(Member::getChannel)
@@ -56,7 +56,7 @@ public class UsersController {
 			return new UserDTO(authenticatedUser, channels, true, true);
 		}
 
-		return new UserDTO(usersService.getUser(username), null, false, false);
+		return new UserDTO(usersService.getUser(idOrUsername), null, false, false);
 	}
 
 	@Operation(summary = "Get user channels")

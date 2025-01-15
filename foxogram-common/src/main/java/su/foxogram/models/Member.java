@@ -68,7 +68,7 @@ public class Member {
 		throw new MissingPermissionsException();
 	}
 
-	public boolean hasAnyPermission(MemberConstants.Permissions... permissions) throws MissingPermissionsException {
+	public boolean hasAnyPermission(MemberConstants.Permissions... permissions) {
 		for (MemberConstants.Permissions permission : permissions) {
 			if ((this.permissions & permission.getBit()) != 0) {
 				return true;

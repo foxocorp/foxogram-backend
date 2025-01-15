@@ -54,17 +54,16 @@ public class ChannelsService {
 	}
 
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
-		String owner = user.getUsername();
 		Channel channel;
 
 		try {
-			channel = new Channel(0, body.getDisplayName(), body.getName(), body.getType(), owner);
+			channel = new Channel(0, body.getDisplayName(), body.getName(), body.getType(), user);
 			channelRepository.save(channel);
 		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();
 		}
 
-		user = userRepository.findByUsername(owner);
+		user = userRepository.findById(user.getId()).get();
 
 		Member member = new Member(user, channel, MemberConstants.Permissions.ADMIN.getBit());
 		memberRepository.save(member);
@@ -73,15 +72,11 @@ public class ChannelsService {
 		return channel;
 	}
 
-	public Channel getChannel(String name) throws ChannelNotFoundException {
-		Channel channel = channelRepository.findByName(name);
-
-		if (channel == null) throw new ChannelNotFoundException();
-
-		return channel;
+	public Channel getChannel(String idOrName) throws ChannelNotFoundException {
+		return channelRepository.findByNameOrId(idOrName, parseIdOrNull(idOrName)).orElseThrow(ChannelNotFoundException::new);
 	}
 
-	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException, JsonProcessingException {
+	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {
 		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_CHANNEL);
 
 		try {
@@ -109,12 +104,12 @@ public class ChannelsService {
 		log.info("Channel ({}) deleted successfully", channel.getName());
 	}
 
-	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
-		Member member = memberRepository.findByChannelAndUsername(channel, user.getUsername());
+	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
+		Member member = memberRepository.findByChannelAndId(channel, user.getId());
 
 		if (member != null) throw new MemberAlreadyInChannelException();
 
-		user = userRepository.findByUsername(user.getUsername());
+		user = userRepository.findById(user.getId()).orElseThrow(ChannelNotFoundException::new);
 
 		member = new Member(user, channel, 0);
 		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
@@ -139,8 +134,8 @@ public class ChannelsService {
 				.toList();
 	}
 
-	public Member getMember(Channel channel, String memberUsername) {
-		return memberRepository.findByChannelAndUsername(channel, memberUsername);
+	public Member getMember(Channel channel, long memberId) {
+		return memberRepository.findByChannelAndId(channel, memberId);
 	}
 
 	private void changeIcon(Channel channel, MultipartFile icon) throws UploadFailedException {
@@ -163,5 +158,14 @@ public class ChannelsService {
 		return channel.getMembers().stream()
 				.map(Member::getId)
 				.collect(Collectors.toList());
+	}
+
+	private Long parseIdOrNull(String idOrName) {
+		try {
+			if (idOrName == null) return 0L;
+			return Long.parseLong(idOrName);
+		} catch (NumberFormatException e) {
+			return 0L;
+		}
 	}
 }

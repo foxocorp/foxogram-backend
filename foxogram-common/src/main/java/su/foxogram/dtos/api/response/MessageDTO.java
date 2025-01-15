@@ -16,9 +16,9 @@ public class MessageDTO {
 
 	private String content;
 
-	private long author;
+	private MemberDTO author;
 
-	private long channel;
+	private ChannelDTO channel;
 
 	private List<String> attachments;
 
@@ -27,8 +27,8 @@ public class MessageDTO {
 	public MessageDTO(Message message) {
 		this.id = message.getId();
 		this.content = message.getContent();
-		this.author = message.getAuthor().getId();
-		this.channel = message.getChannel().getId();
+		this.author = new MemberDTO(message.getAuthor());
+		this.channel = new ChannelDTO(message.getChannel(), false);
 		this.attachments = message.getAttachments();
 		this.createdAt = message.getTimestamp();
 	}

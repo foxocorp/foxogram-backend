@@ -12,9 +12,9 @@ public class MemberDTO {
 
 	private long id;
 
-	private String username;
+	private UserDTO user;
 
-	private long channel;
+	private ChannelDTO channel;
 
 	private long permissions;
 
@@ -22,8 +22,8 @@ public class MemberDTO {
 
 	public MemberDTO(Member member) {
 		this.id = member.getId();
-		this.username = member.getUser().getUsername();
-		this.channel = member.getChannel().getId();
+		this.user = new UserDTO(member.getUser(), null, false, false);
+		this.channel = new ChannelDTO(member.getChannel(), false);
 		this.permissions = member.getPermissions();
 		this.joinedAt = member.getJoinedAt();
 	}
