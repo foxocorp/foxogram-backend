@@ -21,6 +21,10 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
 
+springdoc:
+  swagger-ui:
+    enabled: false
+
 kafka:
   topic: events
 
