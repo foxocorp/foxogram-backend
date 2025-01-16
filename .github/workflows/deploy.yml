@@ -22,10 +22,9 @@ jobs:
           spring.jpa.open-in-view=false\n
           spring.servlet.multipart.max-file-size=100MB\n
           spring.servlet.multipart.max-request-size=1GB\n
-          spring.kafka.producer.bootstrap-servers=${{ vars.KAFKA_HOSTNAME }}:${{ vars.KAFKA_PORT }}\n
+          spring.kafka.bootstrap-servers=${{ vars.KAFKA_HOSTNAME }}:${{ vars.KAFKA_PORT }}\n
           spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer\n
           spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer\n
-          spring.kafka.consumer.bootstrap-servers=${{ vars.KAFKA_HOSTNAME }}:${{ vars.KAFKA_PORT }}\n
           spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer\n
           spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer\n
           spring.kafka.consumer.group-id=0\n
