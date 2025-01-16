@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constants.AttributesConstants;
@@ -12,6 +13,8 @@ import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;
 import su.foxogram.services.ChannelsService;
+
+import java.util.Objects;
 
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
@@ -25,6 +28,8 @@ public class MemberInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws ChannelNotFoundException {
+		if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
+
 		User user = (User) request.getAttribute(AttributesConstants.USER);
 		Channel channel = (Channel) request.getAttribute(AttributesConstants.CHANNEL);
 
