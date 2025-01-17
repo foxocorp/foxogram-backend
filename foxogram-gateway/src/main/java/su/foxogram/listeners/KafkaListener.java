@@ -26,7 +26,7 @@ public class KafkaListener {
 		this.webSocketService = webSocketService;
 	}
 
-	@org.springframework.kafka.annotation.KafkaListener(topicPattern = TOPIC)
+	@org.springframework.kafka.annotation.KafkaListener(topics = TOPIC)
 	public void listen(ConsumerRecord<String, String> record) throws Exception {
 		KafkaDTO dto = objectMapper.readValue(record.value(), KafkaDTO.class);
 
