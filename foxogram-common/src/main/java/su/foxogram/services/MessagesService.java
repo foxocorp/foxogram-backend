@@ -34,17 +34,17 @@ public class MessagesService {
 
 	private final StorageService storageService;
 
-	private final ProducerKafkaService producerKafkaService;
+	private final RabbitService rabbitService;
 
 	private final ChannelRepository channelRepository;
 
 	private final MemberRepository memberRepository;
 
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, StorageService storageService, ProducerKafkaService producerKafkaService, ChannelRepository channelRepository, MemberRepository memberRepository) {
+	public MessagesService(MessageRepository messageRepository, StorageService storageService, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository) {
 		this.messageRepository = messageRepository;
 		this.storageService = storageService;
-		this.producerKafkaService = producerKafkaService;
+		this.rabbitService = rabbitService;
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 	}
@@ -93,7 +93,7 @@ public class MessagesService {
 		Message message = new Message(channel, body.getContent(), member, uploadedAttachments);
 		messageRepository.save(message);
 
-		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 	}
 
@@ -105,7 +105,7 @@ public class MessagesService {
 			throw new MissingPermissionsException();
 
 		messageRepository.delete(message);
-		producerKafkaService.send(getRecipients(channel), Map.of("id", id), GatewayConstants.Event.MESSAGE_DELETE.getValue());
+		rabbitService.send(getRecipients(channel), Map.of("id", id), GatewayConstants.Event.MESSAGE_DELETE.getValue());
 		log.info("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
 	}
 
@@ -119,7 +119,7 @@ public class MessagesService {
 		message.setContent(content);
 		messageRepository.save(message);
 
-		producerKafkaService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
 		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;
@@ -136,7 +136,8 @@ public class MessagesService {
 	private List<Long> getRecipients(Channel channel) {
 		channel = channelRepository.findById(channel.getId()).get();
 		return channel.getMembers().stream()
-				.map(Member::getId)
+				.map(Member::getUser)
+				.map(User::getId)
 				.collect(Collectors.toList());
 	}
 }

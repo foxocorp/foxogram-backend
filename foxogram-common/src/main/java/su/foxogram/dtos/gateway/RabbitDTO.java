@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class KafkaDTO {
+public class RabbitDTO {
 
 	private List<Long> recipients;
 
@@ -15,10 +15,10 @@ public class KafkaDTO {
 
 	private String type;
 
-	public KafkaDTO() {
+	public RabbitDTO() {
 	}
 
-	public KafkaDTO(List<Long> recipients, Object data, String type) {
+	public RabbitDTO(List<Long> recipients, Object data, String type) {
 		this.recipients = recipients;
 		this.data = data;
 		this.type = type;

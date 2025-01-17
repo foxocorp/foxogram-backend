@@ -3,10 +3,9 @@ package su.foxogram.listeners;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Component;
 import su.foxogram.constants.GatewayConstants;
-import su.foxogram.dtos.gateway.KafkaDTO;
+import su.foxogram.dtos.gateway.RabbitDTO;
 import su.foxogram.services.WebSocketService;
 
 import java.util.List;
@@ -14,21 +13,19 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class KafkaListener {
+public class RabbitListener {
 
 	private final WebSocketService webSocketService;
 
-	private final String TOPIC = "events";
-
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	public KafkaListener(WebSocketService webSocketService) {
+	public RabbitListener(WebSocketService webSocketService) {
 		this.webSocketService = webSocketService;
 	}
 
-	@org.springframework.kafka.annotation.KafkaListener(topics = TOPIC)
-	public void listen(ConsumerRecord<String, String> record) throws Exception {
-		KafkaDTO dto = objectMapper.readValue(record.value(), KafkaDTO.class);
+	@org.springframework.amqp.rabbit.annotation.RabbitListener(queues = "${rabbit.queue}")
+	public void listen(String in) throws Exception {
+		RabbitDTO dto = objectMapper.readValue(in, RabbitDTO.class);
 
 		int opcode = GatewayConstants.Opcode.DISPATCH.ordinal();
 		List<Long> recipients = dto.getRecipients();

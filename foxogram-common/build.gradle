@@ -21,12 +21,11 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'ch.qos.logback:logback-classic:1.5.15'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'org.springframework.kafka:spring-kafka'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'// v0.12.6 has no parserBuilder()
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.apache.commons:commons-imaging:1.0.0-alpha5'
     implementation 'io.minio:minio:8.5.14'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-mail'

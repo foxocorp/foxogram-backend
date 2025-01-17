@@ -1,0 +1,76 @@
+services:
+  foxogram-api:
+    container_name: foxogram-api
+    build:
+      context: ./foxogram-api
+    restart: always
+    networks:
+      - db_network
+      - broker_network
+      - minio_network
+      - imgproxy_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
+      traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
+
+  foxogram-api-dev:
+    container_name: foxogram-api-dev
+    build:
+      context: ./foxogram-api
+    restart: always
+    networks:
+      - db_network
+      - broker_network
+      - minio_network
+      - imgproxy_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
+      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
+
+  foxogram-gateway:
+    container_name: foxogram-gateway
+    build:
+      context: ./foxogram-gateway
+    restart: always
+    networks:
+      - db_network
+      - broker_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-gateway.rule: Host(`gateway.foxogram.su`)
+      traefik.http.routers.foxogram-gateway.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-gateway.loadbalancer.server.port: 8080
+
+  foxogram-gateway-dev:
+    container_name: foxogram-gateway-dev
+    build:
+      context: ./foxogram-gateway
+    restart: always
+    networks:
+      - db_network
+      - broker_network
+      - traefik
+    labels:
+      traefik.enable: true
+      traefik.http.routers.foxogram-gateway-dev.rule: Host(`gateway.dev.foxogram.su`)
+      traefik.http.routers.foxogram-gateway-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-gateway-dev.loadbalancer.server.port: 8080
+
+networks:
+  db_network:
+    external: true
+  broker_network:
+    external: true
+  minio_network:
+    external: true
+  imgproxy_network:
+    external: true
+  traefik:
+    external: true

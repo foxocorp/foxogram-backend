@@ -8,24 +8,17 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      group-id: 0
   jackson:
     property-naming-strategy: SNAKE_CASE
+  rabbitmq:
+    host: localhost
+
+rabbit:
+  queue: events
 
 springdoc:
   swagger-ui:
     enabled: false
-
-kafka:
-  topic: events
 
 smtp:
   host: smtp.mailersend.net

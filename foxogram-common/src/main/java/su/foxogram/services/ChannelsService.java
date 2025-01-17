@@ -42,15 +42,15 @@ public class ChannelsService {
 
 	private final StorageService storageService;
 
-	private final ProducerKafkaService producerKafkaService;
+	private final RabbitService rabbitService;
 
 	@Autowired
-	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, StorageService storageService, ProducerKafkaService producerKafkaService) {
+	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, StorageService storageService, RabbitService rabbitService) {
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.userRepository = userRepository;
 		this.storageService = storageService;
-		this.producerKafkaService = producerKafkaService;
+		this.rabbitService = rabbitService;
 	}
 
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
@@ -89,7 +89,7 @@ public class ChannelsService {
 			throw new ChannelAlreadyExistException();
 		}
 
-		producerKafkaService.send(getRecipients(channel), new ChannelDTO(channel, false), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, false), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
 		log.info("Channel ({}) edited successfully", channel.getName());
 		return channel;
 	}
@@ -100,7 +100,7 @@ public class ChannelsService {
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN)) throw new MissingPermissionsException();
 
 		channelRepository.delete(channel);
-		producerKafkaService.send(getRecipients(channel), Map.of("id", channel.getId()), GatewayConstants.Event.CHANNEL_DELETE.getValue());
+		rabbitService.send(getRecipients(channel), Map.of("id", channel.getId()), GatewayConstants.Event.CHANNEL_DELETE.getValue());
 		log.info("Channel ({}) deleted successfully", channel.getName());
 	}
 
@@ -113,7 +113,7 @@ public class ChannelsService {
 
 		member = new Member(user, channel, 0);
 		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
-		producerKafkaService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
+		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
 		return memberRepository.save(member);
 	}
 
@@ -124,7 +124,7 @@ public class ChannelsService {
 
 		member = memberRepository.findByChannelAndUser(channel, user);
 		memberRepository.delete(member);
-		producerKafkaService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_REMOVE.getValue());
+		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_REMOVE.getValue());
 		log.info("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 	}
 
@@ -156,7 +156,8 @@ public class ChannelsService {
 		if (optChannel.isPresent()) channel = optChannel.get();
 
 		return channel.getMembers().stream()
-				.map(Member::getId)
+				.map(Member::getUser)
+				.map(User::getId)
 				.collect(Collectors.toList());
 	}
 
