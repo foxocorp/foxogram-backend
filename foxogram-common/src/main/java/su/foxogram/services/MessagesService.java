@@ -70,13 +70,13 @@ public class MessagesService {
 		return message;
 	}
 
-	public void addMessage(Channel channel, User user, MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
+	public void addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
 		List<String> uploadedAttachments = new ArrayList<>();
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
-		if (attachments.isEmpty()) {
+		if (body.getAttachments() != null && !body.getAttachments().isEmpty()) {
 			try {
-				uploadedAttachments = attachments.stream()
+				uploadedAttachments = body.getAttachments().stream()
 						.map(attachment -> {
 							try {
 								return uploadAttachment(attachment);

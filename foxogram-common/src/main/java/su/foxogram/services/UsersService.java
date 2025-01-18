@@ -50,8 +50,8 @@ public class UsersService {
 		this.memberRepository = memberRepository;
 	}
 
-	public User getUser(String idOrUsername) throws UserNotFoundException {
-		return userRepository.findByUsernameOrId(idOrUsername, parseIdOrNull(idOrUsername)).orElseThrow(UserNotFoundException::new);
+	public User getUser(long id) throws UserNotFoundException {
+		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
 	}
 
 	public List<ChannelDTO> getChannels(User user) {
@@ -133,14 +133,5 @@ public class UsersService {
 		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
 
 		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
-	}
-
-	private Long parseIdOrNull(String idOrName) {
-		try {
-			if (idOrName == null) return 0L;
-			return Long.parseLong(idOrName);
-		} catch (NumberFormatException e) {
-			return 0L;
-		}
 	}
 }

@@ -18,6 +18,5 @@ public class MessageCreateDTO {
 	@Size(min = 1, max = ValidationConstants.Lengths.MESSAGE_CONTENT, message = ValidationConstants.Messages.MESSAGE_WRONG_LENGTH)
 	private String content;
 
-	@NotNull(message = "Attachments" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	private List<MultipartFile> attachments;
 }

@@ -72,8 +72,8 @@ public class ChannelsService {
 		return channel;
 	}
 
-	public Channel getChannel(String idOrName) throws ChannelNotFoundException {
-		return channelRepository.findByNameOrId(idOrName, parseIdOrNull(idOrName)).orElseThrow(ChannelNotFoundException::new);
+	public Channel getChannel(long id) throws ChannelNotFoundException {
+		return channelRepository.findById(id).orElseThrow(ChannelNotFoundException::new);
 	}
 
 	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {
@@ -159,14 +159,5 @@ public class ChannelsService {
 				.map(Member::getUser)
 				.map(User::getId)
 				.collect(Collectors.toList());
-	}
-
-	private Long parseIdOrNull(String idOrName) {
-		try {
-			if (idOrName == null) return 0L;
-			return Long.parseLong(idOrName);
-		} catch (NumberFormatException e) {
-			return 0L;
-		}
 	}
 }

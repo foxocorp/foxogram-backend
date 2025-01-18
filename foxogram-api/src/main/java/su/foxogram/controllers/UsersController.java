@@ -26,7 +26,6 @@ import su.foxogram.repositories.MemberRepository;
 import su.foxogram.services.UsersService;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,20 +42,22 @@ public class UsersController {
 		this.memberRepository = memberRepository;
 	}
 
+	@Operation(summary = "Get me")
+	@GetMapping("/@me")
+	public UserDTO getMe(@RequestAttribute(value = AttributesConstants.USER) User user) {
+		List<Long> channels = memberRepository.findAllByUserId(user.getId())
+				.stream()
+				.map(Member::getChannel)
+				.map(Channel::getId)
+				.collect(Collectors.toList());
+
+		return new UserDTO(user, channels, true, true);
+	}
+
 	@Operation(summary = "Get user")
-	@GetMapping("/{idOrUsername}")
-	public UserDTO getUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @PathVariable String idOrUsername) throws UserNotFoundException {
-		if (Objects.equals(idOrUsername, "@me")) {
-			List<Long> channels = memberRepository.findAllByUserId(authenticatedUser.getId())
-					.stream()
-					.map(Member::getChannel)
-					.map(Channel::getId)
-					.collect(Collectors.toList());
-
-			return new UserDTO(authenticatedUser, channels, true, true);
-		}
-
-		return new UserDTO(usersService.getUser(idOrUsername), null, false, false);
+	@GetMapping("/{id}")
+	public UserDTO getUser(@PathVariable long id) throws UserNotFoundException {
+		return new UserDTO(usersService.getUser(id), null, false, false);
 	}
 
 	@Operation(summary = "Get user channels")

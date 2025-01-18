@@ -47,46 +47,46 @@ public class ChannelsController {
 	}
 
 	@Operation(summary = "Get channel")
-	@GetMapping("/{idOrName}")
-	public ChannelDTO getChannel(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) {
+	@GetMapping("/{id}")
+	public ChannelDTO getChannel(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) {
 		return new ChannelDTO(channel, false);
 	}
 
 	@Operation(summary = "Edit channel")
-	@PatchMapping("/{idOrName}")
-	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute ChannelEditDTO body) throws MissingPermissionsException, ChannelAlreadyExistException, JsonProcessingException {
+	@PatchMapping("/{id}")
+	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {
 		channel = channelsService.editChannel(member, channel, body);
 
 		return new ChannelDTO(channel, false);
 	}
 
 	@Operation(summary = "Delete channel")
-	@DeleteMapping("/{idOrName}")
-	public OkDTO deleteChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MissingPermissionsException, JsonProcessingException {
+	@DeleteMapping("/{id}")
+	public OkDTO deleteChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) throws MissingPermissionsException, JsonProcessingException {
 		channelsService.deleteChannel(channel, user);
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Join channel")
-	@PutMapping("/{idOrName}/members/@me")
-	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
+	@PutMapping("/{id}/members/@me")
+	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
 		Member member = channelsService.joinUser(channel, user);
 
 		return new MemberDTO(member, true);
 	}
 
 	@Operation(summary = "Leave channel")
-	@DeleteMapping("/{idOrName}/members/@me")
-	public OkDTO leaveChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) throws MemberInChannelNotFoundException, JsonProcessingException {
+	@DeleteMapping("/{id}/members/@me")
+	public OkDTO leaveChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) throws MemberInChannelNotFoundException, JsonProcessingException {
 		channelsService.leaveUser(channel, user);
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Get member")
-	@GetMapping("/{idOrName}/members/{memberId}")
-	public MemberDTO getMember(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable String memberId) throws MemberInChannelNotFoundException {
+	@GetMapping("/{id}/members/{memberId}")
+	public MemberDTO getMember(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable String memberId) throws MemberInChannelNotFoundException {
 		if (Objects.equals(memberId, "@me")) {
 			memberId = String.valueOf(user.getId());
 		}
@@ -99,8 +99,8 @@ public class ChannelsController {
 	}
 
 	@Operation(summary = "Get members")
-	@GetMapping("/{idOrName}/members")
-	public List<MemberDTO> getMembers(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel) {
+	@GetMapping("/{id}/members")
+	public List<MemberDTO> getMembers(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) {
 		return channelsService.getMembers(channel);
 	}
 }

@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
 import su.foxogram.dtos.api.request.MessageCreateDTO;
@@ -39,38 +38,38 @@ public class MessagesController {
 	}
 
 	@Operation(summary = "Get messages")
-	@GetMapping("/channel/{idOrName}")
-	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestParam(required = false, defaultValue = "0") long before, @RequestParam(required = false, defaultValue = "25") int limit) {
+	@GetMapping("/channel/{id}")
+	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestParam(required = false, defaultValue = "0") long before, @RequestParam(required = false, defaultValue = "25") int limit) {
 		return messagesService.getMessages(before, limit, channel);
 	}
 
 	@Operation(summary = "Get message")
-	@GetMapping("/channel/{idOrName}/{messageId}")
-	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long messageId) throws MessageNotFoundException {
+	@GetMapping("/channel/{id}/{messageId}")
+	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException {
 		Message message = messagesService.getMessage(messageId, channel);
 
 		return new MessageDTO(message);
 	}
 
 	@Operation(summary = "Create message")
-	@PostMapping("/channel/{idOrName}")
-	public OkDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @ModelAttribute MessageCreateDTO body, List<MultipartFile> attachments) throws UploadFailedException, JsonProcessingException {
-		messagesService.addMessage(channel, user, body, attachments);
+	@PostMapping("/channel/{id}")
+	public OkDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
+		messagesService.addMessage(channel, user, body);
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Delete message")
-	@DeleteMapping("/channel/{idOrName}/{messageId}")
-	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	@DeleteMapping("/channel/{id}/{messageId}")
+	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		messagesService.deleteMessage(messageId, member, channel);
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Edit message")
-	@PatchMapping("/channel/{idOrName}/{messageId}")
-	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @Valid @RequestBody MessageCreateDTO body, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	@PatchMapping("/channel/{id}/{messageId}")
+	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
 		List<Message> message = List.of(messagesService.editMessage(messageId, channel, member, body));
 
 		return new MessagesDTO(message);
