@@ -29,7 +29,7 @@ public class UserDTO {
 
 	private long flags;
 
-	private long type;
+	private int type;
 
 	private long createdAt;
 
