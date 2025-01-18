@@ -53,10 +53,10 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{id}")
-	public OkDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
-		messagesService.addMessage(channel, user, body);
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
+		Message message = messagesService.addMessage(channel, user, body);
 
-		return new OkDTO(true);
+		return new MessageDTO(message);
 	}
 
 	@Operation(summary = "Delete message")

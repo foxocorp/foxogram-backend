@@ -70,7 +70,7 @@ public class MessagesService {
 		return message;
 	}
 
-	public void addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
+	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
 		List<String> uploadedAttachments = new ArrayList<>();
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
@@ -95,6 +95,8 @@ public class MessagesService {
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
+
+		return message;
 	}
 
 	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
