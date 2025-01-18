@@ -30,6 +30,10 @@ public class MemberInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws ChannelNotFoundException {
 		if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
 
+		if (Objects.equals(request.getMethod(), HttpMethod.PUT.name()) && request.getRequestURI().matches("/channels/\\d+/members/@me")) {
+			return true;
+		}
+
 		User user = (User) request.getAttribute(AttributesConstants.USER);
 		Channel channel = (Channel) request.getAttribute(AttributesConstants.CHANNEL);
 
