@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -37,9 +38,13 @@ public class OpenAPIConfig {
 				.url("https://github.com/foxocorp/foxogram-docs");
 
 		List<Server> servers = Arrays.asList(
-				new Server().url("https://api.dev.foxogram.su").description("Development"),
-				new Server().url("https://api.foxogram.su").description("Production")
+				new Server().url("https://api.foxogram.su").description("Production"),
+				new Server().url("https://api.dev.foxogram.su").description("Development")
 		);
+
+		if (apiConfig.isDevelopment()) {
+			Collections.reverse(servers);
+		}
 
 		// Enable bearer authorization
 		SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
