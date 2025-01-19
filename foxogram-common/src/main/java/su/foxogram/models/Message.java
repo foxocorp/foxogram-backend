@@ -19,7 +19,7 @@ public class Message {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
-	@Column()
+	@Column(columnDefinition = "TEXT")
 	public String content;
 
 	@ManyToOne
