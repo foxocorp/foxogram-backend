@@ -22,7 +22,6 @@ public class ExceptionsConstants {
 		INTERNAL_ERROR("An internal server error has occurred"),
 		REQUEST_BODY_EMPTY("Request body cannot be empty"),
 		SERVER_EXCEPTION_STACKTRACE("Server exception stacktrace:"),
-		RATE_LIMIT_EXCEEDED("Rate-limit exceeded. "),
 		UPLOAD_FAILED("Image upload failed"),
 		INVALID_FILE_FORMAT("Invalid file format"),
 		CHANNEL_ALREADY_EXIST("Channel with this name already exist"),

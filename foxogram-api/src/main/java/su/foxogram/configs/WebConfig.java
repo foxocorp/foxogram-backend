@@ -8,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import su.foxogram.interceptors.AuthenticationInterceptor;
 import su.foxogram.interceptors.ChannelInterceptor;
 import su.foxogram.interceptors.MemberInterceptor;
-import su.foxogram.interceptors.RateLimitInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -18,14 +17,11 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private final MemberInterceptor memberInterceptor;
 
-	private final RateLimitInterceptor rateLimitInterceptor;
-
 	@Autowired
-	public WebConfig(AuthenticationInterceptor authenticationInterceptor, ChannelInterceptor channelInterceptor, MemberInterceptor memberInterceptor, RateLimitInterceptor rateLimitInterceptor) {
+	public WebConfig(AuthenticationInterceptor authenticationInterceptor, ChannelInterceptor channelInterceptor, MemberInterceptor memberInterceptor) {
 		this.authenticationInterceptor = authenticationInterceptor;
 		this.channelInterceptor = channelInterceptor;
 		this.memberInterceptor = memberInterceptor;
-		this.rateLimitInterceptor = rateLimitInterceptor;
 	}
 
 	@Override
@@ -38,7 +34,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(rateLimitInterceptor);
 		registry.addInterceptor(authenticationInterceptor).excludePathPatterns("/auth/register", "/auth/login", "/auth/reset-password", "/auth/reset-password/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
 		registry.addInterceptor(channelInterceptor).excludePathPatterns("/auth/**", "/users/**", "/channels/", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
 		registry.addInterceptor(memberInterceptor).excludePathPatterns("/auth/**", "/users/**", "/channels/", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
