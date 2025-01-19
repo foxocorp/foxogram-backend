@@ -15,6 +15,7 @@ services:
       traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
       traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-api.middlewares: ratelimit
 
   foxogram-api-dev:
     container_name: foxogram-api-dev
@@ -32,6 +33,7 @@ services:
       traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
       traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-api-dev.middlewares: ratelimit
 
   foxogram-gateway:
     container_name: foxogram-gateway
@@ -47,6 +49,7 @@ services:
       traefik.http.routers.foxogram-gateway.rule: Host(`gateway.foxogram.su`)
       traefik.http.routers.foxogram-gateway.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-gateway.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-gateway.middlewares: ratelimit
 
   foxogram-gateway-dev:
     container_name: foxogram-gateway-dev
@@ -62,6 +65,7 @@ services:
       traefik.http.routers.foxogram-gateway-dev.rule: Host(`gateway.dev.foxogram.su`)
       traefik.http.routers.foxogram-gateway-dev.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-gateway-dev.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-gateway-dev.middlewares: ratelimit
 
 networks:
   db_network:
