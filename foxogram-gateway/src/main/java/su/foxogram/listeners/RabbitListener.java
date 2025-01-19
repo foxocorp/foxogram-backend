@@ -3,6 +3,7 @@ package su.foxogram.listeners;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import su.foxogram.constants.GatewayConstants;
 import su.foxogram.dtos.gateway.RabbitDTO;
@@ -17,10 +18,12 @@ public class RabbitListener {
 
 	private final WebSocketService webSocketService;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
-	public RabbitListener(WebSocketService webSocketService) {
+	@Autowired
+	public RabbitListener(WebSocketService webSocketService, ObjectMapper objectMapper) {
 		this.webSocketService = webSocketService;
+		this.objectMapper = objectMapper;
 	}
 
 	@org.springframework.amqp.rabbit.annotation.RabbitListener(queues = "${rabbit.queue}")

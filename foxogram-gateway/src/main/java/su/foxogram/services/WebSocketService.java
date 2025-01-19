@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import su.foxogram.dtos.gateway.GatewayEventDTO;
+import su.foxogram.dtos.gateway.EventDTO;
 import su.foxogram.handlers.structures.EventHandler;
 import su.foxogram.models.Session;
 
@@ -18,11 +18,12 @@ public class WebSocketService {
 
 	private final EventHandler webSocketHandler;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public WebSocketService(EventHandler webSocketHandler) {
+	public WebSocketService(EventHandler webSocketHandler, ObjectMapper objectMapper) {
 		this.webSocketHandler = webSocketHandler;
+		this.objectMapper = objectMapper;
 	}
 
 	public void sendMessageToAll(int opcode, Map<String, Object> data, String type) throws Exception {
@@ -35,7 +36,7 @@ public class WebSocketService {
 
 			if (!wsSession.isOpen()) return;
 
-			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new GatewayEventDTO(opcode, data, seqNumber, type))));
+			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
 		}
 	}
 
@@ -51,7 +52,7 @@ public class WebSocketService {
 
 				if (!wsSession.isOpen()) return;
 
-				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new GatewayEventDTO(opcode, data, seqNumber, type))));
+				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
 			}
 		}
 	}

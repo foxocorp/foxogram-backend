@@ -3,6 +3,7 @@ package su.foxogram.handlers.structures;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -11,7 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import su.foxogram.constants.CloseCodesConstants;
 import su.foxogram.constants.ExceptionsConstants;
-import su.foxogram.dtos.gateway.GatewayEventDTO;
+import su.foxogram.dtos.gateway.EventDTO;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.Session;
 
@@ -27,13 +28,15 @@ public class EventHandler extends TextWebSocketHandler {
 
 	private final EventHandlerRegistry handlerRegistry;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Getter
 	private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 
-	public EventHandler(EventHandlerRegistry handlerRegistry) {
+	@Autowired
+	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper) {
 		this.handlerRegistry = handlerRegistry;
+		this.objectMapper = objectMapper;
 
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
@@ -75,7 +78,7 @@ public class EventHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
 		try {
-			GatewayEventDTO payload = objectMapper.readValue(message.getPayload(), GatewayEventDTO.class);
+			EventDTO payload = objectMapper.readValue(message.getPayload(), EventDTO.class);
 			int opcode = payload.getOp();
 
 			BaseHandler handler = handlerRegistry.getHandler(opcode);

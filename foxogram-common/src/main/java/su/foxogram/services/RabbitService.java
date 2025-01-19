@@ -19,12 +19,13 @@ public class RabbitService {
 
 	private final RabbitConfig rabbitConfig;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public RabbitService(RabbitTemplate rabbitTemplate, RabbitConfig rabbitConfig) {
+	public RabbitService(RabbitTemplate rabbitTemplate, RabbitConfig rabbitConfig, ObjectMapper objectMapper) {
 		this.rabbitTemplate = rabbitTemplate;
 		this.rabbitConfig = rabbitConfig;
+		this.objectMapper = objectMapper;
 	}
 
 	public void send(List<Long> recipients, Object data, String event) throws JsonProcessingException {

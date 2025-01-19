@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class GatewayEventDTO {
+public class EventDTO {
 
 	private int op;
 
@@ -17,10 +17,10 @@ public class GatewayEventDTO {
 
 	private String t;
 
-	public GatewayEventDTO() {
+	public EventDTO() {
 	}
 
-	public GatewayEventDTO(int opcode, Map<String, Object> data, int sequence, String type) {
+	public EventDTO(int opcode, Map<String, Object> data, int sequence, String type) {
 		this.op = opcode;
 		this.d = data;
 		this.s = sequence;

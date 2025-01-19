@@ -1,11 +1,12 @@
 package su.foxogram.handlers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import su.foxogram.constants.GatewayConstants;
-import su.foxogram.dtos.gateway.GatewayEventDTO;
+import su.foxogram.dtos.gateway.EventDTO;
 import su.foxogram.dtos.gateway.response.HelloDTO;
 import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
@@ -17,16 +18,17 @@ import su.foxogram.services.AuthenticationService;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static su.foxogram.dtos.gateway.BaseDTO.objectMapper;
-
 @Slf4j
 @Component
 public class HelloHandler implements BaseHandler {
 
 	private final AuthenticationService authenticationService;
 
-	public HelloHandler(AuthenticationService authenticationService) {
+	private final ObjectMapper objectMapper;
+
+	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper) {
 		this.authenticationService = authenticationService;
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class HelloHandler implements BaseHandler {
 	}
 
 	@Override
-	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, GatewayEventDTO payload) throws UserEmailNotVerifiedException, UserUnauthorizedException, IOException {
+	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws UserEmailNotVerifiedException, UserUnauthorizedException, IOException {
 		String accessToken = (String) payload.getD().get("token");
 
 		User user = authenticationService.authUser(accessToken, true, true);
