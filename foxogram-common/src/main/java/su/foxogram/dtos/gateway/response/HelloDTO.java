@@ -16,6 +16,6 @@ public class HelloDTO {
 
 	public HelloDTO() {
 		this.op = GatewayConstants.Opcode.HELLO.ordinal();
-		this.d = Map.of("heartbeat_interval", 30000);
+		this.d = Map.of("heartbeat_interval", GatewayConstants.HEARTBEAT_INTERVAL);
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import su.foxogram.constants.CloseCodesConstants;
 import su.foxogram.constants.ExceptionsConstants;
+import su.foxogram.constants.GatewayConstants;
 import su.foxogram.dtos.gateway.EventDTO;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.Session;
@@ -46,7 +47,9 @@ public class EventHandler extends TextWebSocketHandler {
 			sessions.values().forEach(session -> {
 				long lastPingTimestamp = session.getLastPingTimestamp();
 
-				if (lastPingTimestamp < (System.currentTimeMillis() - 33_000)) {
+				long timeout = (GatewayConstants.HEARTBEAT_INTERVAL + GatewayConstants.HEARTBEAT_TIMEOUT) * 1000;
+
+				if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
 					try {
 						session.getWebSocketSession().close(CloseCodesConstants.HEARTBEAT_TIMEOUT);
 						log.info("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());

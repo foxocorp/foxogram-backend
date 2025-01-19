@@ -1,6 +1,9 @@
 package su.foxogram.constants;
 
 public class GatewayConstants {
+	public static final int HEARTBEAT_INTERVAL = 30;
+
+	public static final int HEARTBEAT_TIMEOUT = 3;
 
 	public enum Event {
 		MESSAGE_CREATE("MESSAGE_CREATE"),
