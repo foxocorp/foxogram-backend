@@ -48,8 +48,8 @@ public class ValidationConstants {
 	public static class Regex {
 		public static final String EMAIL_REGEX = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-		public static final String USERNAME_REGEX = "^[_A-Za-z0-9-.]+$";
+		public static final String USERNAME_REGEX = "^[_a-z0-9-.]+$";
 
-		public static final String CHANNEL_NAME_REGEX = "^[_A-Za-z0-9-.]+$";
+		public static final String CHANNEL_NAME_REGEX = "^[_a-z0-9-.]+$";
 	}
 }
