@@ -47,7 +47,7 @@ public class EventHandler extends TextWebSocketHandler {
 			sessions.values().forEach(session -> {
 				long lastPingTimestamp = session.getLastPingTimestamp();
 
-				long timeout = (GatewayConstants.HEARTBEAT_INTERVAL + GatewayConstants.HEARTBEAT_TIMEOUT) * 1000;
+				long timeout = (GatewayConstants.HEARTBEAT_INTERVAL + GatewayConstants.HEARTBEAT_TIMEOUT);
 
 				if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
 					try {
