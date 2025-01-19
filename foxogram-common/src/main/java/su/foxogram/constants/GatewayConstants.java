@@ -1,7 +1,7 @@
 package su.foxogram.constants;
 
 public class GatewayConstants {
-	public static final int HEARTBEAT_INTERVAL = 30;
+	public static final int HEARTBEAT_INTERVAL = 30000;
 
 	public static final int HEARTBEAT_TIMEOUT = 3;
 
