@@ -22,8 +22,6 @@ public class ValidationConstants {
 
 		public static final String DISPLAY_NAME_WRONG_LENGTH = "Display name must be between {min} and {max} characters long";
 
-		public static final String DISPLAY_NAME_INCORRECT = "Incorrect display name format";
-
 		public static final String USERNAME_WRONG_LENGTH = "Username must be between {min} and {max} characters long";
 
 		public static final String USERNAME_INCORRECT = "Incorrect username format";
@@ -46,10 +44,8 @@ public class ValidationConstants {
 	}
 
 	public static class Regex {
-		public static final String EMAIL_REGEX = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+		public static final String EMAIL_REGEX = "^[\\w+.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
-		public static final String USERNAME_REGEX = "^[_a-z0-9-.]+$";
-
-		public static final String CHANNEL_NAME_REGEX = "^[_a-z0-9-.]+$";
+		public static final String NAME_REGEX = "^[\\w.-]+$";
 	}
 }

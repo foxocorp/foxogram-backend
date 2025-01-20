@@ -14,7 +14,7 @@ import su.foxogram.constants.ValidationConstants;
 public class UserRegisterDTO {
 	@NotNull(message = "Username" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.USERNAME, message = ValidationConstants.Messages.USERNAME_WRONG_LENGTH)
-	@Pattern(regexp = ValidationConstants.Regex.USERNAME_REGEX, message = ValidationConstants.Messages.USERNAME_INCORRECT)
+	@Pattern(regexp = ValidationConstants.Regex.NAME_REGEX, message = ValidationConstants.Messages.USERNAME_INCORRECT)
 	private String username;
 
 	@NotNull(message = "Email" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
