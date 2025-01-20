@@ -33,6 +33,7 @@ public class ExceptionsConstants {
 		MEMBER_NOT_FOUND("Can't find member in this channel"),
 		MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
 		MESSAGE_NOT_FOUND("Unable to find message(s) for this channel or matching these parameters"),
+		MESSAGE_CANNOT_BE_EMPTY("Message cannot be empty"),
 		USER_CREDENTIALS_DUPLICATE("User with this username/email already exist"),
 		USER_CREDENTIALS_IS_INVALID("Invalid password or email"),
 		USER_EMAIL_VERIFIED("You need to verify your email first"),
@@ -83,7 +84,8 @@ public class ExceptionsConstants {
 	}
 
 	public enum Message {
-		NOT_FOUND;
+		NOT_FOUND,
+		CANNOT_BE_EMPTY;
 
 		public int getValue() {
 			return MESSAGE_ERROR + this.ordinal();

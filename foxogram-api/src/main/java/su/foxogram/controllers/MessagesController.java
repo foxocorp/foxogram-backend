@@ -15,6 +15,7 @@ import su.foxogram.dtos.api.response.MessagesDTO;
 import su.foxogram.dtos.api.response.OkDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.MessageCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageNotFoundException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
@@ -53,7 +54,11 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{id}")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MessageCannotBeEmpty {
+		if (body.getContent().isBlank() && body.getAttachments().isEmpty()) {
+			throw new MessageCannotBeEmpty();
+		}
+
 		Message message = messagesService.addMessage(channel, user, body);
 
 		return new MessageDTO(message);
