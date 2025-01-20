@@ -21,6 +21,8 @@ public class ChannelDTO {
 
 	private int type;
 
+	private int memberCount;
+
 	private UserDTO owner;
 
 	private long createdAt;
@@ -34,6 +36,7 @@ public class ChannelDTO {
 		this.name = channel.getName();
 		this.icon = channel.getIcon();
 		this.type = channel.getType();
+		this.memberCount = channel.getMembers().size();
 		if (includeLastMessage) {
 			if (channel.getMessages() != null && !channel.getMessages().isEmpty())
 				this.lastMessage = new MessageDTO(channel.getMessages().getLast());
