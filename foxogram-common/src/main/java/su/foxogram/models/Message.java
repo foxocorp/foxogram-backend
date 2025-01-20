@@ -10,8 +10,6 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "messages", indexes = {
-		@Index(name = "idx_message_id", columnList = "id"),
-		@Index(name = "idx_message_channel", columnList = "channel"),
 		@Index(name = "idx_message_id_channel_id", columnList = "id, channel")
 })
 public class Message {
