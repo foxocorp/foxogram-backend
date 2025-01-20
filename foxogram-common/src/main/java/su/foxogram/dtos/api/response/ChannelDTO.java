@@ -36,7 +36,9 @@ public class ChannelDTO {
 		this.name = channel.getName();
 		this.icon = channel.getIcon();
 		this.type = channel.getType();
-		this.memberCount = channel.getMembers().size();
+		if (channel.getMembers() != null) {
+			this.memberCount = channel.getMembers().size();
+		}
 		if (includeLastMessage) {
 			if (channel.getMessages() != null && !channel.getMessages().isEmpty())
 				this.lastMessage = new MessageDTO(channel.getMessages().getLast());
