@@ -12,7 +12,6 @@ import su.foxogram.constants.ValidationConstants;
 @Setter
 @Schema(name = "ChannelEdit")
 public class ChannelEditDTO {
-	@Pattern(regexp = ValidationConstants.Regex.CHANNEL_NAME_REGEX, message = ValidationConstants.Messages.CHANNEL_NAME_INCORRECT)
 	@Size(min = 1, max = ValidationConstants.Lengths.CHANNEL_NAME, message = ValidationConstants.Messages.CHANNEL_NAME_WRONG_LENGTH)
 	private String displayName;
 
