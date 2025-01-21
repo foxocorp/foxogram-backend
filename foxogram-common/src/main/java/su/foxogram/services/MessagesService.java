@@ -54,7 +54,7 @@ public class MessagesService {
 
 		log.info("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
-		return messagesArray.stream()
+		return messagesArray.reversed().stream()
 				.map(MessageDTO::new)
 				.collect(Collectors.toList());
 	}
