@@ -120,7 +120,7 @@ public class UsersService {
 	}
 
 	private void changePassword(User user, UserEditDTO body) {
-		user.setPassword(body.getPassword());
+		user.setPassword(Encryptor.hashPassword(body.getPassword()));
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		sendEmail(user, EmailConstants.Type.RESET_PASSWORD);

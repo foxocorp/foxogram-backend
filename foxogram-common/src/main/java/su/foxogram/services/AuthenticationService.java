@@ -176,7 +176,7 @@ public class AuthenticationService {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 		Code code = codeService.validateCode(body.getCode());
 
-		user.setPassword(body.getNewPassword());
+		user.setPassword(Encryptor.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		codeService.deleteCode(code);
