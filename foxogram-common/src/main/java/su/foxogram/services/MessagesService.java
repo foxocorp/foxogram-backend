@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.GatewayConstants;
@@ -53,8 +52,8 @@ public class MessagesService {
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
-		Pageable pageable = PageRequest.of(0, limit, Sort.by("id").descending());
-		List<Message> messagesArray = messageRepository.findAllByChannel(channel, limit, pageable);
+		Pageable pageable = PageRequest.of((int) (before / limit), limit);
+		List<Message> messagesArray = messageRepository.findAllByChannel(channel, pageable);
 
 		log.info("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
