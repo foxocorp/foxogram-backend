@@ -18,6 +18,9 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
 	@Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.id = :id")
 	Message findByChannelAndId(@Param("ch") Channel channel, @Param("id") long id);
 
+	@Query("SELECT m FROM Message m WHERE m.channel = :ch ORDER BY m.id DESC LIMIT 1")
+	Message getLastMessageByChannel(@Param("ch") Channel channel);
+
 	@NotNull
 	List<Message> findAll();
 

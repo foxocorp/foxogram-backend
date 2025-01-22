@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.models.Channel;
+import su.foxogram.models.Message;
 
 @Getter
 @Setter
@@ -30,7 +31,7 @@ public class ChannelDTO {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private MessageDTO lastMessage;
 
-	public ChannelDTO(Channel channel, boolean includeLastMessage) {
+	public ChannelDTO(Channel channel, Message lastMessage) {
 		this.id = channel.getId();
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
@@ -39,10 +40,8 @@ public class ChannelDTO {
 		if (channel.getMembers() != null) {
 			this.memberCount = channel.getMembers().size();
 		}
-		if (includeLastMessage) {
-			if (channel.getMessages() != null && !channel.getMessages().isEmpty())
-				this.lastMessage = new MessageDTO(channel.getMessages().getLast());
-			else this.lastMessage = null;
+		if (lastMessage != null) {
+			this.lastMessage = new MessageDTO(lastMessage);
 		}
 		this.owner = new UserDTO(channel.getOwner(), null, false, false);
 		this.createdAt = channel.getCreatedAt();

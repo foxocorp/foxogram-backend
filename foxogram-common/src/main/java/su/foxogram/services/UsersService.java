@@ -19,8 +19,10 @@ import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Code;
 import su.foxogram.models.Member;
+import su.foxogram.models.Message;
 import su.foxogram.models.User;
 import su.foxogram.repositories.MemberRepository;
+import su.foxogram.repositories.MessageRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.CodeGenerator;
 import su.foxogram.util.Encryptor;
@@ -41,13 +43,16 @@ public class UsersService {
 
 	private final MemberRepository memberRepository;
 
+	private final MessageRepository messageRepository;
+
 	@Autowired
-	public UsersService(UserRepository userRepository, EmailService emailService, CodeService codeService, StorageService storageService, MemberRepository memberRepository) {
+	public UsersService(UserRepository userRepository, EmailService emailService, CodeService codeService, StorageService storageService, MemberRepository memberRepository, MessageRepository messageRepository) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.codeService = codeService;
 		this.storageService = storageService;
 		this.memberRepository = memberRepository;
+		this.messageRepository = messageRepository;
 	}
 
 	public User getUser(long id) throws UserNotFoundException {
@@ -57,7 +62,10 @@ public class UsersService {
 	public List<ChannelDTO> getChannels(User user) {
 		return memberRepository.findAllByUserId(user.getId())
 				.stream()
-				.map(Member::getChannel).map(channel -> new ChannelDTO(channel, true))
+				.map(Member::getChannel).map(channel -> {
+					Message lastMessage = messageRepository.getLastMessageByChannel(channel);
+					return new ChannelDTO(channel, lastMessage);
+				})
 				.collect(Collectors.toList());
 	}
 

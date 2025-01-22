@@ -43,13 +43,13 @@ public class ChannelsController {
 	public ChannelDTO createChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
 		Channel channel = channelsService.createChannel(user, body);
 
-		return new ChannelDTO(channel, false);
+		return new ChannelDTO(channel, null);
 	}
 
 	@Operation(summary = "Get channel")
 	@GetMapping("/{id}")
 	public ChannelDTO getChannel(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) {
-		return new ChannelDTO(channel, false);
+		return new ChannelDTO(channel, null);
 	}
 
 	@Operation(summary = "Edit channel")
@@ -57,7 +57,7 @@ public class ChannelsController {
 	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {
 		channel = channelsService.editChannel(member, channel, body);
 
-		return new ChannelDTO(channel, false);
+		return new ChannelDTO(channel, null);
 	}
 
 	@Operation(summary = "Delete channel")

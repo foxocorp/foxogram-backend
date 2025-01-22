@@ -89,7 +89,7 @@ public class ChannelsService {
 			throw new ChannelAlreadyExistException();
 		}
 
-		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, false), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, null), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
 		log.info("Channel ({}) edited successfully", channel.getName());
 		return channel;
 	}
