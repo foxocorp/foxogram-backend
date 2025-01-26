@@ -1,5 +1,8 @@
 name: Deploy Foxogram
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
