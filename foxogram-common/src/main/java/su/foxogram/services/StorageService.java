@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.exceptions.cdn.InvalidFileFormatException;
+import su.foxogram.models.Attachment;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
+import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.ChannelRepository;
 import su.foxogram.repositories.MessageRepository;
 import su.foxogram.repositories.UserRepository;
@@ -47,12 +49,15 @@ public class StorageService {
 
 	private final MessageRepository messageRepository;
 
+	private final AttachmentRepository attachmentRepository;
+
 	@Autowired
-	public StorageService(MinioAsyncClient minioClient, UserRepository userRepository, ChannelRepository channelRepository, MessageRepository messageRepository) {
+	public StorageService(MinioAsyncClient minioClient, UserRepository userRepository, ChannelRepository channelRepository, MessageRepository messageRepository, AttachmentRepository attachmentRepository) {
 		this.minioClient = minioClient;
 		this.userRepository = userRepository;
 		this.channelRepository = channelRepository;
 		this.messageRepository = messageRepository;
+		this.attachmentRepository = attachmentRepository;
 	}
 
 	private static String getFileHash(byte[] imageBytes) throws NoSuchAlgorithmException {
@@ -67,7 +72,7 @@ public class StorageService {
 		return hexString.toString();
 	}
 
-	public String uploadToMinio(MultipartFile file, String bucketName) throws RuntimeException, IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException {
+	public Attachment uploadToMinio(MultipartFile file, String bucketName) throws RuntimeException, IOException, ExecutionException, InterruptedException, NoSuchAlgorithmException {
 		byte[] byteArray = file.getBytes();
 		FileData fileData = new FileData(file);
 
@@ -75,13 +80,15 @@ public class StorageService {
 
 		if (isHashExists(fileData.getHash())) {
 			log.info("Duplicate file ({}) found. Skipping upload...", fileData.getHash());
-			return fileData.getHash();
+			return new Attachment(fileData.getHash(), fileData.getName(), fileData.getContentType(), 0);
 		}
 
 		ensureBucketExists(bucketName);
 		uploadFile(byteArray, fileData, bucketName);
 
-		return fileData.getHash();
+		Attachment attachment = new Attachment(fileData.getHash(), fileData.getName(), fileData.getContentType(), 0);
+		attachmentRepository.save(attachment);
+		return attachment;
 	}
 
 	public String uploadIdentityImage(MultipartFile file, String bucketName) throws IOException, NoSuchAlgorithmException, ExecutionException, InterruptedException, InvalidFileFormatException {

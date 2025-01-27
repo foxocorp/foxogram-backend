@@ -142,7 +142,7 @@ public class ChannelsService {
 		String hash;
 
 		try {
-			hash = storageService.uploadToMinio(icon, StorageConstants.AVATARS_BUCKET);
+			hash = storageService.uploadIdentityImage(icon, StorageConstants.AVATARS_BUCKET);
 		} catch (Exception e) {
 			throw new UploadFailedException();
 		}
