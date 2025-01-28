@@ -58,7 +58,9 @@ public class MessagesService {
 		return messagesArray.reversed().stream()
 				.map(message -> {
 					List<Attachment> attachments = new ArrayList<>();
-					message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+					if (message.getAttachments() != null) {
+						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+					}
 					return new MessageDTO(message, attachments);
 				})
 				.collect(Collectors.toList());
