@@ -25,7 +25,7 @@ import su.foxogram.models.User;
 import su.foxogram.repositories.CodeRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.CodeGenerator;
-import su.foxogram.util.Encryptor;
+import su.foxogram.util.PasswordHasher;
 
 @Slf4j
 @Service
@@ -100,7 +100,7 @@ public class AuthenticationService {
 		long flags = UserConstants.Flags.AWAITING_CONFIRMATION.getBit();
 		int type = UserConstants.Type.USER.getType();
 
-		return new User(0, null, null, username, email, Encryptor.hashPassword(password), flags, type, deletion, null);
+		return new User(0, null, null, username, email, PasswordHasher.hashPassword(password), flags, type, deletion, null);
 	}
 
 	private void sendConfirmationEmail(User user) {
@@ -126,7 +126,7 @@ public class AuthenticationService {
 	}
 
 	private void validatePassword(User user, String password) throws UserCredentialsIsInvalidException {
-		if (!Encryptor.verifyPassword(password, user.getPassword()))
+		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
 			throw new UserCredentialsIsInvalidException();
 	}
 
@@ -176,7 +176,7 @@ public class AuthenticationService {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 		Code code = codeService.validateCode(body.getCode());
 
-		user.setPassword(Encryptor.hashPassword(body.getNewPassword()));
+		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		codeService.deleteCode(code);
