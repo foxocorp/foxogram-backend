@@ -54,23 +54,29 @@ public class AuthenticationService {
 
 	public User getUser(String header, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		long userId;
+		String passwordHash;
 
 		try {
-			String claims = header.substring(7);
+			String token = header.substring(7);
 
-			if (ignoreBearer) claims = header;
+			if (ignoreBearer) token = header;
 
 			Jws<Claims> claimsJws = Jwts.parserBuilder()
 					.setSigningKey(jwtService.getSigningKey())
 					.build()
-					.parseClaimsJws(claims);
+					.parseClaimsJws(token);
 
 			userId = Long.parseLong(claimsJws.getBody().getId());
+			passwordHash = claimsJws.getBody().getSubject();
 		} catch (Exception e) {
 			throw new UserUnauthorizedException();
 		}
 
 		User user = userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
+
+		if (!user.getPassword().equals(passwordHash)) {
+			throw new UserUnauthorizedException();
+		}
 
 		if (!ignoreEmailVerification && user.hasFlag(UserConstants.Flags.EMAIL_VERIFIED))
 			throw new UserEmailNotVerifiedException();
@@ -92,7 +98,7 @@ public class AuthenticationService {
 
 		log.info("User ({}, {}) email verification message sent successfully", user.getUsername(), user.getEmail());
 
-		return jwtService.generate(user.getId());
+		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
 	private User createUser(String username, String email, String password) {
@@ -108,7 +114,7 @@ public class AuthenticationService {
 		String digitCode = CodeGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
 		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
-		String accessToken = jwtService.generate(user.getId());
+		String accessToken = jwtService.generate(user.getId(), user.getPassword());
 
 		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
 	}
@@ -118,7 +124,7 @@ public class AuthenticationService {
 		validatePassword(user, password);
 
 		log.info("User ({}, {}) login successfully", user.getUsername(), user.getEmail());
-		return jwtService.generate(user.getId());
+		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
 	public User findUserByEmail(String email) throws UserCredentialsIsInvalidException {

@@ -72,12 +72,11 @@ public class UsersService {
 	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException {
 		if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
 		if (body.getAvatar() != null) changeAvatar(user, body.getAvatar());
+		if (body.getUsername() != null) user.setUsername(body.getUsername());
+		if (body.getEmail() != null) changeEmail(user, body);
+		if (body.getPassword() != null) changePassword(user, body);
 
 		try {
-			if (body.getUsername() != null) user.setUsername(body.getUsername());
-			if (body.getEmail() != null) changeEmail(user, body);
-			if (body.getPassword() != null) changePassword(user, body);
-
 			userRepository.save(user);
 		} catch (DataIntegrityViolationException e) {
 			throw new UserCredentialsDuplicateException();

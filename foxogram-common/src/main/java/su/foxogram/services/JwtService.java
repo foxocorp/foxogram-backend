@@ -20,19 +20,19 @@ public class JwtService {
 		this.jwtConfig = jwtConfig;
 	}
 
-	public String generate(long id) {
+	public String generate(long id, String passwordHash) {
 		long now = System.currentTimeMillis();
 		Date expirationDate = new Date(now + TokenConstants.LIFETIME);
 
 		return Jwts.builder()
 				.setId(String.valueOf(id))
+				.setSubject(passwordHash)
 				.setExpiration(expirationDate)
 				.signWith(getSigningKey())
 				.compact();
 	}
 
 	public Key getSigningKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret());
-		return Keys.hmacShaKeyFor(keyBytes);
+		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
 	}
 }
