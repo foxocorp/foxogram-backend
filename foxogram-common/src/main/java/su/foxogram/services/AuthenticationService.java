@@ -61,13 +61,13 @@ public class AuthenticationService {
 
 			if (ignoreBearer) token = header;
 
-			Jws<Claims> claimsJws = Jwts.parserBuilder()
-					.setSigningKey(jwtService.getSigningKey())
+			Jws<Claims> claimsJws = Jwts.parser()
+					.verifyWith(jwtService.getSigningKey())
 					.build()
-					.parseClaimsJws(token);
+					.parseSignedClaims(token);
 
-			userId = Long.parseLong(claimsJws.getBody().getId());
-			passwordHash = claimsJws.getBody().getSubject();
+			userId = Long.parseLong(claimsJws.getPayload().getId());
+			passwordHash = claimsJws.getPayload().getSubject();
 		} catch (Exception e) {
 			throw new UserUnauthorizedException();
 		}
