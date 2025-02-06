@@ -3,7 +3,7 @@ package su.foxogram.util;
 import org.mindrot.jbcrypt.BCrypt;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public class Encryptor {
+public class PasswordHasher {
 	public static String hashPassword(String password) {
 		return BCrypt.hashpw(password, BCrypt.gensalt());
 	}

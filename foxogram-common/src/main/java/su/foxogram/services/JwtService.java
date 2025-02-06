@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import su.foxogram.configs.JwtConfig;
 import su.foxogram.constants.TokenConstants;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
@@ -20,19 +20,19 @@ public class JwtService {
 		this.jwtConfig = jwtConfig;
 	}
 
-	public String generate(long id) {
+	public String generate(long id, String passwordHash) {
 		long now = System.currentTimeMillis();
 		Date expirationDate = new Date(now + TokenConstants.LIFETIME);
 
 		return Jwts.builder()
-				.setId(String.valueOf(id))
-				.setExpiration(expirationDate)
+				.id(String.valueOf(id))
+				.subject(passwordHash)
+				.expiration(expirationDate)
 				.signWith(getSigningKey())
 				.compact();
 	}
 
-	public Key getSigningKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret());
-		return Keys.hmacShaKeyFor(keyBytes);
+	public SecretKey getSigningKey() {
+		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
 	}
 }

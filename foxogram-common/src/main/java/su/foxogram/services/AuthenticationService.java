@@ -25,7 +25,7 @@ import su.foxogram.models.User;
 import su.foxogram.repositories.CodeRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.CodeGenerator;
-import su.foxogram.util.Encryptor;
+import su.foxogram.util.PasswordHasher;
 
 @Slf4j
 @Service
@@ -54,23 +54,29 @@ public class AuthenticationService {
 
 	public User getUser(String header, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		long userId;
+		String passwordHash;
 
 		try {
-			String claims = header.substring(7);
+			String token = header.substring(7);
 
-			if (ignoreBearer) claims = header;
+			if (ignoreBearer) token = header;
 
-			Jws<Claims> claimsJws = Jwts.parserBuilder()
-					.setSigningKey(jwtService.getSigningKey())
+			Jws<Claims> claimsJws = Jwts.parser()
+					.verifyWith(jwtService.getSigningKey())
 					.build()
-					.parseClaimsJws(claims);
+					.parseSignedClaims(token);
 
-			userId = Long.parseLong(claimsJws.getBody().getId());
+			userId = Long.parseLong(claimsJws.getPayload().getId());
+			passwordHash = claimsJws.getPayload().getSubject();
 		} catch (Exception e) {
 			throw new UserUnauthorizedException();
 		}
 
 		User user = userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
+
+		if (!user.getPassword().equals(passwordHash)) {
+			throw new UserUnauthorizedException();
+		}
 
 		if (!ignoreEmailVerification && user.hasFlag(UserConstants.Flags.EMAIL_VERIFIED))
 			throw new UserEmailNotVerifiedException();
@@ -92,7 +98,7 @@ public class AuthenticationService {
 
 		log.info("User ({}, {}) email verification message sent successfully", user.getUsername(), user.getEmail());
 
-		return jwtService.generate(user.getId());
+		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
 	private User createUser(String username, String email, String password) {
@@ -100,7 +106,7 @@ public class AuthenticationService {
 		long flags = UserConstants.Flags.AWAITING_CONFIRMATION.getBit();
 		int type = UserConstants.Type.USER.getType();
 
-		return new User(0, null, null, username, email, Encryptor.hashPassword(password), flags, type, deletion, null);
+		return new User(0, null, null, username, email, PasswordHasher.hashPassword(password), flags, type, deletion, null);
 	}
 
 	private void sendConfirmationEmail(User user) {
@@ -108,7 +114,7 @@ public class AuthenticationService {
 		String digitCode = CodeGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
 		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
-		String accessToken = jwtService.generate(user.getId());
+		String accessToken = jwtService.generate(user.getId(), user.getPassword());
 
 		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
 	}
@@ -118,7 +124,7 @@ public class AuthenticationService {
 		validatePassword(user, password);
 
 		log.info("User ({}, {}) login successfully", user.getUsername(), user.getEmail());
-		return jwtService.generate(user.getId());
+		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
 	public User findUserByEmail(String email) throws UserCredentialsIsInvalidException {
@@ -126,7 +132,7 @@ public class AuthenticationService {
 	}
 
 	private void validatePassword(User user, String password) throws UserCredentialsIsInvalidException {
-		if (!Encryptor.verifyPassword(password, user.getPassword()))
+		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
 			throw new UserCredentialsIsInvalidException();
 	}
 
@@ -176,7 +182,7 @@ public class AuthenticationService {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 		Code code = codeService.validateCode(body.getCode());
 
-		user.setPassword(Encryptor.hashPassword(body.getNewPassword()));
+		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		codeService.deleteCode(code);

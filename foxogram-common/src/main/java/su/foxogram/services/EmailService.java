@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import su.foxogram.configs.APIConfig;
 import su.foxogram.configs.EmailConfig;
 import su.foxogram.constants.EmailConstants;
-import su.foxogram.util.Algorithm;
+import su.foxogram.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +92,7 @@ public class EmailService {
 		}
 
 		try (InputStream inputStream = resource.getInputStream()) {
-			return Algorithm.inputStreamToString(inputStream, StandardCharsets.UTF_8);
+			return StringUtils.inputStreamToString(inputStream, StandardCharsets.UTF_8);
 		}
 	}
 }

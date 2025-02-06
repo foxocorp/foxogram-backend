@@ -13,10 +13,8 @@ import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.MessageNotFoundException;
-import su.foxogram.models.Channel;
-import su.foxogram.models.Member;
-import su.foxogram.models.Message;
-import su.foxogram.models.User;
+import su.foxogram.models.*;
+import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.ChannelRepository;
 import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.MessageRepository;
@@ -40,13 +38,16 @@ public class MessagesService {
 
 	private final MemberRepository memberRepository;
 
+	private final AttachmentRepository attachmentRepository;
+
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, StorageService storageService, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository) {
+	public MessagesService(MessageRepository messageRepository, StorageService storageService, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository) {
 		this.messageRepository = messageRepository;
 		this.storageService = storageService;
 		this.rabbitService = rabbitService;
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
+		this.attachmentRepository = attachmentRepository;
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
@@ -55,18 +56,27 @@ public class MessagesService {
 		log.info("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
 		return messagesArray.reversed().stream()
-				.map(MessageDTO::new)
+				.map(message -> {
+					List<Attachment> attachments = new ArrayList<>();
+					if (message.getAttachments() != null) {
+						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+					}
+					return new MessageDTO(message, attachments);
+				})
 				.collect(Collectors.toList());
 	}
 
-	public Message getMessage(long id, Channel channel) throws MessageNotFoundException {
+	public MessageDTO getMessage(long id, Channel channel) throws MessageNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 
 		if (message == null) throw new MessageNotFoundException();
 
+		List<Attachment> attachments = new ArrayList<>();
+		message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+
 		log.info("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
-		return message;
+		return new MessageDTO(message, attachments);
 	}
 
 	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
@@ -78,7 +88,7 @@ public class MessagesService {
 				uploadedAttachments = body.getAttachments().stream()
 						.map(attachment -> {
 							try {
-								return uploadAttachment(attachment);
+								return uploadAttachment(attachment).getId();
 							} catch (UploadFailedException e) {
 								throw new RuntimeException(e);
 							}
@@ -92,7 +102,7 @@ public class MessagesService {
 		Message message = new Message(channel, body.getContent(), member, uploadedAttachments);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_CREATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, null), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 
 		return message;
@@ -120,13 +130,13 @@ public class MessagesService {
 		message.setContent(content);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, null), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
 		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;
 	}
 
-	private String uploadAttachment(MultipartFile attachment) throws UploadFailedException {
+	private Attachment uploadAttachment(MultipartFile attachment) throws UploadFailedException {
 		try {
 			return storageService.uploadToMinio(attachment, StorageConstants.ATTACHMENTS_BUCKET);
 		} catch (Exception e) {

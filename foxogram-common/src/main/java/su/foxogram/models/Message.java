@@ -27,8 +27,6 @@ public class Message {
 	@Column()
 	public long timestamp;
 
-	@ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "attachments", joinColumns = @JoinColumn(name = "message_id"))
 	@Column()
 	public List<String> attachments;
 

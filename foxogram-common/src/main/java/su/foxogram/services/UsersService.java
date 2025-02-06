@@ -25,7 +25,7 @@ import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.MessageRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.CodeGenerator;
-import su.foxogram.util.Encryptor;
+import su.foxogram.util.PasswordHasher;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,12 +72,11 @@ public class UsersService {
 	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException {
 		if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
 		if (body.getAvatar() != null) changeAvatar(user, body.getAvatar());
+		if (body.getUsername() != null) user.setUsername(body.getUsername());
+		if (body.getEmail() != null) changeEmail(user, body);
+		if (body.getPassword() != null) changePassword(user, body);
 
 		try {
-			if (body.getUsername() != null) user.setUsername(body.getUsername());
-			if (body.getEmail() != null) changeEmail(user, body);
-			if (body.getPassword() != null) changePassword(user, body);
-
 			userRepository.save(user);
 		} catch (DataIntegrityViolationException e) {
 			throw new UserCredentialsDuplicateException();
@@ -89,7 +88,7 @@ public class UsersService {
 	}
 
 	public void requestUserDelete(User user, String password) throws UserCredentialsIsInvalidException {
-		if (!Encryptor.verifyPassword(password, user.getPassword()))
+		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
 			throw new UserCredentialsIsInvalidException();
 
 		sendEmail(user, EmailConstants.Type.ACCOUNT_DELETE);
@@ -128,7 +127,7 @@ public class UsersService {
 	}
 
 	private void changePassword(User user, UserEditDTO body) {
-		user.setPassword(Encryptor.hashPassword(body.getPassword()));
+		user.setPassword(PasswordHasher.hashPassword(body.getPassword()));
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		sendEmail(user, EmailConstants.Type.RESET_PASSWORD);

@@ -55,9 +55,7 @@ public class MessagesController {
 	@Operation(summary = "Get message")
 	@GetMapping("/channel/{id}/{messageId}")
 	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException {
-		Message message = messagesService.getMessage(messageId, channel);
-
-		return new MessageDTO(message);
+		return messagesService.getMessage(messageId, channel);
 	}
 
 	@Operation(summary = "Create message")
@@ -69,7 +67,7 @@ public class MessagesController {
 
 		Message message = messagesService.addMessage(channel, user, body);
 
-		return new MessageDTO(message);
+		return new MessageDTO(message, null);
 	}
 
 	@Operation(summary = "Delete message")
