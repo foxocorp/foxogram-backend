@@ -78,8 +78,8 @@ public class AuthenticationService {
 			throw new UserUnauthorizedException();
 		}
 
-		// if (!ignoreEmailVerification && user.hasFlag(UserConstants.Flags.EMAIL_VERIFIED))
-		// 	throw new UserEmailNotVerifiedException();
+		if (!ignoreEmailVerification && user.hasFlag(UserConstants.Flags.EMAIL_VERIFIED))
+			throw new UserEmailNotVerifiedException();
 
 		return userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
 	}
