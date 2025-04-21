@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import su.foxogram.constants.ChannelsConstants;
 import su.foxogram.constants.GatewayConstants;
 import su.foxogram.constants.MemberConstants;
 import su.foxogram.constants.StorageConstants;
@@ -56,8 +57,12 @@ public class ChannelsService {
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
 		Channel channel;
 
+		long isPublic = 0;
+
+		if (body.isPublic()) isPublic = ChannelsConstants.Flags.PUBLIC.getBit();
+
 		try {
-			channel = new Channel(0, body.getDisplayName(), body.getName(), body.getType(), user);
+			channel = new Channel(0, body.getDisplayName(), body.getName(), isPublic, body.getType(), user);
 			channelRepository.save(channel);
 		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();
@@ -77,7 +82,9 @@ public class ChannelsService {
 	}
 
 	public Channel getChannelByName(String name) throws ChannelNotFoundException {
-		return channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
+		Channel channel = channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
+		if (channel.hasFlag(ChannelsConstants.Flags.PUBLIC)) return channel;
+		throw new ChannelNotFoundException();
 	}
 
 	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {

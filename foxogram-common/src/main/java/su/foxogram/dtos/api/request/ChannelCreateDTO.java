@@ -23,4 +23,7 @@ public class ChannelCreateDTO {
 	@Min(value = 1, message = ValidationConstants.Messages.CHANNEL_TYPE_INCORRECT)
 	@Max(value = 3, message = ValidationConstants.Messages.CHANNEL_TYPE_INCORRECT)
 	private int type;
+
+	@NotNull(message = "Public" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
+	private boolean isPublic;
 }

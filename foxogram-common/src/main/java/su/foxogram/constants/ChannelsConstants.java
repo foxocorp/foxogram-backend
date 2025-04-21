@@ -15,4 +15,16 @@ public class ChannelsConstants {
 			this.type = type;
 		}
 	}
+
+	@Getter
+	public enum Flags {
+		PUBLIC(1),
+		BLOCKED(1 << 1);
+
+		private final long bit;
+
+		Flags(long bit) {
+			this.bit = bit;
+		}
+	}
 }

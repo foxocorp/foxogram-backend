@@ -3,6 +3,7 @@ package su.foxogram.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import su.foxogram.constants.ChannelsConstants;
 
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class Channel {
 	@Column()
 	public int type;
 
+	@Column()
+	public long flags;
+
 	@ManyToOne()
 	@JoinColumn(name = "user_id", nullable = false)
 	public User owner;
@@ -46,12 +50,25 @@ public class Channel {
 	public Channel() {
 	}
 
-	public Channel(long id, String displayName, String name, int type, User owner) {
+	public Channel(long id, String displayName, String name, long flags, int type, User owner) {
 		this.id = id;
 		this.displayName = displayName;
 		this.name = name;
 		this.type = type;
 		this.owner = owner;
+		this.flags = flags;
 		this.createdAt = System.currentTimeMillis();
+	}
+
+	public void addFlag(ChannelsConstants.Flags flag) {
+		this.flags |= flag.getBit();
+	}
+
+	public void removeFlag(ChannelsConstants.Flags flag) {
+		this.flags &= ~flag.getBit();
+	}
+
+	public boolean hasFlag(ChannelsConstants.Flags flag) {
+		return (this.flags & flag.getBit()) != 0;
 	}
 }

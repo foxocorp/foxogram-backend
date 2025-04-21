@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import su.foxogram.constants.ChannelsConstants;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
 
@@ -22,6 +23,10 @@ public class ChannelDTO {
 
 	private int type;
 
+	private boolean isPublic;
+
+	private long flags;
+
 	private int memberCount;
 
 	private UserDTO owner;
@@ -37,6 +42,8 @@ public class ChannelDTO {
 		this.name = channel.getName();
 		this.icon = channel.getIcon();
 		this.type = channel.getType();
+		this.flags = channel.getFlags();
+		this.isPublic = channel.hasFlag(ChannelsConstants.Flags.PUBLIC);
 		if (channel.getMembers() != null) {
 			this.memberCount = channel.getMembers().size();
 		}
