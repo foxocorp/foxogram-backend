@@ -6,7 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/foxogram
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     open-in-view: false
   jackson:
     property-naming-strategy: SNAKE_CASE

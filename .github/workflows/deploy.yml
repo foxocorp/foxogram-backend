@@ -21,7 +21,7 @@ jobs:
           spring.datasource.username=${{ secrets.DB_USERNAME }}\n
           spring.datasource.password=${{ secrets.DB_PASSWORD }}\n
           spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOSTNAME }}:${{ secrets.DB_PORT }}/${{ secrets.DB_DATABASE }}\n
-          spring.jpa.hibernate.ddl-auto=none\n
+          spring.jpa.hibernate.ddl-auto=update\n
           spring.jpa.open-in-view=false\n
           spring.servlet.multipart.max-file-size=100MB\n
           spring.servlet.multipart.max-request-size=1GB\n
