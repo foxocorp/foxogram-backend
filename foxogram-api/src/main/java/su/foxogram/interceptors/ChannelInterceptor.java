@@ -2,6 +2,7 @@ package su.foxogram.interceptors;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class ChannelInterceptor implements HandlerInterceptor {
 
@@ -36,7 +38,9 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 		long id = getChannelKey(uriVariables).orElseThrow(ChannelNotFoundException::new);
 
-		request.setAttribute(AttributesConstants.CHANNEL, channelsService.getChannel(id));
+		log.info("preHandle");
+
+		request.setAttribute(AttributesConstants.CHANNEL, channelsService.getChannelById(id));
 
 		return true;
 	}

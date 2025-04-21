@@ -72,8 +72,12 @@ public class ChannelsService {
 		return channel;
 	}
 
-	public Channel getChannel(long id) throws ChannelNotFoundException {
+	public Channel getChannelById(long id) throws ChannelNotFoundException {
 		return channelRepository.findById(id).orElseThrow(ChannelNotFoundException::new);
+	}
+
+	public Channel getChannelByName(String name) throws ChannelNotFoundException {
+		return channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
 	}
 
 	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {

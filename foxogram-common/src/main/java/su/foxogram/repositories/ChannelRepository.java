@@ -13,6 +13,8 @@ public interface ChannelRepository extends CrudRepository<Channel, Long> {
 
 	Optional<Channel> findById(long id);
 
+	Optional<Channel> findByName(String name);
+
 	@Override
 	void delete(@NotNull Channel channel);
 }

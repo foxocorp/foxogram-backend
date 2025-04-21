@@ -46,10 +46,16 @@ public class ChannelsController {
 		return new ChannelDTO(channel, null);
 	}
 
-	@Operation(summary = "Get channel")
+	@Operation(summary = "Get channel by id")
 	@GetMapping("/{id}")
-	public ChannelDTO getChannel(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) {
+	public ChannelDTO getChannelById(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id) {
 		return new ChannelDTO(channel, null);
+	}
+
+	@Operation(summary = "Get channel by name")
+	@GetMapping("/@{name}")
+	public ChannelDTO getChannelByName(@PathVariable String name) throws ChannelNotFoundException {
+		return new ChannelDTO(channelsService.getChannelByName(name), null);
 	}
 
 	@Operation(summary = "Edit channel")
