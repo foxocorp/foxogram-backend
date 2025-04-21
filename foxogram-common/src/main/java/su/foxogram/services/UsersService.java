@@ -55,8 +55,12 @@ public class UsersService {
 		this.messageRepository = messageRepository;
 	}
 
-	public User getUser(long id) throws UserNotFoundException {
+	public User getUserById(long id) throws UserNotFoundException {
 		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+	}
+
+	public User getUserByUsername(String username) throws UserNotFoundException {
+		return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
 	}
 
 	public List<ChannelDTO> getChannels(User user) {

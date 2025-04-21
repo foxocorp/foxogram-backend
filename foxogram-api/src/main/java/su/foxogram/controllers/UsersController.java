@@ -56,8 +56,14 @@ public class UsersController {
 
 	@Operation(summary = "Get user")
 	@GetMapping("/{id}")
-	public UserDTO getUser(@PathVariable long id) throws UserNotFoundException {
-		return new UserDTO(usersService.getUser(id), null, false, false);
+	public UserDTO getUserById(@PathVariable long id) throws UserNotFoundException {
+		return new UserDTO(usersService.getUserById(id), null, false, false);
+	}
+
+	@Operation(summary = "Get user")
+	@GetMapping("/@{username}")
+	public UserDTO getUserByUsername(@PathVariable String username) throws UserNotFoundException {
+		return new UserDTO(usersService.getUserByUsername(username), null, false, false);
 	}
 
 	@Operation(summary = "Get user channels")
