@@ -1,6 +1,7 @@
 services:
   foxogram-api:
     container_name: foxogram-api
+    image: foxogram/api:prod
     build:
       context: ./foxogram-api
     restart: always
@@ -19,6 +20,7 @@ services:
 
   foxogram-api-dev:
     container_name: foxogram-api-dev
+    image: foxogram/api:dev
     build:
       context: ./foxogram-api
     restart: always
@@ -37,6 +39,7 @@ services:
 
   foxogram-gateway:
     container_name: foxogram-gateway
+    image: foxogram/gateway:prod
     build:
       context: ./foxogram-gateway
     restart: always
@@ -53,6 +56,7 @@ services:
 
   foxogram-gateway-dev:
     container_name: foxogram-gateway-dev
+    image: foxogram/gateway:dev
     build:
       context: ./foxogram-gateway
     restart: always
