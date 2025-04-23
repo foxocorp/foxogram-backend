@@ -38,8 +38,6 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 		long id = getChannelKey(uriVariables).orElseThrow(ChannelNotFoundException::new);
 
-		log.info("preHandle");
-
 		request.setAttribute(AttributesConstants.CHANNEL, channelsService.getChannelById(id));
 
 		return true;
