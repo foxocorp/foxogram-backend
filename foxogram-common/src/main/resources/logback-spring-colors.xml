@@ -4,7 +4,7 @@
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                %d{HH:mm:ss} %-5level [%t] %C{1}: %msg%n%throwable
+                %white(%d{HH:mm:ss}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable
             </pattern>
         </encoder>
     </appender>
