@@ -94,9 +94,11 @@ public class AuthenticationService {
 
 		log.info("User ({}, {}) created successfully", user.getUsername(), user.getEmail());
 
-		sendConfirmationEmail(user);
+		if (!apiConfig.isDevelopment()) {
+			sendConfirmationEmail(user);
 
-		log.info("User ({}, {}) email verification message sent successfully", user.getUsername(), user.getEmail());
+			log.info("User ({}, {}) email verification message sent successfully", user.getUsername(), user.getEmail());
+		}
 
 		return jwtService.generate(user.getId(), user.getPassword());
 	}
@@ -104,6 +106,7 @@ public class AuthenticationService {
 	private User createUser(String username, String email, String password) {
 		long deletion = 0;
 		long flags = UserConstants.Flags.AWAITING_CONFIRMATION.getBit();
+		if (apiConfig.isDevelopment()) flags = UserConstants.Flags.EMAIL_VERIFIED.getBit();
 		int type = UserConstants.Type.USER.getType();
 
 		return new User(0, null, null, username, email, PasswordHasher.hashPassword(password), flags, type, deletion, null);
@@ -143,8 +146,6 @@ public class AuthenticationService {
 		user.addFlag(UserConstants.Flags.EMAIL_VERIFIED);
 		userRepository.save(user);
 		log.info("User ({}, {}) email verified successfully", user.getUsername(), user.getEmail());
-
-		if (OTP == null) return; // is dev
 
 		OTPService.delete(OTP);
 	}

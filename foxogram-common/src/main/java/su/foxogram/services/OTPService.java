@@ -22,7 +22,6 @@ public class OTPService {
 	}
 
 	public OTP validateCode(String pathCode) throws OTPsInvalidException, OTPExpiredException {
-		if (apiConfig.isDevelopment()) return null;
 
 		OTP OTP = OTPRepository.findByValue(pathCode);
 
@@ -38,13 +37,13 @@ public class OTPService {
 	}
 
 	public void delete(OTP OTP) {
-		if (!apiConfig.isDevelopment()) OTPRepository.delete(OTP);
+		OTPRepository.delete(OTP);
 		log.info("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
 	}
 
 	public void save(long id, String type, String digitCode, long issuedAt, long expiresAt) {
 		OTP OTP = new OTP(id, type, digitCode, issuedAt, expiresAt);
-		if (!apiConfig.isDevelopment()) OTPRepository.save(OTP);
+		OTPRepository.save(OTP);
 		log.info("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
 	}
 }
