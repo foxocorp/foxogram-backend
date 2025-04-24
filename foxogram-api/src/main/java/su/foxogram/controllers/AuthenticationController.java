@@ -12,9 +12,9 @@ import su.foxogram.constants.AttributesConstants;
 import su.foxogram.dtos.api.request.*;
 import su.foxogram.dtos.api.response.OkDTO;
 import su.foxogram.dtos.api.response.TokenDTO;
-import su.foxogram.exceptions.code.CodeExpiredException;
-import su.foxogram.exceptions.code.CodeIsInvalidException;
-import su.foxogram.exceptions.code.NeedToWaitBeforeResendException;
+import su.foxogram.exceptions.otp.NeedToWaitBeforeResendException;
+import su.foxogram.exceptions.otp.OTPExpiredException;
+import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.models.User;
@@ -58,15 +58,15 @@ public class AuthenticationController {
 
 	@Operation(summary = "Verify email")
 	@PostMapping("/email/verify")
-	public OkDTO emailVerify(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody CodeDTO body) throws CodeIsInvalidException, CodeExpiredException {
-		authenticationService.verifyEmail(user, body.getCode());
+	public OkDTO emailVerify(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody OTPDTO body) throws OTPsInvalidException, OTPExpiredException {
+		authenticationService.verifyEmail(user, body.getOTP());
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Resend email")
 	@PostMapping("/email/resend")
-	public OkDTO resendEmail(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.ACCESS_TOKEN) String accessToken) throws CodeIsInvalidException, NeedToWaitBeforeResendException {
+	public OkDTO resendEmail(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.ACCESS_TOKEN) String accessToken) throws OTPsInvalidException, NeedToWaitBeforeResendException {
 		authenticationService.resendEmail(user, accessToken);
 
 		return new OkDTO(true);
@@ -84,7 +84,7 @@ public class AuthenticationController {
 	@Operation(summary = "Confirm reset password")
 	@SecurityRequirements()
 	@PostMapping("/reset-password/confirm")
-	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws CodeExpiredException, CodeIsInvalidException, UserCredentialsIsInvalidException {
+	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		authenticationService.confirmResetPassword(body);
 
 		return new OkDTO(true);

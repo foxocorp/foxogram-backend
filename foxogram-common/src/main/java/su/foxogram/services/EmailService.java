@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class EmailService {
 
-	private final CodeService codeService;
+	private final OTPService OTPService;
 
 	private final ResourceLoader resourceLoader;
 
@@ -34,8 +34,8 @@ public class EmailService {
 	private final APIConfig apiConfig;
 
 	@Autowired
-	public EmailService(CodeService codeService, JavaMailSender javaMailSender, ResourceLoader resourceLoader, EmailConfig emailConfig, APIConfig apiConfig) {
-		this.codeService = codeService;
+	public EmailService(OTPService OTPService, JavaMailSender javaMailSender, ResourceLoader resourceLoader, EmailConfig emailConfig, APIConfig apiConfig) {
+		this.OTPService = OTPService;
 		this.javaMailSender = javaMailSender;
 		this.resourceLoader = resourceLoader;
 		this.emailConfig = emailConfig;
@@ -62,7 +62,7 @@ public class EmailService {
 			javaMailSender.send(mimeMessage);
 			log.info("Email ({}) sent to ({}) successfully", type, to);
 
-			codeService.saveCode(id, type, digitCode, issuedAt, expiresAt);
+			OTPService.save(id, type, digitCode, issuedAt, expiresAt);
 		} catch (IllegalArgumentException | MessagingException | IOException e) {
 			log.error("Error occurred while sending email to {}: {}", to, e.getMessage(), e);
 		}

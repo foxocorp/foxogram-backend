@@ -9,7 +9,7 @@ public class ExceptionsConstants {
 
 	private static final int MESSAGE_ERROR = 400;
 
-	private static final int CODE_ERROR = 500;
+	private static final int OTP_ERROR = 500;
 
 	private static final int CDN_ERROR = 700;
 
@@ -26,9 +26,9 @@ public class ExceptionsConstants {
 		INVALID_FILE_FORMAT("Invalid file format"),
 		CHANNEL_ALREADY_EXIST("Channel with this name already exist"),
 		CHANNEL_NOT_FOUND("Unknown channel"),
-		CODE_EXPIRED("Code has expired"),
-		CODE_IS_INVALID("Code is invalid"),
-		NEED_TO_WAIT("You need to wait 1 minute to resend code again"),
+		OTP_EXPIRED("OTP has expired"),
+		OTP_IS_INVALID("OTP is invalid"),
+		NEED_TO_WAIT("You need to wait 1 minute to resend OTP again"),
 		MEMBER_ALREADY_EXIST("You've already joined this channel"),
 		MEMBER_NOT_FOUND("Can't find member in this channel"),
 		MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
@@ -92,13 +92,13 @@ public class ExceptionsConstants {
 		}
 	}
 
-	public enum Code {
+	public enum OTP {
 		IS_INVALID,
 		EXPIRED,
 		WAIT_TO_RESEND;
 
 		public int getValue() {
-			return CODE_ERROR + this.ordinal();
+			return OTP_ERROR + this.ordinal();
 		}
 	}
 

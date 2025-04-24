@@ -3,14 +3,14 @@ package su.foxogram.repositories;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import su.foxogram.models.Code;
+import su.foxogram.models.OTP;
 
 @Repository
-public interface CodeRepository extends CrudRepository<Code, Long> {
-	Code findByUserId(long userId);
+public interface OTPRepository extends CrudRepository<OTP, Long> {
+	OTP findByUserId(long userId);
 
-	Code findByValue(String value);
+	OTP findByValue(String value);
 
 	@Override
-	void delete(@NotNull Code code);
+	void delete(@NotNull OTP OTP);
 }

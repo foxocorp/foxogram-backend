@@ -11,7 +11,7 @@ import lombok.Setter;
 		@Index(name = "idx_code_user_id", columnList = "userId", unique = true),
 		@Index(name = "idx_code_value", columnList = "value", unique = true)
 })
-public class Code {
+public class OTP {
 	@Id()
 	public long userId;
 
@@ -27,10 +27,10 @@ public class Code {
 	@Column()
 	public long expiresAt;
 
-	public Code() {
+	public OTP() {
 	}
 
-	public Code(long userId, String type, String value, long issuedAt, long expiresAt) {
+	public OTP(long userId, String type, String value, long issuedAt, long expiresAt) {
 		this.userId = userId;
 		this.type = type;
 		this.value = value;

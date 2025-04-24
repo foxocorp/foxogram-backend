@@ -5,26 +5,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import su.foxogram.constants.CodesConstants;
 import su.foxogram.constants.EmailConstants;
+import su.foxogram.constants.OTPConstants;
 import su.foxogram.constants.StorageConstants;
 import su.foxogram.constants.UserConstants;
 import su.foxogram.dtos.api.request.UserEditDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
-import su.foxogram.exceptions.code.CodeExpiredException;
-import su.foxogram.exceptions.code.CodeIsInvalidException;
+import su.foxogram.exceptions.otp.OTPExpiredException;
+import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
-import su.foxogram.models.Code;
 import su.foxogram.models.Member;
 import su.foxogram.models.Message;
+import su.foxogram.models.OTP;
 import su.foxogram.models.User;
 import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.MessageRepository;
 import su.foxogram.repositories.UserRepository;
-import su.foxogram.util.CodeGenerator;
+import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class UsersService {
 
 	private final EmailService emailService;
 
-	private final CodeService codeService;
+	private final OTPService OTPService;
 
 	private final StorageService storageService;
 
@@ -46,10 +46,10 @@ public class UsersService {
 	private final MessageRepository messageRepository;
 
 	@Autowired
-	public UsersService(UserRepository userRepository, EmailService emailService, CodeService codeService, StorageService storageService, MemberRepository memberRepository, MessageRepository messageRepository) {
+	public UsersService(UserRepository userRepository, EmailService emailService, OTPService OTPService, StorageService storageService, MemberRepository memberRepository, MessageRepository messageRepository) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
-		this.codeService = codeService;
+		this.OTPService = OTPService;
 		this.storageService = storageService;
 		this.memberRepository = memberRepository;
 		this.messageRepository = messageRepository;
@@ -99,16 +99,16 @@ public class UsersService {
 		log.info("User ({}, {}) delete requested successfully", user.getUsername(), user.getEmail());
 	}
 
-	public void confirmUserDelete(User user, String pathCode) throws CodeIsInvalidException, CodeExpiredException {
-		Code code = codeService.validateCode(pathCode);
+	public void confirmUserDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
+		OTP OTP = OTPService.validateCode(pathCode);
 
 		userRepository.delete(user);
 
 		log.info("User ({}, {}) deleted successfully", user.getUsername(), user.getEmail());
 
-		if (code == null) return; // is dev
+		if (OTP == null) return; // is dev
 
-		codeService.deleteCode(code);
+		OTPService.delete(OTP);
 	}
 
 	private void changeAvatar(User user, MultipartFile avatar) throws UploadFailedException {
@@ -139,9 +139,9 @@ public class UsersService {
 
 	private void sendEmail(User user, EmailConstants.Type type) {
 		String emailType = type.getValue();
-		String code = CodeGenerator.generateDigitCode();
+		String code = OTPGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
-		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
+		long expiresAt = issuedAt + OTPConstants.Lifetime.BASE.getValue();
 
 		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
 	}

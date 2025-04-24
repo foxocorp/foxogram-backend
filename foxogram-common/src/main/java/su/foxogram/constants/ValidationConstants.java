@@ -38,7 +38,7 @@ public class ValidationConstants {
 
 		public static final String MESSAGE_WRONG_LENGTH = "Message length must be between {min} and {max} characters long";
 
-		public static final String CODE_NAME_WRONG_LENGTH = "Code must be {min} characters long";
+		public static final String OTP_NAME_WRONG_LENGTH = "OTP must be {min} characters long";
 
 		public static final String MUST_NOT_BE_NULL = " must not be null";
 	}

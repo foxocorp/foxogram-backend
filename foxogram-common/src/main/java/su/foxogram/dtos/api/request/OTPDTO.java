@@ -9,9 +9,9 @@ import su.foxogram.constants.ValidationConstants;
 
 @Setter
 @Getter
-@Schema(name = "Code")
-public class CodeDTO {
-	@NotNull(message = "Code" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
-	@Size(min = 6, max = 6, message = ValidationConstants.Messages.CODE_NAME_WRONG_LENGTH)
-	private String code;
+@Schema(name = "OTP")
+public class OTPDTO {
+	@NotNull(message = "OTP" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
+	@Size(min = 6, max = 6, message = ValidationConstants.Messages.OTP_NAME_WRONG_LENGTH)
+	private String OTP;
 }

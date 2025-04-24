@@ -7,15 +7,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
-import su.foxogram.dtos.api.request.CodeDTO;
+import su.foxogram.dtos.api.request.OTPDTO;
 import su.foxogram.dtos.api.request.UserDeleteDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.OkDTO;
 import su.foxogram.dtos.api.response.UserDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
-import su.foxogram.exceptions.code.CodeExpiredException;
-import su.foxogram.exceptions.code.CodeIsInvalidException;
+import su.foxogram.exceptions.otp.OTPExpiredException;
+import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
@@ -93,10 +93,10 @@ public class UsersController {
 
 	@Operation(summary = "Confirm delete")
 	@PostMapping("/@me/delete-confirm")
-	public OkDTO deleteUserConfirm(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody CodeDTO body) throws CodeExpiredException, CodeIsInvalidException {
+	public OkDTO deleteUserConfirm(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
 		log.info("USER deletion confirm ({}, {}) request", user.getId(), user.getEmail());
 
-		usersService.confirmUserDelete(user, body.getCode());
+		usersService.confirmUserDelete(user, body.getOTP());
 
 		return new OkDTO(true);
 	}

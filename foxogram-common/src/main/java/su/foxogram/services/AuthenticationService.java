@@ -8,23 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import su.foxogram.configs.APIConfig;
-import su.foxogram.constants.CodesConstants;
 import su.foxogram.constants.EmailConstants;
+import su.foxogram.constants.OTPConstants;
 import su.foxogram.constants.UserConstants;
 import su.foxogram.dtos.api.request.UserResetPasswordConfirmDTO;
 import su.foxogram.dtos.api.request.UserResetPasswordDTO;
-import su.foxogram.exceptions.code.CodeExpiredException;
-import su.foxogram.exceptions.code.CodeIsInvalidException;
-import su.foxogram.exceptions.code.NeedToWaitBeforeResendException;
+import su.foxogram.exceptions.otp.NeedToWaitBeforeResendException;
+import su.foxogram.exceptions.otp.OTPExpiredException;
+import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
-import su.foxogram.models.Code;
+import su.foxogram.models.OTP;
 import su.foxogram.models.User;
-import su.foxogram.repositories.CodeRepository;
+import su.foxogram.repositories.OTPRepository;
 import su.foxogram.repositories.UserRepository;
-import su.foxogram.util.CodeGenerator;
+import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
 @Slf4j
@@ -32,23 +32,23 @@ import su.foxogram.util.PasswordHasher;
 public class AuthenticationService {
 	private final UserRepository userRepository;
 
-	private final CodeRepository codeRepository;
+	private final OTPRepository OTPRepository;
 
 	private final EmailService emailService;
 
 	private final JwtService jwtService;
 
-	private final CodeService codeService;
+	private final OTPService OTPService;
 
 	private final APIConfig apiConfig;
 
 	@Autowired
-	public AuthenticationService(UserRepository userRepository, CodeRepository codeRepository, EmailService emailService, JwtService jwtService, CodeService codeService, APIConfig apiConfig) {
+	public AuthenticationService(UserRepository userRepository, OTPRepository OTPRepository, EmailService emailService, JwtService jwtService, OTPService OTPService, APIConfig apiConfig) {
 		this.userRepository = userRepository;
-		this.codeRepository = codeRepository;
+		this.OTPRepository = OTPRepository;
 		this.emailService = emailService;
 		this.jwtService = jwtService;
-		this.codeService = codeService;
+		this.OTPService = OTPService;
 		this.apiConfig = apiConfig;
 	}
 
@@ -111,9 +111,9 @@ public class AuthenticationService {
 
 	private void sendConfirmationEmail(User user) {
 		String emailType = EmailConstants.Type.EMAIL_VERIFY.getValue();
-		String digitCode = CodeGenerator.generateDigitCode();
+		String digitCode = OTPGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
-		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
+		long expiresAt = issuedAt + OTPConstants.Lifetime.BASE.getValue();
 		String accessToken = jwtService.generate(user.getId(), user.getPassword());
 
 		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
@@ -136,41 +136,41 @@ public class AuthenticationService {
 			throw new UserCredentialsIsInvalidException();
 	}
 
-	public void verifyEmail(User user, String pathCode) throws CodeIsInvalidException, CodeExpiredException {
-		Code code = codeService.validateCode(pathCode);
+	public void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
+		OTP OTP = OTPService.validateCode(pathCode);
 
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 		user.addFlag(UserConstants.Flags.EMAIL_VERIFIED);
 		userRepository.save(user);
 		log.info("User ({}, {}) email verified successfully", user.getUsername(), user.getEmail());
 
-		if (code == null) return; // is dev
+		if (OTP == null) return; // is dev
 
-		codeService.deleteCode(code);
+		OTPService.delete(OTP);
 	}
 
-	public void resendEmail(User user, String accessToken) throws CodeIsInvalidException, NeedToWaitBeforeResendException {
+	public void resendEmail(User user, String accessToken) throws OTPsInvalidException, NeedToWaitBeforeResendException {
 		if (apiConfig.isDevelopment()) return;
 
-		Code code = codeRepository.findByUserId(user.getId());
+		OTP OTP = OTPRepository.findByUserId(user.getId());
 
-		if (code == null) throw new CodeIsInvalidException();
+		if (OTP == null) throw new OTPsInvalidException();
 
-		long issuedAt = code.getIssuedAt();
-		if (System.currentTimeMillis() - issuedAt < CodesConstants.Lifetime.RESEND.getValue())
+		long issuedAt = OTP.getIssuedAt();
+		if (System.currentTimeMillis() - issuedAt < OTPConstants.Lifetime.RESEND.getValue())
 			throw new NeedToWaitBeforeResendException();
 
 		log.info("User ({}, {}) email resend successfully", user.getUsername(), user.getEmail());
-		emailService.sendEmail(user.getEmail(), user.getId(), code.getType(), user.getUsername(), code.getValue(), System.currentTimeMillis(), code.getExpiresAt(), accessToken);
+		emailService.sendEmail(user.getEmail(), user.getId(), OTP.getType(), user.getUsername(), OTP.getValue(), System.currentTimeMillis(), OTP.getExpiresAt(), accessToken);
 	}
 
 	public void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 
 		String type = EmailConstants.Type.EMAIL_VERIFY.getValue();
-		String value = CodeGenerator.generateDigitCode();
+		String value = OTPGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
-		long expiresAt = issuedAt + CodesConstants.Lifetime.BASE.getValue();
+		long expiresAt = issuedAt + OTPConstants.Lifetime.BASE.getValue();
 
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
@@ -178,14 +178,14 @@ public class AuthenticationService {
 		log.info("User ({}, {}) reset password requested successfully", user.getUsername(), user.getEmail());
 	}
 
-	public void confirmResetPassword(UserResetPasswordConfirmDTO body) throws CodeExpiredException, CodeIsInvalidException, UserCredentialsIsInvalidException {
+	public void confirmResetPassword(UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
-		Code code = codeService.validateCode(body.getCode());
+		OTP OTP = OTPService.validateCode(body.getOTP());
 
 		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
-		codeService.deleteCode(code);
+		OTPService.delete(OTP);
 		log.info("User ({}, {}) password reset successfully", user.getUsername(), user.getEmail());
 	}
 
