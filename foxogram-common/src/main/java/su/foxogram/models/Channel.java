@@ -53,7 +53,7 @@ public class Channel {
 	public Channel(long id, String displayName, String name, long flags, int type, User owner) {
 		this.id = id;
 		this.displayName = displayName;
-		this.name = name;
+		this.name = name.toLowerCase();
 		this.type = type;
 		this.owner = owner;
 		this.flags = flags;
