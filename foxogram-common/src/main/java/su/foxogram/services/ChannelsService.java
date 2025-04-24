@@ -125,6 +125,7 @@ public class ChannelsService {
 		user = userRepository.findById(user.getId()).orElseThrow(ChannelNotFoundException::new);
 
 		member = new Member(user, channel, 0);
+		member.setPermissions(MemberConstants.Permissions.ATTACH_FILES, MemberConstants.Permissions.SEND_MESSAGES);
 		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
 		return memberRepository.save(member);

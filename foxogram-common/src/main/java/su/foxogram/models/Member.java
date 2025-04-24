@@ -50,6 +50,19 @@ public class Member {
 		this.permissions |= permission.getBit();
 	}
 
+	public void addPermissions(MemberConstants.Permissions... permissions) {
+		for (MemberConstants.Permissions permission : permissions) {
+			this.permissions |= permission.getBit();
+		}
+	}
+
+	public void setPermissions(MemberConstants.Permissions... permissions) {
+		this.permissions = 0;
+		for (MemberConstants.Permissions permission : permissions) {
+			this.permissions |= permission.getBit();
+		}
+	}
+
 	public void removePermission(MemberConstants.Permissions permission) {
 		this.permissions &= ~permission.getBit();
 	}
