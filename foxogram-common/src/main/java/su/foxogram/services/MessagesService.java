@@ -79,11 +79,18 @@ public class MessagesService {
 		return new MessageDTO(message, attachments);
 	}
 
-	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException {
+	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MissingPermissionsException {
 		List<String> uploadedAttachments = new ArrayList<>();
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
+		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
+			throw new MissingPermissionsException();
+
 		if (body.getAttachments() != null && !body.getAttachments().isEmpty()) {
+
+			if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.ATTACH_FILES))
+				throw new MissingPermissionsException();
+
 			try {
 				uploadedAttachments = body.getAttachments().stream()
 						.map(attachment -> {

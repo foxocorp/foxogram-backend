@@ -87,8 +87,10 @@ public class ChannelsService {
 		throw new ChannelNotFoundException();
 	}
 
-	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException {
-		member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_CHANNEL);
+	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException {
+
+		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES))
+			throw new MissingPermissionsException();
 
 		try {
 			if (body.getIcon() != null) changeIcon(channel, body.getIcon());
