@@ -13,6 +13,7 @@ import su.foxogram.dtos.api.request.ChannelEditDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.MemberDTO;
 import su.foxogram.dtos.api.response.OkDTO;
+import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.channel.ChannelAlreadyExistException;
 import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MemberAlreadyInChannelException;
@@ -60,7 +61,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Edit channel")
 	@PatchMapping("/{id}")
-	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException {
+	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
 		channel = channelsService.editChannel(member, channel, body);
 
 		return new ChannelDTO(channel, null);

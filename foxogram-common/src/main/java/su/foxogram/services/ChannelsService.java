@@ -87,7 +87,7 @@ public class ChannelsService {
 		throw new ChannelNotFoundException();
 	}
 
-	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException {
+	public Channel editChannel(Member member, Channel channel, ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES))
 			throw new MissingPermissionsException();
@@ -98,8 +98,10 @@ public class ChannelsService {
 			if (body.getName() != null) channel.setName(body.getName());
 
 			channelRepository.save(channel);
-		} catch (DataIntegrityViolationException | UploadFailedException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();
+		} catch (UploadFailedException e) {
+			throw new UploadFailedException();
 		}
 
 		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, null), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
