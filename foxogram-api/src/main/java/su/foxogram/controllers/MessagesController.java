@@ -60,14 +60,14 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{id}")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MessageCannotBeEmpty {
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException {
 		if (body.getContent().isBlank() && body.getAttachments().isEmpty()) {
 			throw new MessageCannotBeEmpty();
 		}
 
 		Message message = messagesService.addMessage(channel, user, body);
 
-		return new MessageDTO(message, null);
+		return new MessageDTO(message, null, true);
 	}
 
 	@Operation(summary = "Delete message")

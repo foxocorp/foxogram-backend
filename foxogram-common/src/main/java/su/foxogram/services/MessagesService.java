@@ -61,7 +61,7 @@ public class MessagesService {
 					if (message.getAttachments() != null) {
 						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
 					}
-					return new MessageDTO(message, attachments);
+					return new MessageDTO(message, attachments, true);
 				})
 				.collect(Collectors.toList());
 	}
@@ -76,7 +76,7 @@ public class MessagesService {
 
 		log.info("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
-		return new MessageDTO(message, attachments);
+		return new MessageDTO(message, attachments, true);
 	}
 
 	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MissingPermissionsException {
@@ -109,7 +109,7 @@ public class MessagesService {
 		Message message = new Message(channel, body.getContent(), member, uploadedAttachments);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message, null), GatewayConstants.Event.MESSAGE_CREATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 
 		return message;
@@ -137,7 +137,7 @@ public class MessagesService {
 		message.setContent(content);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message, null), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
 		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;

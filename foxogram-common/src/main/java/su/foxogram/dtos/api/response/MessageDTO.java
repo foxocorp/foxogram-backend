@@ -25,11 +25,11 @@ public class MessageDTO {
 
 	private long createdAt;
 
-	public MessageDTO(Message message, List<Attachment> attachments) {
+	public MessageDTO(Message message, List<Attachment> attachments, boolean includeChannel) {
 		this.id = message.getId();
 		this.content = message.getContent();
 		this.author = new MemberDTO(message.getAuthor(), false);
-		this.channel = new ChannelDTO(message.getChannel(), null);
+		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
 		if (attachments != null) this.attachments = attachments;
 		else this.attachments = message.getAttachments();
 		this.createdAt = message.getTimestamp();
