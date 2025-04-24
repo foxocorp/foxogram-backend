@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.AttributesConstants;
 import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
@@ -29,9 +30,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 	final AuthenticationService authenticationService;
 
+	final APIConfig apiConfig;
+
 	@Autowired
-	public AuthenticationInterceptor(AuthenticationService authenticationService) {
+	public AuthenticationInterceptor(AuthenticationService authenticationService, APIConfig apiConfig) {
 		this.authenticationService = authenticationService;
+		this.apiConfig = apiConfig;
 	}
 
 	@Override
@@ -40,6 +44,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 		String requestURI = request.getRequestURI();
 		boolean ignoreEmailVerification = EMAIL_VERIFICATION_IGNORE_PATHS.stream().anyMatch(requestURI::contains);
+		if (apiConfig.isDevelopment()) ignoreEmailVerification = true;
 
 		String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
