@@ -8,21 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
 import su.foxogram.constants.AttributesConstants;
 import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.services.ChannelsService;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
 public class ChannelInterceptor implements HandlerInterceptor {
 
 	private final ChannelsService channelsService;
+
+	private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
 
 	@Autowired
 	public ChannelInterceptor(ChannelsService channelsService) {
@@ -31,32 +30,18 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws ChannelNotFoundException {
-		if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
+		if (HttpMethod.OPTIONS.matches(request.getMethod())) return true;
 
-		@SuppressWarnings("unchecked")
-		Map<String, String> uriVariables = (Map<String, String>) getUriVariables(request);
+		String uri = request.getRequestURI();
+		Matcher matcher = CHANNEL_ID_PATTERN.matcher(uri);
 
-		long id = getChannelKey(uriVariables).orElseThrow(ChannelNotFoundException::new);
+		if (!matcher.find()) {
+			throw new ChannelNotFoundException();
+		}
 
+		long id = Long.parseLong(matcher.group(1));
 		request.setAttribute(AttributesConstants.CHANNEL, channelsService.getChannelById(id));
 
 		return true;
-	}
-
-	private Map<?, ?> getUriVariables(HttpServletRequest request) {
-		return Optional.ofNullable(request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE))
-				.filter(Map.class::isInstance)
-				.map(Map.class::cast)
-				.orElseGet(Collections::emptyMap);
-	}
-
-	private Optional<Long> getChannelKey(Map<String, String> uriVariables) {
-		String channelId = uriVariables.get("id");
-
-		try {
-			return Optional.of(Long.valueOf(channelId));
-		} catch (NumberFormatException e) {
-			return Optional.empty();
-		}
 	}
 }
