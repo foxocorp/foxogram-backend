@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.ValidationConstants;
 
 @Getter
@@ -26,5 +25,5 @@ public class UserEditDTO {
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.PASSWORD, message = ValidationConstants.Messages.PASSWORD_WRONG_LENGTH)
 	private String password;
 
-	private MultipartFile avatar;
+	private long avatar;
 }

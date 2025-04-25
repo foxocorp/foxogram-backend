@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.ChannelsConstants;
 import su.foxogram.constants.GatewayConstants;
 import su.foxogram.constants.MemberConstants;
-import su.foxogram.constants.StorageConstants;
+import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.ChannelCreateDTO;
 import su.foxogram.dtos.api.request.ChannelEditDTO;
+import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.MemberDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
@@ -20,9 +20,12 @@ import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MemberAlreadyInChannelException;
 import su.foxogram.exceptions.member.MemberInChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.UnknownAttachmentsException;
+import su.foxogram.models.Attachment;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;
+import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.ChannelRepository;
 import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.UserRepository;
@@ -41,17 +44,20 @@ public class ChannelsService {
 
 	private final UserRepository userRepository;
 
-	private final StorageService storageService;
-
 	private final RabbitService rabbitService;
 
+	private final AttachmentsService attachmentsService;
+
+	private final AttachmentRepository attachmentRepository;
+
 	@Autowired
-	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, StorageService storageService, RabbitService rabbitService) {
+	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, RabbitService rabbitService, AttachmentsService attachmentsService, AttachmentRepository attachmentRepository) {
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.userRepository = userRepository;
-		this.storageService = storageService;
 		this.rabbitService = rabbitService;
+		this.attachmentsService = attachmentsService;
+		this.attachmentRepository = attachmentRepository;
 	}
 
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
@@ -93,20 +99,30 @@ public class ChannelsService {
 			throw new MissingPermissionsException();
 
 		try {
-			if (body.getIcon() != null) changeIcon(channel, body.getIcon());
 			if (body.getDisplayName() != null) channel.setDisplayName(body.getDisplayName());
 			if (body.getName() != null) channel.setName(body.getName());
+			if (body.getIcon() <= 0) {
+				Attachment attachment = attachmentRepository.findById(body.getIcon());
+
+				if (attachment == null) throw new UnknownAttachmentsException();
+
+				channel.setIcon(attachmentRepository.findById(body.getIcon()).getUuid());
+			}
 
 			channelRepository.save(channel);
 		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();
-		} catch (UploadFailedException e) {
+		} catch (UnknownAttachmentsException e) {
 			throw new UploadFailedException();
 		}
 
 		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, null), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
 		log.info("Channel ({}) edited successfully", channel.getName());
 		return channel;
+	}
+
+	public AttachmentsDTO uploadIcon(AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+		return attachmentsService.uploadAttachment(null, attachment);
 	}
 
 	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException {
@@ -152,18 +168,6 @@ public class ChannelsService {
 
 	public Member getMember(Channel channel, long memberId) {
 		return memberRepository.findByChannelAndId(channel, memberId);
-	}
-
-	private void changeIcon(Channel channel, MultipartFile icon) throws UploadFailedException {
-		String hash;
-
-		try {
-			hash = storageService.uploadIdentityImage(icon, StorageConstants.AVATARS_BUCKET);
-		} catch (Exception e) {
-			throw new UploadFailedException();
-		}
-
-		channel.setIcon(hash);
 	}
 
 	private List<Long> getRecipients(Channel channel) {

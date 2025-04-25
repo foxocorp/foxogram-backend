@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
+import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.MessageCreateDTO;
+import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.dtos.api.response.MessagesDTO;
 import su.foxogram.dtos.api.response.OkDTO;
-import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageNotFoundException;
+import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.Message;
@@ -60,14 +63,24 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{id}")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException {
-		if (body.getContent().isBlank() && body.getAttachments().isEmpty()) {
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException {
+		if (body.getContent().isBlank()) {
 			throw new MessageCannotBeEmpty();
 		}
 
 		Message message = messagesService.addMessage(channel, user, body);
 
 		return new MessageDTO(message, null, true);
+	}
+
+	@Operation(summary = "Add attachments")
+	@PutMapping("/channel/{id}/attachments")
+	public List<AttachmentsDTO> addAttachments(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestBody List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty {
+		if (attachments == null || attachments.isEmpty()) {
+			throw new AttachmentsCannotBeEmpty();
+		}
+
+		return messagesService.addAttachments(channel, user, attachments);
 	}
 
 	@Operation(summary = "Delete message")

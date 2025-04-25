@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
+import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.ChannelCreateDTO;
 import su.foxogram.dtos.api.request.ChannelEditDTO;
+import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.MemberDTO;
 import su.foxogram.dtos.api.response.OkDTO;
@@ -19,6 +21,7 @@ import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MemberAlreadyInChannelException;
 import su.foxogram.exceptions.member.MemberInChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;
@@ -65,6 +68,12 @@ public class ChannelsController {
 		channel = channelsService.editChannel(member, channel, body);
 
 		return new ChannelDTO(channel, null);
+	}
+
+	@Operation(summary = "Upload avatar")
+	@PutMapping("/{id}/icon")
+	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+		return channelsService.uploadIcon(attachment);
 	}
 
 	@Operation(summary = "Delete channel")

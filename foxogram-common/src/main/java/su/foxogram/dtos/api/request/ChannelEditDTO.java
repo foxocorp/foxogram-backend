@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.ValidationConstants;
 
 @Getter
@@ -19,5 +18,5 @@ public class ChannelEditDTO {
 	@Size(min = 1, max = ValidationConstants.Lengths.CHANNEL_NAME, message = ValidationConstants.Messages.CHANNEL_NAME_WRONG_LENGTH)
 	private String name;
 
-	private MultipartFile icon;
+	private long icon;
 }

@@ -15,6 +15,10 @@ public class ValidationConstants {
 		public static final int CHANNEL_NAME = 16;
 
 		public static final int MESSAGE_CONTENT = 5000;
+
+		public static final int ATTACHMENTS_MIN = 0;
+
+		public static final int ATTACHMENTS_MAX = 10;
 	}
 
 	public static class Messages {
@@ -37,6 +41,8 @@ public class ValidationConstants {
 		public static final String CHANNEL_TYPE_INCORRECT = "Channel type are incorrect";
 
 		public static final String MESSAGE_WRONG_LENGTH = "Message length must be between {min} and {max} characters long";
+
+		public static final String ATTACHMENTS_WRONG_SIZE = "Message can contain only {max} attachments";
 
 		public static final String OTP_NAME_WRONG_LENGTH = "OTP must be {min} characters long";
 

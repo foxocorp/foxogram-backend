@@ -8,7 +8,7 @@ import su.foxogram.models.Attachment;
 @Repository
 public interface AttachmentRepository extends CrudRepository<Attachment, Long> {
 
-	Attachment findById(String id);
+	Attachment findById(long id);
 
 	@Override
 	void delete(@NotNull Attachment attachment);

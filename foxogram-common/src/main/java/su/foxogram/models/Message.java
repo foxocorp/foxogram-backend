@@ -27,8 +27,8 @@ public class Message {
 	@Column()
 	public long timestamp;
 
-	@Column()
-	public List<String> attachments;
+	@OneToMany(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+	public List<Attachment> attachments;
 
 	@ManyToOne
 	@JoinColumn(name = "channel", nullable = false)
@@ -37,7 +37,7 @@ public class Message {
 	public Message() {
 	}
 
-	public Message(Channel channel, String content, Member member, List<String> attachments) {
+	public Message(Channel channel, String content, Member member, List<Attachment> attachments) {
 		this.channel = channel;
 		this.author = member;
 		this.content = content;

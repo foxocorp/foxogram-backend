@@ -34,6 +34,8 @@ public class ExceptionsConstants {
 		MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
 		MESSAGE_NOT_FOUND("Unable to find message(s) for this channel or matching these parameters"),
 		MESSAGE_CANNOT_BE_EMPTY("Message cannot be empty"),
+		ATTACHMENTS_CANNOT_BE_EMPTY("Attachments cannot be empty"),
+		UNKNOWN_ATTACHMENTS("Unknown attachments ids"),
 		USER_CREDENTIALS_DUPLICATE("User with this username/email already exist"),
 		USER_CREDENTIALS_IS_INVALID("Invalid password or email"),
 		USER_EMAIL_VERIFIED("You need to verify your email first"),
@@ -85,7 +87,9 @@ public class ExceptionsConstants {
 
 	public enum Message {
 		NOT_FOUND,
-		CANNOT_BE_EMPTY;
+		CANNOT_BE_EMPTY,
+		ATTACHMENTS_CANNOT_BE_EMPTY,
+		UNKNOWN_ATTACHMENTS;
 
 		public int getValue() {
 			return MESSAGE_ERROR + this.ordinal();

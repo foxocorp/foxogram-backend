@@ -4,15 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import su.foxogram.constants.GatewayConstants;
 import su.foxogram.constants.MemberConstants;
-import su.foxogram.constants.StorageConstants;
+import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.MessageCreateDTO;
+import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
-import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.MessageNotFoundException;
+import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.*;
 import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.ChannelRepository;
@@ -30,8 +30,6 @@ public class MessagesService {
 
 	private final MessageRepository messageRepository;
 
-	private final StorageService storageService;
-
 	private final RabbitService rabbitService;
 
 	private final ChannelRepository channelRepository;
@@ -40,14 +38,16 @@ public class MessagesService {
 
 	private final AttachmentRepository attachmentRepository;
 
+	private final AttachmentsService attachmentsService;
+
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, StorageService storageService, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository) {
+	public MessagesService(MessageRepository messageRepository, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository, AttachmentsService attachmentsService) {
 		this.messageRepository = messageRepository;
-		this.storageService = storageService;
 		this.rabbitService = rabbitService;
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.attachmentRepository = attachmentRepository;
+		this.attachmentsService = attachmentsService;
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
@@ -59,7 +59,7 @@ public class MessagesService {
 				.map(message -> {
 					List<Attachment> attachments = new ArrayList<>();
 					if (message.getAttachments() != null) {
-						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment.getId())));
 					}
 					return new MessageDTO(message, attachments, true);
 				})
@@ -72,47 +72,34 @@ public class MessagesService {
 		if (message == null) throw new MessageNotFoundException();
 
 		List<Attachment> attachments = new ArrayList<>();
-		message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment)));
+		message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment.getId())));
 
 		log.info("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
 		return new MessageDTO(message, attachments, true);
 	}
 
-	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws UploadFailedException, JsonProcessingException, MissingPermissionsException {
-		List<String> uploadedAttachments = new ArrayList<>();
+	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException {
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		if (body.getAttachments() != null && !body.getAttachments().isEmpty()) {
-
-			if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.ATTACH_FILES))
-				throw new MissingPermissionsException();
-
-			try {
-				uploadedAttachments = body.getAttachments().stream()
-						.map(attachment -> {
-							try {
-								return uploadAttachment(attachment).getId();
-							} catch (UploadFailedException e) {
-								throw new RuntimeException(e);
-							}
-						})
-						.collect(Collectors.toList());
-			} catch (Exception e) {
-				throw new UploadFailedException();
-			}
-		}
-
-		Message message = new Message(channel, body.getContent(), member, uploadedAttachments);
+		Message message = new Message(channel, body.getContent(), member, attachmentsService.getAttachments(user, body.getAttachments()));
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 
 		return message;
+	}
+
+	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException {
+		Member member = memberRepository.findByChannelAndUser(channel, user);
+		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
+			throw new MissingPermissionsException();
+
+		return attachmentsService.uploadAttachments(user, attachments);
 	}
 
 	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
@@ -141,14 +128,6 @@ public class MessagesService {
 		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;
-	}
-
-	private Attachment uploadAttachment(MultipartFile attachment) throws UploadFailedException {
-		try {
-			return storageService.uploadToMinio(attachment, StorageConstants.ATTACHMENTS_BUCKET);
-		} catch (Exception e) {
-			throw new UploadFailedException();
-		}
 	}
 
 	private List<Long> getRecipients(Channel channel) {

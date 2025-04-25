@@ -8,27 +8,38 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "attachments", indexes = {
-		@Index(name = "idx_attachment_id", columnList = "id", unique = true)
+		@Index(name = "idx_attachment_id", columnList = "id", unique = true),
+		@Index(name = "idx_attachment_user_id", columnList = "id, user_id")
 })
 public class Attachment {
 
 	@Id
-	public String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+
+	@ManyToOne()
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
 	@Column()
-	public String filename;
+	private String uuid;
 
 	@Column()
-	public String contentType;
+	private String filename;
 
 	@Column()
-	public long flags;
+	private String contentType;
+
+	@Column()
+	private long flags;
 
 	public Attachment() {
 	}
 
-	public Attachment(String id, String filename, String contentType, long flags) {
+	public Attachment(long id, User user, String uuid, String filename, String contentType, long flags, boolean includeUser) {
 		this.id = id;
+		if (includeUser) this.user = user;
+		this.uuid = uuid;
 		this.filename = filename;
 		this.contentType = contentType;
 		this.flags = flags;

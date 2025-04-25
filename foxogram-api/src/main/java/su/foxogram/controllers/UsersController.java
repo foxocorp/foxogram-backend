@@ -7,13 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constants.APIConstants;
 import su.foxogram.constants.AttributesConstants;
+import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.OTPDTO;
 import su.foxogram.dtos.api.request.UserDeleteDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
+import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.dtos.api.response.OkDTO;
 import su.foxogram.dtos.api.response.UserDTO;
 import su.foxogram.exceptions.cdn.UploadFailedException;
+import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
@@ -74,10 +77,16 @@ public class UsersController {
 
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
-	public UserDTO editUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @Valid @ModelAttribute UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException {
+	public UserDTO editUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @Valid @ModelAttribute UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException, UnknownAttachmentsException {
 		authenticatedUser = usersService.editUser(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, true, true);
+	}
+
+	@Operation(summary = "Upload avatar")
+	@PutMapping("/@me/avatar")
+	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+		return usersService.uploadAvatar(authenticatedUser, attachment);
 	}
 
 	@Operation(summary = "Delete")
