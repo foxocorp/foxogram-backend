@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "codes", indexes = {
-		@Index(name = "idx_code_user_id", columnList = "userId", unique = true),
-		@Index(name = "idx_code_value", columnList = "value", unique = true)
+@Table(name = "otps", indexes = {
+		@Index(name = "idx_otp_user_id", columnList = "userId", unique = true),
+		@Index(name = "idx_otp_value", columnList = "value", unique = true)
 })
 public class OTP {
 	@Id()
