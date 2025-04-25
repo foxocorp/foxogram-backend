@@ -43,8 +43,8 @@ public class MessagesController {
 	}
 
 	@Operation(summary = "Get messages")
-	@GetMapping("/channel/{id}")
-	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestParam(defaultValue = "0") long before, @RequestParam(defaultValue = "25") int limit) {
+	@GetMapping("/channels/{channelId}/messages")
+	public List<MessageDTO> getMessages(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @RequestParam(defaultValue = "0") long before, @RequestParam(defaultValue = "25") int limit) {
 		if (before <= 0) {
 			before = System.currentTimeMillis();
 		}
@@ -57,14 +57,14 @@ public class MessagesController {
 	}
 
 	@Operation(summary = "Get message")
-	@GetMapping("/channel/{id}/{messageId}")
-	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException {
+	@GetMapping("/channels/{channelId}/messages/{messageId}")
+	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId) throws MessageNotFoundException {
 		return messagesService.getMessage(messageId, channel);
 	}
 
 	@Operation(summary = "Create message")
-	@PostMapping("/channel/{id}")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
+	@PostMapping("/channels/{channelId}/messages")
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
 		if (body.getContent().isBlank()) {
 			throw new MessageCannotBeEmpty();
 		}
@@ -75,7 +75,7 @@ public class MessagesController {
 	}
 
 	@Operation(summary = "Add attachments")
-	@PutMapping("/channel/{id}/attachments")
+	@PutMapping("/channels/{channelId}/attachments")
 	public List<AttachmentsDTO> addAttachments(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestBody List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty {
 		if (attachments == null || attachments.isEmpty()) {
 			throw new AttachmentsCannotBeEmpty();
@@ -85,16 +85,16 @@ public class MessagesController {
 	}
 
 	@Operation(summary = "Delete message")
-	@DeleteMapping("/channel/{id}/{messageId}")
-	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
+	@DeleteMapping("/channels/{channelId}/messages/{messageId}")
+	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		messagesService.deleteMessage(messageId, member, channel);
 
 		return new OkDTO(true);
 	}
 
 	@Operation(summary = "Edit message")
-	@PatchMapping("/channel/{id}/{messageId}")
-	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
+	@PatchMapping("/channels/{channelId}/messages/{messageId}")
+	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		List<Message> message = List.of(messagesService.editMessage(messageId, channel, member, body));
 
 		return new MessagesDTO(message);

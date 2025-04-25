@@ -1,7 +1,7 @@
 package su.foxogram.constants;
 
 public class APIConstants {
-	public static final String MESSAGES = "/messages";
+	public static final String MESSAGES = "/";
 
 	public static final String USERS = "/users";
 
