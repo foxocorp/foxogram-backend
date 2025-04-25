@@ -11,7 +11,6 @@ import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
-import su.foxogram.exceptions.cdn.UploadFailedException;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
@@ -75,7 +74,7 @@ public class UsersService {
 				.collect(Collectors.toList());
 	}
 
-	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException, UnknownAttachmentsException {
+	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
 		if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
 		if (body.getUsername() != null) user.setUsername(body.getUsername());
 		if (body.getEmail() != null) changeEmail(user, body);

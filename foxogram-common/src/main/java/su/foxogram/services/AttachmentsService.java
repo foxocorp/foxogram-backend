@@ -18,9 +18,9 @@ import java.util.List;
 @Service
 public class AttachmentsService {
 
-	public AttachmentRepository attachmentRepository;
+	public final AttachmentRepository attachmentRepository;
 
-	public StorageService storageService;
+	public final StorageService storageService;
 
 	public AttachmentsService(AttachmentRepository attachmentRepository, StorageService storageService) {
 		this.attachmentRepository = attachmentRepository;

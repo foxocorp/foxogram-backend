@@ -44,7 +44,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Create channel")
 	@PostMapping("/")
-	public ChannelDTO createChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
+	public ChannelDTO createChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
 		Channel channel = channelsService.createChannel(user, body);
 
 		return new ChannelDTO(channel, null);

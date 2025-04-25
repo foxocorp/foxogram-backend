@@ -11,5 +11,5 @@ public interface AttachmentRepository extends CrudRepository<Attachment, Long> {
 	Attachment findById(long id);
 
 	@Override
-	void delete(@NotNull Attachment attachment);
+	void delete(@NotNull @org.jetbrains.annotations.NotNull Attachment attachment);
 }

@@ -60,7 +60,7 @@ public class ChannelsService {
 		this.attachmentRepository = attachmentRepository;
 	}
 
-	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException {
+	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
 		Channel channel;
 
 		long isPublic = 0;
@@ -74,7 +74,7 @@ public class ChannelsService {
 			throw new ChannelAlreadyExistException();
 		}
 
-		user = userRepository.findById(user.getId()).get();
+		user = userRepository.findById(user.getId()).orElseThrow(ChannelNotFoundException::new);
 
 		Member member = new Member(user, channel, MemberConstants.Permissions.ADMIN.getBit());
 		memberRepository.save(member);

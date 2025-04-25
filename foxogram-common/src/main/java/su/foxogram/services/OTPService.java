@@ -2,7 +2,6 @@ package su.foxogram.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import su.foxogram.configs.APIConfig;
 import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.models.OTP;
@@ -14,11 +13,8 @@ public class OTPService {
 
 	private final OTPRepository OTPRepository;
 
-	private final APIConfig apiConfig;
-
-	public OTPService(OTPRepository OTPRepository, APIConfig apiConfig) {
+	public OTPService(OTPRepository OTPRepository) {
 		this.OTPRepository = OTPRepository;
-		this.apiConfig = apiConfig;
 	}
 
 	public OTP validateCode(String pathCode) throws OTPsInvalidException, OTPExpiredException {

@@ -10,6 +10,7 @@ import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.MessageCreateDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
+import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.MessageNotFoundException;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
@@ -79,7 +80,7 @@ public class MessagesService {
 		return new MessageDTO(message, attachments, true);
 	}
 
-	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException {
+	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
 		Member member = memberRepository.findByChannelAndUser(channel, user);
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
@@ -102,7 +103,7 @@ public class MessagesService {
 		return attachmentsService.uploadAttachments(user, attachments);
 	}
 
-	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 
 		if (message == null) throw new MessageNotFoundException();
@@ -114,7 +115,7 @@ public class MessagesService {
 		log.info("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
 	}
 
-	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id);
 		String content = body.getContent();
 
@@ -130,8 +131,8 @@ public class MessagesService {
 		return message;
 	}
 
-	private List<Long> getRecipients(Channel channel) {
-		channel = channelRepository.findById(channel.getId()).get();
+	private List<Long> getRecipients(Channel channel) throws ChannelNotFoundException {
+		channel = channelRepository.findById(channel.getId()).orElseThrow(ChannelNotFoundException::new);
 		return channel.getMembers().stream()
 				.map(Member::getUser)
 				.map(User::getId)
