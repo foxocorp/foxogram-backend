@@ -15,6 +15,7 @@ import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.dtos.api.response.MessagesDTO;
 import su.foxogram.dtos.api.response.OkDTO;
+import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageCannotBeEmpty;
@@ -63,7 +64,7 @@ public class MessagesController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/channel/{id}")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException {
+	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
 		if (body.getContent().isBlank()) {
 			throw new MessageCannotBeEmpty();
 		}
@@ -85,7 +86,7 @@ public class MessagesController {
 
 	@Operation(summary = "Delete message")
 	@DeleteMapping("/channel/{id}/{messageId}")
-	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	public OkDTO deleteMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		messagesService.deleteMessage(messageId, member, channel);
 
 		return new OkDTO(true);
@@ -93,7 +94,7 @@ public class MessagesController {
 
 	@Operation(summary = "Edit message")
 	@PatchMapping("/channel/{id}/{messageId}")
-	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException {
+	public MessagesDTO editMessage(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		List<Message> message = List.of(messagesService.editMessage(messageId, channel, member, body));
 
 		return new MessagesDTO(message);
