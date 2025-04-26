@@ -106,7 +106,7 @@ public class ChannelsService {
 
 				if (attachment == null) throw new UnknownAttachmentsException();
 
-				channel.setIcon(attachmentRepository.findById(body.getIcon()).getUuid());
+				channel.setIcon(attachment);
 			}
 
 			channelRepository.save(channel);

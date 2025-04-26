@@ -84,7 +84,7 @@ public class UsersService {
 
 			if (attachment == null) throw new UnknownAttachmentsException();
 
-			user.setAvatar(attachment.getUuid());
+			user.setAvatar(attachment);
 		}
 
 		try {

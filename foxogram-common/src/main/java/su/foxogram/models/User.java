@@ -30,8 +30,8 @@ public class User {
 	@Column()
 	private String password;
 
-	@Column()
-	public String avatar;
+	@OneToOne(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+	public Attachment avatar;
 
 	@Column()
 	public long flags;
@@ -51,9 +51,8 @@ public class User {
 	public User() {
 	}
 
-	public User(long id, String avatar, String displayName, String username, String email, String password, long flags, int type, long deletion, String key) {
+	public User(long id, String displayName, String username, String email, String password, long flags, int type, long deletion, String key) {
 		this.id = id;
-		this.avatar = avatar;
 		this.displayName = displayName;
 		this.username = username.toLowerCase();
 		this.email = email;

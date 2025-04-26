@@ -25,8 +25,8 @@ public class Channel {
 	@Column()
 	public String name;
 
-	@Column()
-	public String icon;
+	@OneToOne(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+	public Attachment icon;
 
 	@Column()
 	public int type;
