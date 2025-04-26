@@ -1,0 +1,5 @@
+ALTER TABLE users
+    ALTER COLUMN avatar DROP NOT NULL;
+
+ALTER TABLE channels
+    ALTER COLUMN icon DROP NOT NULL;
