@@ -19,7 +19,7 @@ public class ChannelDTO {
 
 	private String name;
 
-	private String icon;
+	private AttachmentDTO icon;
 
 	private int type;
 
@@ -40,7 +40,7 @@ public class ChannelDTO {
 		this.id = channel.getId();
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
-		this.icon = channel.getIcon();
+		this.icon = new AttachmentDTO(channel.getIcon().getId(), channel.getIcon().getUuid(), channel.getIcon().getFilename(), channel.getIcon().getContentType(), channel.getIcon().getFlags());
 		this.type = channel.getType();
 		this.flags = channel.getFlags();
 		this.isPublic = channel.hasFlag(ChannelsConstants.Flags.PUBLIC);

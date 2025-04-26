@@ -15,7 +15,7 @@ public class UserDTO {
 
 	private long id;
 
-	private String avatar;
+	private AttachmentDTO avatar;
 
 	private String displayName;
 
@@ -35,7 +35,7 @@ public class UserDTO {
 
 	public UserDTO(User user, List<Long> channels, boolean includeEmail, boolean includeChannels) {
 		this.id = user.getId();
-		this.avatar = user.getAvatar();
+		this.avatar = new AttachmentDTO(user.getAvatar().getId(), user.getAvatar().getUuid(), user.getAvatar().getFilename(), user.getAvatar().getContentType(), user.getAvatar().getFlags());
 		this.displayName = user.getDisplayName();
 		this.username = user.getUsername();
 		if (includeEmail) {
