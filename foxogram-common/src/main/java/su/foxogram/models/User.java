@@ -30,7 +30,8 @@ public class User {
 	@Column()
 	private String password;
 
-	@OneToOne(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "avatar", nullable = false)
+	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	public Attachment avatar;
 
 	@Column()

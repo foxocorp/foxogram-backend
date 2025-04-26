@@ -25,7 +25,8 @@ public class Channel {
 	@Column()
 	public String name;
 
-	@OneToOne(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "icon", nullable = false)
+	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	public Attachment icon;
 
 	@Column()
