@@ -27,8 +27,14 @@ smtp:
   password: pass
   email: noreply@foxogram.su
 
+minio:
+  url: https://min.io # minio api url
+  name: # access key
+  secret: # secret key
+
 jwt:
-  secret: 123
+  secret: # random secret key
 
 api:
   version: 1
+  env: dev # dev or prod
