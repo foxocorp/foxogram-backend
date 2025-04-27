@@ -8,7 +8,6 @@ services:
     networks:
       - db_network
       - broker_network
-      - minio_network
       - imgproxy_network
       - traefik
     labels:
@@ -27,7 +26,6 @@ services:
     networks:
       - db_network
       - broker_network
-      - minio_network
       - imgproxy_network
       - traefik
     labels:
@@ -75,8 +73,6 @@ networks:
   db_network:
     external: true
   broker_network:
-    external: true
-  minio_network:
     external: true
   imgproxy_network:
     external: true

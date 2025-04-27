@@ -35,7 +35,7 @@ jobs:
           smtp.password=${{ secrets.SMTP_PASSWORD }}\n
           smtp.email=${{ secrets.SMTP_EMAIL }}\n
           jwt.secret=${{ secrets.JWT_SECRET }}\n
-          minio.url=${{ secrets.MINIO_URL }}\n
+          minio.url=${{ vars.MINIO_URL }}\n
           minio.name=${{ secrets.MINIO_NAME }}\n
           minio.secret=${{ secrets.MINIO_SECRET }}\n
           api.version=1\n
