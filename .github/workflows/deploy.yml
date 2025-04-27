@@ -44,7 +44,7 @@ jobs:
           api.gateway.production_url=wss://gateway.foxogram.su\n
           api.gateway.development_url=wss://gateway.dev.foxogram.su\n
           api.app.production_url=https://app.foxogram.su\n
-          api.app.development_url=https://app.dev.foxogram.su\n" >> foxogram-common/src/main/resources/application.properties
+          api.app.development_url=https://app.dev.foxogram.su" >> foxogram-common/src/main/resources/application.properties
 
       - name: Build Foxogram API
         run: ./gradlew :foxogram-api:build
