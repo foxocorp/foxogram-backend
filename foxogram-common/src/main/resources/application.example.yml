@@ -6,7 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/foxogram
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     open-in-view: false
   jackson:
     property-naming-strategy: SNAKE_CASE
@@ -38,3 +38,11 @@ jwt:
 api:
   version: 1
   env: dev # dev or prod
+  cdn:
+    url: https://cdn.foxogram.su
+  gateway:
+    production_url: wss://gateway.foxogram.su
+    development_url: wss://gateway.dev.foxogram.su
+  app:
+    production_url: https://app.foxogram.su
+    development_url: https://app.dev.foxogram.su
