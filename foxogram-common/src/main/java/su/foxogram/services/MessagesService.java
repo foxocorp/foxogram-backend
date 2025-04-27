@@ -12,6 +12,7 @@ import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageNotFoundException;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.*;
@@ -95,8 +96,11 @@ public class MessagesService {
 		return message;
 	}
 
-	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException {
+	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty {
+		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
+
 		Member member = memberRepository.findByChannelAndUser(channel, user);
+
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 

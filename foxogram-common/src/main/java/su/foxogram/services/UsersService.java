@@ -11,6 +11,7 @@ import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.ChannelDTO;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
@@ -98,7 +99,9 @@ public class UsersService {
 		return user;
 	}
 
-	public AttachmentsDTO uploadAvatar(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+	public AttachmentsDTO uploadAvatar(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+		if (attachment == null) throw new AttachmentsCannotBeEmpty();
+
 		return attachmentsService.uploadAttachment(user, attachment);
 	}
 

@@ -21,6 +21,7 @@ import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MemberAlreadyInChannelException;
 import su.foxogram.exceptions.member.MemberInChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
@@ -72,7 +73,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{id}/icon")
-	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		return channelsService.uploadIcon(attachment);
 	}
 

@@ -20,6 +20,7 @@ import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.exceptions.member.MemberAlreadyInChannelException;
 import su.foxogram.exceptions.member.MemberInChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.Attachment;
 import su.foxogram.models.Channel;
@@ -121,7 +122,9 @@ public class ChannelsService {
 		return channel;
 	}
 
-	public AttachmentsDTO uploadIcon(AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+	public AttachmentsDTO uploadIcon(AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+		if (attachment == null) throw new AttachmentsCannotBeEmpty();
+
 		return attachmentsService.uploadAttachment(null, attachment);
 	}
 
