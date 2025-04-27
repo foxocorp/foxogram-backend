@@ -40,6 +40,11 @@ jobs:
           minio.secret=${{ secrets.MINIO_SECRET }}\n
           api.version=1\n
           api.env=${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'dev' }}" >> foxogram-common/src/main/resources/application.properties
+          api.cdn.url=https://cdn.foxogram.su\n
+          api.gateway.production_url=wss://gateway.foxogram.su\n
+          api.gateway.development_url=wss://gateway.dev.foxogram.su\n
+          api.app.production_url=https://app.foxogram.su\n
+          api.app.development_url=https://app.dev.foxogram.su\n
 
       - name: Build Foxogram API
         run: ./gradlew :foxogram-api:build
