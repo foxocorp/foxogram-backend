@@ -22,7 +22,7 @@ public class MessageDTO {
 
 	private ChannelDTO channel;
 
-	private List<?> attachments;
+	private List<AttachmentDTO> attachments;
 
 	private long createdAt;
 
