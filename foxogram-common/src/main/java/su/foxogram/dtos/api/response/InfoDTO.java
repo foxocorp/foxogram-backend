@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(name = "Ok")
+@Schema(name = "Info")
 public class InfoDTO {
 
 	private String version;
