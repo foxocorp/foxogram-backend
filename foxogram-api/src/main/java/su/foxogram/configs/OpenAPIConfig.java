@@ -33,10 +33,6 @@ public class OpenAPIConfig {
 				.title("Foxogram")
 				.version(apiConfig.getVersion());
 
-		ExternalDocumentation externalDocs = new ExternalDocumentation()
-				.description("External documentation")
-				.url("https://github.com/foxocorp/foxogram-docs");
-
 		List<Server> servers = Arrays.asList(
 				new Server().url("https://api.foxogram.su").description("Production"),
 				new Server().url("https://api.dev.foxogram.su").description("Development")
@@ -66,7 +62,6 @@ public class OpenAPIConfig {
 
 		return new OpenAPI()
 				.info(info)
-				.externalDocs(externalDocs)
 				.servers(servers)
 				.addSecurityItem(securityRequirement)
 				.components(components);
