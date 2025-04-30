@@ -47,6 +47,9 @@ jobs:
           api.app.development_url=https://app.dev.foxogram.su" >> foxogram-common/src/main/resources/application.properties
 
       - name: Build
+        env:
+          JAVA_HOME: ${{ vars.JAVA_HOME }}
+          PATH: ${{ vars.JAVA_HOME }}/bin:$PATH
         run: ./gradlew build
 
       - name: Run
