@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.5' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+allprojects {
+    group = 'su.foxogram'
+    version = '1.0.0'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_21
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+
+    if (project.name != 'foxogram-common') {
+        jar {
+            manifest {
+                attributes(
+                        'Main-Class': 'su.foxogram.Main'
+                )
+            }
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            from {
+                configurations.runtimeClasspath.collect {
+                    it.isDirectory() ? it : zipTree(it)
+                }
+            }
+        }
+    }
+
+    tasks.named('bootRun') {
+        doFirst {
+            jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS", "-XX:+UseShenandoahGC"]
+        }
+    }
+}

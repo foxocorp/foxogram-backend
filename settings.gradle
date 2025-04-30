@@ -1,4 +1,5 @@
 rootProject.name = 'foxogram-backend'
+
 include 'foxogram-common'
 include 'foxogram-gateway'
 include 'foxogram-api'

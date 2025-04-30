@@ -1,46 +1,6 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.4.1'
-    id 'io.spring.dependency-management' version '1.1.7'
-}
-
-group = 'su.foxogram'
-version = '1.0.0'
-
-java {
-    sourceCompatibility = '21'
-}
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(path: ':foxogram-common')
-    runtimeOnly 'org.postgresql:postgresql'
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'su.foxogram.Main'
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}
-
-tasks.named('bootRun') {
-    doFirst {
-        jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS", "-XX:+UseShenandoahGC"]
-    }
 }
