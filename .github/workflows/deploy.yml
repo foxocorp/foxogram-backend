@@ -46,14 +46,10 @@ jobs:
           api.app.production_url=https://app.foxogram.su\n
           api.app.development_url=https://app.dev.foxogram.su" >> foxogram-common/src/main/resources/application.properties
 
-      - name: Build Foxogram API
-        run: ./gradlew :foxogram-api:build
+      - name: Build
+        run: ./gradlew build
 
-      - name: Build Foxogram Gateway
-        run: ./gradlew :foxogram-gateway:build
-
-      - name: Run Foxogram API
-        run: docker compose up foxogram-api${{ github.ref_name == 'dev' && '-dev' || '' }} -d --build
-
-      - name: Run Foxogram Gateway
-        run: docker compose up foxogram-gateway${{ github.ref_name == 'dev' && '-dev' || '' }} -d --build
+      - name: Run
+        env:
+          SUFFIX: ${{ github.ref_name == 'dev' && '-dev' || '' }}
+        run: docker compose up foxogram-api$SUFFIX foxogram-gateway$SUFFIX -d --build
