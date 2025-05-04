@@ -17,34 +17,35 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create config
-        run: echo -e "spring.datasource.driver-class-name=org.postgresql.Driver\n
-          spring.datasource.username=${{ secrets.DB_USERNAME }}\n
-          spring.datasource.password=${{ secrets.DB_PASSWORD }}\n
-          spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOSTNAME }}:${{ secrets.DB_PORT }}/${{ secrets.DB_DATABASE }}\n
-          spring.jpa.hibernate.ddl-auto=none\n
-          spring.jpa.open-in-view=false\n
-          spring.servlet.multipart.max-file-size=100MB\n
-          spring.servlet.multipart.max-request-size=1GB\n
-          spring.rabbitmq.host=${{ vars.RABBIT_HOST }}\n
-          rabbit.queue=${{ vars.RABBIT_QUEUE }}\n
-          spring.jackson.property-naming-strategy=SNAKE_CASE\n
-          springdoc.swagger-ui.enabled=false\n
-          smtp.host=${{ secrets.SMTP_HOSTNAME }}\n
-          smtp.port=${{ secrets.SMTP_PORT }}\n
-          smtp.username=${{ secrets.SMTP_USERNAME }}\n
-          smtp.password=${{ secrets.SMTP_PASSWORD }}\n
-          smtp.email=${{ secrets.SMTP_EMAIL }}\n
-          jwt.secret=${{ secrets.JWT_SECRET }}\n
-          minio.url=${{ vars.MINIO_URL }}\n
-          minio.name=${{ secrets.MINIO_NAME }}\n
-          minio.secret=${{ secrets.MINIO_SECRET }}\n
-          api.version=1\n
-          api.env=${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'dev' }}\n
-          api.cdn.url=https://cdn.foxogram.su\n
-          api.gateway.production_url=wss://gateway.foxogram.su\n
-          api.gateway.development_url=wss://gateway.dev.foxogram.su\n
-          api.app.production_url=https://app.foxogram.su\n
-          api.app.development_url=https://app.dev.foxogram.su" >> foxogram-common/src/main/resources/application.properties
+        run: |
+          cat <<EOF > foxogram-common/src/main/resources/application.properties
+          spring.datasource.driver-class-name=org.postgresql.Driver
+          spring.datasource.username=${{ secrets.DB_USERNAME }}
+          spring.datasource.password=${{ secrets.DB_PASSWORD }}
+          spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOSTNAME }}:${{ secrets.DB_PORT }}/${{ secrets.DB_DATABASE }}
+          spring.jpa.hibernate.ddl-auto=none
+          spring.jpa.open-in-view=false
+          spring.rabbitmq.host=${{ vars.RABBIT_HOST }}
+          rabbit.queue=${{ vars.RABBIT_QUEUE }}
+          spring.jackson.property-naming-strategy=SNAKE_CASE
+          springdoc.swagger-ui.enabled=false
+          smtp.host=${{ secrets.SMTP_HOSTNAME }}
+          smtp.port=${{ secrets.SMTP_PORT }}
+          smtp.username=${{ secrets.SMTP_USERNAME }}
+          smtp.password=${{ secrets.SMTP_PASSWORD }}
+          smtp.email=${{ secrets.SMTP_EMAIL }}
+          jwt.secret=${{ secrets.JWT_SECRET }}
+          minio.url=${{ vars.MINIO_URL }}
+          minio.name=${{ secrets.MINIO_NAME }}
+          minio.secret=${{ secrets.MINIO_SECRET }}
+          api.version=1
+          api.env=${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'dev' }}
+          api.cdn.url=https://cdn.foxogram.su
+          api.gateway.production_url=wss://gateway.foxogram.su
+          api.gateway.development_url=wss://gateway.dev.foxogram.su
+          api.app.production_url=https://app.foxogram.su
+          api.app.development_url=https://app.dev.foxogram.su
+          EOF
 
       - name: Build
         env:
