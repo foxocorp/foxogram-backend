@@ -49,8 +49,9 @@ jobs:
       - name: Build
         env:
           JAVA_HOME: ${{ vars.JAVA_HOME }}
-          PATH: ${{ vars.JAVA_HOME }}/bin:$PATH
-        run: ./gradlew build
+        run: |
+          export PATH="${{ vars.JAVA_HOME }}/bin:$PATH"
+          ./gradlew build
 
       - name: Run
         env:
