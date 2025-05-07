@@ -56,8 +56,8 @@ jobs:
 
       - name: Build images
         run: |
-          docker build -t foxogram/api:${{ vars.ENV }} -f foxogram-api
-          docker build -t foxogram/gateway:${{ vars.ENV }} -f foxogram-gateway
+          docker build -t foxogram/api:${{ vars.ENV }} foxogram-api
+          docker build -t foxogram/gateway:${{ vars.ENV }} foxogram-gateway
 
       - name: Run
         env:
