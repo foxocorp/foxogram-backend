@@ -39,7 +39,7 @@ jobs:
           minio.name=${{ secrets.MINIO_NAME }}
           minio.secret=${{ secrets.MINIO_SECRET }}
           api.version=1
-          api.env=${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'dev' && 'dev' || 'dev' }}
+          api.env=${{ vars.ENV }}
           api.cdn.url=https://cdn.foxogram.su
           api.gateway.production_url=wss://gateway.foxogram.su
           api.gateway.development_url=wss://gateway.dev.foxogram.su
@@ -47,14 +47,24 @@ jobs:
           api.app.development_url=https://app.dev.foxogram.su
           EOF
 
-      - name: Build
+      - name: Build project
         env:
           JAVA_HOME: ${{ vars.JAVA_HOME }}
         run: |
           export PATH="${{ vars.JAVA_HOME }}/bin:$PATH"
           ./gradlew build
 
+      - name: Build images
+        run: |
+          docker build -t foxogram/api:${{ vars.ENV }} -f foxogram-api
+          docker build -t foxogram/gateway:${{ vars.ENV }} -f foxogram-gateway
+
       - name: Run
         env:
-          SUFFIX: ${{ github.ref_name == 'dev' && '-dev' || '' }}
-        run: docker compose up foxogram-api$SUFFIX foxogram-gateway$SUFFIX -d --build
+          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+          NOMAD_VAR_service_name_api: ${{ vars.SERVICE_NAME_API }}
+          NOMAD_VAR_domain_api: ${{ vars.DOMAIN_API }}
+          NOMAD_VAR_service_name_gateway: ${{ vars.SERVICE_NAME_GATEWAY }}
+          NOMAD_VAR_domain_gateway: ${{ vars.DOMAIN_GATEWAY }}
+          NOMAD_VAR_env: ${{ vars.ENV }}
+        run: nomad job run -namespace ${{ vars.ENV }} nomad.hcl
