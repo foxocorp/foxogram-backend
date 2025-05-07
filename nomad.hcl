@@ -60,6 +60,7 @@ job "foxogram-backend" {
         name = "api"
 
         check {
+          address_mode   = "driver"
           port           = "http"
           name           = "health"
           type           = "http"
@@ -110,6 +111,7 @@ job "foxogram-backend" {
         name = "gateway"
 
         check {
+          address_mode   = "driver"
           port           = "http"
           name           = "health"
           type           = "http"
