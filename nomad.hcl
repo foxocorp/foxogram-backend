@@ -1,29 +1,20 @@
-variable "service_name_api" {
-  type    = string
-  default = "foxogram-api-dev"
-}
-
-variable "domain_api" {
-  type    = string
-  default = "api.dev.foxogram.su"
-}
-
-variable "service_name_gateway" {
-  type    = string
-  default = "foxogram-gateway-dev"
-}
-
-variable "domain_gateway" {
-  type    = string
-  default = "gateway.dev.foxogram.su"
-}
-
 variable "env" {
   type    = string
   default = "dev"
 }
 
+locals {
+  is_dev = var.env != "prod"
+
+  service_api     = "foxogram-api${local.is_dev ? "-${var.env}" : ""}"
+  service_gateway = "foxogram-gateway${local.is_dev ? "-${var.env}" : ""}"
+
+  domain_api     = "api${local.is_dev ? ".${var.env}" : ""}.foxogram.su"
+  domain_gateway = "gateway${local.is_dev ? ".${var.env}" : ""}.foxogram.su"
+}
+
 job "foxogram-backend" {
+  namespace   = var.env
   datacenters = ["dc1"]
 
   update {
@@ -48,11 +39,11 @@ job "foxogram-backend" {
         image        = "foxogram/api:${var.env}"
         network_mode = "foxogram"
         labels = {
-          "traefik.enable"                                                         = "true"
-          "traefik.http.routers.${var.service_name_api}.rule"                      = "Host(`${var.domain_api}`)"
-          "traefik.http.routers.${var.service_name_api}.tls.certresolver"          = "letsencrypt"
-          "traefik.http.services.${var.service_name_api}.loadbalancer.server.port" = "8080"
-          "traefik.http.routers.${var.service_name_api}.middlewares"               = "ratelimit@file"
+          "traefik.enable"                                                      = "true"
+          "traefik.http.routers.${local.service_api}.rule"                      = "Host(`${local.domain_api}`)"
+          "traefik.http.routers.${local.service_api}.tls.certresolver"          = "letsencrypt"
+          "traefik.http.services.${local.service_api}.loadbalancer.server.port" = "8080"
+          "traefik.http.routers.${local.service_api}.middlewares"               = "ratelimit@file"
         }
       }
 
@@ -99,11 +90,11 @@ job "foxogram-backend" {
         image        = "foxogram/gateway:${var.env}"
         network_mode = "foxogram"
         labels = {
-          "traefik.enable"                                                             = "true"
-          "traefik.http.routers.${var.service_name_gateway}.rule"                      = "Host(`${var.domain_gateway}`)"
-          "traefik.http.routers.${var.service_name_gateway}.tls.certresolver"          = "letsencrypt"
-          "traefik.http.services.${var.service_name_gateway}.loadbalancer.server.port" = "8080"
-          "traefik.http.routers.${var.service_name_gateway}.middlewares"               = "ratelimit@file"
+          "traefik.enable"                                                          = "true"
+          "traefik.http.routers.${local.service_gateway}.rule"                      = "Host(`${local.domain_gateway}`)"
+          "traefik.http.routers.${local.service_gateway}.tls.certresolver"          = "letsencrypt"
+          "traefik.http.services.${local.service_gateway}.loadbalancer.server.port" = "8080"
+          "traefik.http.routers.${local.service_gateway}.middlewares"               = "ratelimit@file"
         }
       }
 

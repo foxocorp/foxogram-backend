@@ -62,9 +62,5 @@ jobs:
       - name: Run
         env:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
-          NOMAD_VAR_service_name_api: ${{ vars.SERVICE_NAME_API }}
-          NOMAD_VAR_domain_api: ${{ vars.DOMAIN_API }}
-          NOMAD_VAR_service_name_gateway: ${{ vars.SERVICE_NAME_GATEWAY }}
-          NOMAD_VAR_domain_gateway: ${{ vars.DOMAIN_GATEWAY }}
           NOMAD_VAR_env: ${{ vars.ENV }}
-        run: nomad job run -namespace ${{ vars.ENV }} nomad.hcl
+        run: nomad job run nomad.hcl
