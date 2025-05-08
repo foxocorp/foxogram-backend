@@ -42,8 +42,6 @@ public class EventHandler extends TextWebSocketHandler {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
 		Runnable task = () -> {
-			log.info("Checking heartbeat intervals...");
-
 			sessions.values().forEach(session -> {
 				long lastPingTimestamp = session.getLastPingTimestamp();
 
@@ -59,8 +57,6 @@ public class EventHandler extends TextWebSocketHandler {
 					}
 				}
 			});
-
-			log.info("Done checking heartbeat intervals");
 		};
 
 		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);

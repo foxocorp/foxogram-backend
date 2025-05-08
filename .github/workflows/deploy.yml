@@ -19,6 +19,8 @@ jobs:
       - name: Create config
         run: |
           cat <<EOF > foxogram-common/src/main/resources/application.properties
+          spring.main.lazy-initialization=true
+          spring.jmx.enabled=false
           spring.datasource.driver-class-name=org.postgresql.Driver
           spring.datasource.username=${{ secrets.DB_USERNAME }}
           spring.datasource.password=${{ secrets.DB_PASSWORD }}

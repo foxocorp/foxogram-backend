@@ -11,6 +11,10 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    configurations.configureEach {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
 }
 
 subprojects {
@@ -31,7 +35,7 @@ subprojects {
         jar {
             manifest {
                 attributes(
-                        'Main-Class': 'su.foxogram.Main'
+                    'Main-Class': 'su.foxogram.Main'
                 )
             }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE

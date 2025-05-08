@@ -33,7 +33,7 @@ public class ExceptionController {
 
 	@ExceptionHandler(BaseException.class)
 	public ResponseEntity<ExceptionDTO> handleBaseException(BaseException exception) {
-		if (apiConfig.isDevelopment()) exception.printStackTrace();
+		if (apiConfig.isDevelopment()) log.error(exception.getMessage());
 		return buildErrorResponse(exception.getErrorCode(), exception.getMessage(), exception.getStatus());
 	}
 
@@ -59,7 +59,7 @@ public class ExceptionController {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
 		String message = exception.getMessage();
-		if (apiConfig.isDevelopment()) exception.printStackTrace();
+		if (apiConfig.isDevelopment()) log.error(exception.getMessage());
 		if (!apiConfig.isDevelopment()) message = ExceptionsConstants.Messages.INTERNAL_ERROR.getValue();
 
 		log.error(ExceptionsConstants.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), exception);
