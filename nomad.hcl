@@ -37,6 +37,7 @@ job "foxogram-backend" {
 
       config {
         image        = "foxogram/api:${var.env}"
+        force_pull   = true
         network_mode = "foxogram"
         labels = {
           "traefik.enable"                                                      = "true"
@@ -88,6 +89,7 @@ job "foxogram-backend" {
 
       config {
         image        = "foxogram/gateway:${var.env}"
+        force_pull   = true
         network_mode = "foxogram"
         labels = {
           "traefik.enable"                                                          = "true"
