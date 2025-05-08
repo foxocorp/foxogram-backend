@@ -1,4 +1,8 @@
 spring:
+  main:
+    lazy-initialization: true
+  jmx:
+    enabled: false
   datasource:
     driver-class-name: org.postgresql.Driver
     username: foxogram
