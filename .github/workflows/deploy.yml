@@ -58,11 +58,12 @@ jobs:
 
       - name: Build images
         run: |
-          docker buildx build --push -t localhost:5000/foxogram/api:${{ vars.ENV }} foxogram-api
-          docker buildx build --push -t localhost:5000/foxogram/gateway:${{ vars.ENV }} foxogram-gateway
+          docker buildx build --push -t localhost:5000/foxogram/api:${{ vars.ENV }}-${{ github.sha }} foxogram-api
+          docker buildx build --push -t localhost:5000/foxogram/gateway:${{ vars.ENV }}-${{ github.sha }} foxogram-gateway
 
       - name: Run
         env:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
           NOMAD_VAR_env: ${{ vars.ENV }}
+          NOMAD_VAR_commit: ${{ github.sha }}
         run: nomad job run nomad.hcl

@@ -3,6 +3,10 @@ variable "env" {
   default = "dev"
 }
 
+variable "commit" {
+  type    = string
+}
+
 locals {
   is_dev = var.env != "prod"
 
@@ -36,7 +40,7 @@ job "foxogram-backend" {
       driver = "docker"
 
       config {
-        image        = "localhost:5000/foxogram/api:${var.env}"
+        image        = "localhost:5000/foxogram/api:${var.env}-${var.commit}"
         force_pull   = true
         network_mode = "foxogram"
         labels = {
@@ -88,7 +92,7 @@ job "foxogram-backend" {
       driver = "docker"
 
       config {
-        image        = "localhost:5000/foxogram/gateway:${var.env}"
+        image        = "localhost:5000/foxogram/gateway:${var.env}-${var.commit}"
         force_pull   = true
         network_mode = "foxogram"
         labels = {
