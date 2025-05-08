@@ -36,7 +36,7 @@ job "foxogram-backend" {
       driver = "docker"
 
       config {
-        image        = "foxogram/api:${var.env}"
+        image        = "localhost:5000/foxogram/api:${var.env}"
         force_pull   = true
         network_mode = "foxogram"
         labels = {
@@ -88,7 +88,7 @@ job "foxogram-backend" {
       driver = "docker"
 
       config {
-        image        = "foxogram/gateway:${var.env}"
+        image        = "localhost:5000/foxogram/gateway:${var.env}"
         force_pull   = true
         network_mode = "foxogram"
         labels = {
