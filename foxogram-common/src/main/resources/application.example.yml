@@ -1,6 +1,9 @@
 spring:
   main:
     lazy-initialization: true
+  threads:
+    virtual:
+      enabled: true
   jmx:
     enabled: false
   datasource:
@@ -12,6 +15,10 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: deferred
   jackson:
     property-naming-strategy: SNAKE_CASE
   rabbitmq:

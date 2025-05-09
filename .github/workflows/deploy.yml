@@ -20,6 +20,7 @@ jobs:
         run: |
           cat <<EOF > foxogram-common/src/main/resources/application.properties
           spring.main.lazy-initialization=true
+          spring.threads.virtual.enabled=true
           spring.jmx.enabled=false
           spring.datasource.driver-class-name=org.postgresql.Driver
           spring.datasource.username=${{ secrets.DB_USERNAME }}
@@ -27,6 +28,7 @@ jobs:
           spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOSTNAME }}:${{ secrets.DB_PORT }}/${{ secrets.DB_DATABASE }}
           spring.jpa.hibernate.ddl-auto=none
           spring.jpa.open-in-view=false
+          spring.data.jpa.repositories.bootstrap-mode: deferred
           spring.rabbitmq.host=${{ vars.RABBIT_HOST }}
           rabbit.queue=${{ vars.RABBIT_QUEUE }}
           spring.jackson.property-naming-strategy=SNAKE_CASE
