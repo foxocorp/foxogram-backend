@@ -11,6 +11,7 @@ import su.foxogram.dtos.api.request.MessageCreateDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.api.response.MessageDTO;
 import su.foxogram.exceptions.channel.ChannelNotFoundException;
+import su.foxogram.exceptions.member.MemberInChannelNotFoundException;
 import su.foxogram.exceptions.member.MissingPermissionsException;
 import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageNotFoundException;
@@ -54,8 +55,10 @@ public class MessageService {
 		return messagesArray.reversed().stream()
 				.map(message -> {
 					List<Attachment> attachments = new ArrayList<>();
-					if (message.getAttachments() != null) {
-						message.getAttachments().forEach(attachment -> attachments.add(attachmentService.getById(attachment.getId())));
+					for (Attachment attachment : message.getAttachments()) {
+						try {
+							attachments.add(attachmentService.getById(attachment.getId()));
+						} catch (Exception ignored) {}
 					}
 					return new MessageDTO(message, attachments, true);
 				})
@@ -63,20 +66,22 @@ public class MessageService {
 	}
 
 	public MessageDTO getMessage(long id, Channel channel) throws MessageNotFoundException {
-		Message message = messageRepository.findByChannelAndId(channel, id);
-
-		if (message == null) throw new MessageNotFoundException();
+		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
 		List<Attachment> attachments = new ArrayList<>();
-		message.getAttachments().forEach(attachment -> attachments.add(attachmentService.getById(attachment.getId())));
+		for (Attachment attachment : message.getAttachments()) {
+			try {
+				attachments.add(attachmentService.getById(attachment.getId()));
+			} catch (Exception ignored) {}
+		}
 
 		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
 		return new MessageDTO(message, attachments, true);
 	}
 
-	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
+	public Message add(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
@@ -90,10 +95,10 @@ public class MessageService {
 		return message;
 	}
 
-	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty {
+	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
 		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
 
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
@@ -101,10 +106,9 @@ public class MessageService {
 		return attachmentService.uploadAttachments(user, attachments);
 	}
 
-	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
-		Message message = messageRepository.findByChannelAndId(channel, id);
+	public void delete(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
+		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
-		if (message == null) throw new MessageNotFoundException();
 		if (!message.isAuthor(member) && !member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.MANAGE_MESSAGES))
 			throw new MissingPermissionsException();
 
@@ -113,11 +117,10 @@ public class MessageService {
 		log.debug("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
 	}
 
-	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
-		Message message = messageRepository.findByChannelAndId(channel, id);
+	public Message update(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
+		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 		String content = body.getContent();
 
-		if (message == null) throw new MessageNotFoundException();
 		if (!message.isAuthor(member)) throw new MissingPermissionsException();
 
 		message.setContent(content);
@@ -130,7 +133,7 @@ public class MessageService {
 	}
 
 	private List<Long> getRecipients(Channel channel) throws ChannelNotFoundException {
-		return channelService.getChannelById(channel.getId())
+		return channelService.getById(channel.getId())
 				.getMembers().stream()
 				.map(Member::getUser)
 				.map(User::getId)
@@ -138,6 +141,6 @@ public class MessageService {
 	}
 
 	public Message getLastMessageByChannel(Channel channel) {
-		return messageRepository.getLastMessageByChannel(channel);
+		return messageRepository.getLastMessageByChannel(channel).orElse(null);
 	}
 }

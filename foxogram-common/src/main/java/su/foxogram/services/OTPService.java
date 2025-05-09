@@ -19,10 +19,7 @@ public class OTPService {
 
 	public OTP validateCode(String pathCode) throws OTPsInvalidException, OTPExpiredException {
 
-		OTP OTP = otpRepository.findByValue(pathCode);
-
-		if (OTP == null)
-			throw new OTPsInvalidException();
+		OTP OTP = otpRepository.findByValue(pathCode).orElseThrow(OTPsInvalidException::new);
 
 		if (OTP.expiresAt <= System.currentTimeMillis())
 			throw new OTPExpiredException();
@@ -43,7 +40,7 @@ public class OTPService {
 		log.debug("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
 	}
 
-	public OTP getByUserId(long userId) {
-		return otpRepository.findByUserId(userId);
+	public OTP getByUserId(long userId) throws OTPsInvalidException {
+		return otpRepository.findByUserId(userId).orElseThrow(OTPsInvalidException::new);
 	}
 }

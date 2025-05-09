@@ -6,6 +6,7 @@ import su.foxogram.constants.StorageConstants;
 import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
 import su.foxogram.dtos.internal.AttachmentPresignedDTO;
+import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.Attachment;
 import su.foxogram.models.User;
@@ -45,7 +46,9 @@ public class AttachmentService {
 		return attachmentsData;
 	}
 
-	public AttachmentsDTO uploadAttachment(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException {
+	public AttachmentsDTO uploadAttachment(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+		if (attachment == null) throw new AttachmentsCannotBeEmpty();
+
 		AttachmentPresignedDTO dto = getPresignedURLAndSave(attachment, user);
 
 		if (user != null && dto.getAttachment().getUser().getId() != user.getId()) {
@@ -71,7 +74,7 @@ public class AttachmentService {
 		return attachments;
 	}
 
-	public Attachment getById(long id) {
-		return attachmentRepository.findById(id);
+	public Attachment getById(long id) throws UnknownAttachmentsException {
+		return attachmentRepository.findById(id).orElseThrow(UnknownAttachmentsException::new);
 	}
 }

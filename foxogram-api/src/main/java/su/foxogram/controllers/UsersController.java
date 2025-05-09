@@ -26,6 +26,7 @@ import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
+import su.foxogram.services.AttachmentService;
 import su.foxogram.services.MemberService;
 import su.foxogram.services.MessageService;
 import su.foxogram.services.UserService;
@@ -44,16 +45,19 @@ public class UsersController {
 
 	private final MessageService messageService;
 
-	public UsersController(UserService userService, MemberService memberService, MessageService messageService) {
+	private final AttachmentService attachmentService;
+
+	public UsersController(UserService userService, MemberService memberService, MessageService messageService, AttachmentService attachmentService) {
 		this.userService = userService;
 		this.memberService = memberService;
 		this.messageService = messageService;
+		this.attachmentService = attachmentService;
 	}
 
 	@Operation(summary = "Get me")
 	@GetMapping("/@me")
 	public UserDTO getMe(@RequestAttribute(value = AttributesConstants.USER) User user) {
-		List<Long> channels = memberService.getChannelsByUserId(user.getId())
+		List<Long> channels = memberService.getChannelsByUser(user.getId())
 				.stream()
 				.map(Channel::getId)
 				.collect(Collectors.toList());
@@ -79,7 +83,7 @@ public class UsersController {
 	@Operation(summary = "Get user channels")
 	@GetMapping("/@me/channels")
 	public List<ChannelDTO> getUserChannels(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser) {
-		return memberService.getChannelsByUserId(authenticatedUser.getId())
+		return memberService.getChannelsByUser(authenticatedUser.getId())
 				.stream()
 				.map(channel -> {
 					Message lastMessage = messageService.getLastMessageByChannel(channel);
@@ -99,7 +103,7 @@ public class UsersController {
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
 	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		return userService.uploadAvatar(authenticatedUser, attachment);
+		return attachmentService.uploadAttachment(authenticatedUser, attachment);
 	}
 
 	@Operation(summary = "Delete")

@@ -7,6 +7,7 @@ import su.foxogram.models.Member;
 import su.foxogram.repositories.MemberRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,19 +19,19 @@ public class MemberService {
 		this.memberRepository = memberRepository;
 	}
 
-	public List<Channel> getChannelsByUserId(long userId) {
+	public List<Channel> getChannelsByUser(long userId) {
 		return memberRepository.findAllByUserId(userId)
 				.stream()
 				.map(Member::getChannel)
 				.collect(Collectors.toList());
 	}
 
-	public List<Member> getMembers(Channel channel) {
-		return memberRepository.findAllByChannelId(channel.getId());
+	public List<Member> getMembers(long channelId) {
+		return memberRepository.findAllByChannelId(channelId);
 	}
 
-	public Member getByChannelAndUser(long channel, long user) {
-		return memberRepository.findByChannelIdAndUserId(channel, user);
+	public Optional<Member> getByChannelAndUser(long channelId, long userId) {
+		return memberRepository.findByChannelIdAndUserId(channelId, userId);
 	}
 
 	public Member add(Member member) {

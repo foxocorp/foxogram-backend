@@ -9,6 +9,7 @@ import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Long> {
@@ -16,14 +17,11 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
 	List<Message> findAllByChannel(@Param("ch") Channel channel, @Param("before") long before, @Param("limit") int limit);
 
 	@Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.id = :id")
-	Message findByChannelAndId(@Param("ch") Channel channel, @Param("id") long id);
+	Optional<Message> findByChannelAndId(@Param("ch") Channel channel, @Param("id") long id);
 
 	@Query("SELECT m FROM Message m WHERE m.channel = :ch ORDER BY m.id DESC LIMIT 1")
-	Message getLastMessageByChannel(@Param("ch") Channel channel);
+	Optional<Message> getLastMessageByChannel(@Param("ch") Channel channel);
 
 	@NotNull
 	List<Message> findAll();
-
-	@Override
-	void delete(@NotNull Message message);
 }

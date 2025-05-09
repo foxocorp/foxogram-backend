@@ -8,10 +8,7 @@ import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.EmailConstants;
 import su.foxogram.constants.OTPConstants;
 import su.foxogram.constants.UserConstants;
-import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
-import su.foxogram.dtos.api.response.AttachmentsDTO;
-import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
@@ -87,11 +84,7 @@ public class UserService {
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
 		if (body.getAvatar() <= 0) {
-			Attachment attachment = attachmentService.getById(body.getAvatar());
-
-			if (attachment == null) throw new UnknownAttachmentsException();
-
-			user.setAvatar(attachment);
+			user.setAvatar(attachmentService.getById(body.getAvatar()));
 		}
 
 		try {
@@ -103,12 +96,6 @@ public class UserService {
 		log.debug("User ({}) edited successfully", user.getUsername());
 
 		return user;
-	}
-
-	public AttachmentsDTO uploadAvatar(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		if (attachment == null) throw new AttachmentsCannotBeEmpty();
-
-		return attachmentService.uploadAttachment(user, attachment);
 	}
 
 	public void requestDelete(User user, String password) throws UserCredentialsIsInvalidException {

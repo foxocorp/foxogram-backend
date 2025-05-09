@@ -40,7 +40,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
 		}
 
 		long id = Long.parseLong(matcher.group(1));
-		request.setAttribute(AttributesConstants.CHANNEL, channelService.getChannelById(id));
+		request.setAttribute(AttributesConstants.CHANNEL, channelService.getById(id));
 
 		return true;
 	}
