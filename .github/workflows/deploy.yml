@@ -1,4 +1,4 @@
-name: Deploy Foxogram
+name: Deploy Backend
 
 permissions:
   contents: read
