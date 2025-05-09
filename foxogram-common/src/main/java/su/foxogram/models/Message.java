@@ -31,7 +31,7 @@ public class Message {
 	public List<Attachment> attachments;
 
 	@ManyToOne
-	@JoinColumn(name = "channel", nullable = false)
+	@JoinColumn(name = "channel_id", nullable = false)
 	private Channel channel;
 
 	public Message() {

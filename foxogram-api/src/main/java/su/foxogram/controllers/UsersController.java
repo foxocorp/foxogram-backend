@@ -24,8 +24,10 @@ import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Channel;
+import su.foxogram.models.Message;
 import su.foxogram.models.User;
 import su.foxogram.services.MemberService;
+import su.foxogram.services.MessageService;
 import su.foxogram.services.UserService;
 
 import java.util.List;
@@ -40,9 +42,12 @@ public class UsersController {
 
 	private final MemberService memberService;
 
-	public UsersController(UserService userService, MemberService memberService) {
+	private final MessageService messageService;
+
+	public UsersController(UserService userService, MemberService memberService, MessageService messageService) {
 		this.userService = userService;
 		this.memberService = memberService;
+		this.messageService = messageService;
 	}
 
 	@Operation(summary = "Get me")
@@ -74,7 +79,13 @@ public class UsersController {
 	@Operation(summary = "Get user channels")
 	@GetMapping("/@me/channels")
 	public List<ChannelDTO> getUserChannels(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser) {
-		return userService.getChannels(authenticatedUser);
+		return memberService.getChannelsByUserId(authenticatedUser.getId())
+				.stream()
+				.map(channel -> {
+					Message lastMessage = messageService.getLastMessageByChannel(channel);
+					return new ChannelDTO(channel, lastMessage);
+				})
+				.collect(Collectors.toList());
 	}
 
 	@Operation(summary = "Edit user")

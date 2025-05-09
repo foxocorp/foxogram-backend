@@ -11,7 +11,6 @@ import su.foxogram.constants.UserConstants;
 import su.foxogram.dtos.api.request.AttachmentsAddDTO;
 import su.foxogram.dtos.api.request.UserEditDTO;
 import su.foxogram.dtos.api.response.AttachmentsDTO;
-import su.foxogram.dtos.api.response.ChannelDTO;
 import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.exceptions.otp.OTPExpiredException;
@@ -23,9 +22,7 @@ import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,21 +33,15 @@ public class UserService {
 
 	private final OTPService otpService;
 
-	private final MemberService memberService;
-
-	private final MessageService messageService;
-
 	private final AttachmentService attachmentService;
 
 	private final APIConfig apiConfig;
 
 	@Autowired
-	public UserService(UserRepository userRepository, EmailService emailService, OTPService otpService, MemberService memberService, MessageService messageService, AttachmentService attachmentService, APIConfig apiConfig) {
+	public UserService(UserRepository userRepository, EmailService emailService, OTPService otpService, AttachmentService attachmentService, APIConfig apiConfig) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.otpService = otpService;
-		this.memberService = memberService;
-		this.messageService = messageService;
 		this.attachmentService = attachmentService;
 		this.apiConfig = apiConfig;
 	}
@@ -65,16 +56,6 @@ public class UserService {
 
 	public Optional<User> getByEmail(String email) {
 		return userRepository.findByEmail(email);
-	}
-
-	public List<ChannelDTO> getChannels(User user) {
-		return memberService.getChannelsByUserId(user.getId())
-				.stream()
-				.map(channel -> {
-					Message lastMessage = messageService.getLastMessageByChannel(channel);
-					return new ChannelDTO(channel, lastMessage);
-				})
-				.collect(Collectors.toList());
 	}
 
 	public void updateFlags(User user, UserConstants.Flags removeFlag, UserConstants.Flags addFlag) {
