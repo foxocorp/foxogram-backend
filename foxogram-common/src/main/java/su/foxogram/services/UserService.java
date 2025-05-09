@@ -19,9 +19,6 @@ import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.models.*;
-import su.foxogram.repositories.AttachmentRepository;
-import su.foxogram.repositories.MemberRepository;
-import su.foxogram.repositories.MessageRepository;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
@@ -37,27 +34,24 @@ public class UserService {
 
 	private final EmailService emailService;
 
-	private final OTPService OTPService;
+	private final OTPService otpService;
 
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 
-	private final MessageRepository messageRepository;
+	private final MessageService messageService;
 
 	private final AttachmentService attachmentService;
-
-	private final AttachmentRepository attachmentRepository;
 
 	private final APIConfig apiConfig;
 
 	@Autowired
-	public UserService(UserRepository userRepository, EmailService emailService, OTPService OTPService, MemberRepository memberRepository, MessageRepository messageRepository, AttachmentService attachmentService, AttachmentRepository attachmentRepository, APIConfig apiConfig) {
+	public UserService(UserRepository userRepository, EmailService emailService, OTPService otpService, MemberService memberService, MessageService messageService, AttachmentService attachmentService, APIConfig apiConfig) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
-		this.OTPService = OTPService;
-		this.memberRepository = memberRepository;
-		this.messageRepository = messageRepository;
+		this.otpService = otpService;
+		this.memberService = memberService;
+		this.messageService = messageService;
 		this.attachmentService = attachmentService;
-		this.attachmentRepository = attachmentRepository;
 		this.apiConfig = apiConfig;
 	}
 
@@ -74,10 +68,10 @@ public class UserService {
 	}
 
 	public List<ChannelDTO> getChannels(User user) {
-		return memberRepository.findAllByUserId(user.getId())
+		return memberService.getChannelsByUserId(user.getId())
 				.stream()
-				.map(Member::getChannel).map(channel -> {
-					Message lastMessage = messageRepository.getLastMessageByChannel(channel);
+				.map(channel -> {
+					Message lastMessage = messageService.getLastMessageByChannel(channel);
 					return new ChannelDTO(channel, lastMessage);
 				})
 				.collect(Collectors.toList());
@@ -112,7 +106,7 @@ public class UserService {
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
 		if (body.getAvatar() <= 0) {
-			Attachment attachment = attachmentRepository.findById(body.getAvatar());
+			Attachment attachment = attachmentService.getById(body.getAvatar());
 
 			if (attachment == null) throw new UnknownAttachmentsException();
 
@@ -145,7 +139,7 @@ public class UserService {
 	}
 
 	public void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
-		OTP OTP = OTPService.validateCode(pathCode);
+		OTP OTP = otpService.validateCode(pathCode);
 
 		userRepository.delete(user);
 
@@ -153,7 +147,7 @@ public class UserService {
 
 		if (OTP == null) return; // is dev
 
-		OTPService.delete(OTP);
+		otpService.delete(OTP);
 	}
 
 	private void changeEmail(User user, UserEditDTO body) {

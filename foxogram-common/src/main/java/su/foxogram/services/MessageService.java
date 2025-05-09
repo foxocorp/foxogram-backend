@@ -136,4 +136,8 @@ public class MessageService {
 				.map(User::getId)
 				.collect(Collectors.toList());
 	}
+
+	public Message getLastMessageByChannel(Channel channel) {
+		return messageRepository.getLastMessageByChannel(channel);
+	}
 }
