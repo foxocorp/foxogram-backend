@@ -1,15 +1,23 @@
+x-common-settings: &common-settings
+  restart: always
+  networks:
+    - foxogram
+
+x-api-settings: &api-settings
+  <<: *common-settings
+  build:
+    context: ./foxogram-api
+
+x-gateway-settings: &gateway-settings
+  <<: *common-settings
+  build:
+    context: ./foxogram-gateway
+
 services:
   foxogram-api:
+    <<: *api-settings
     container_name: foxogram-api
     image: foxogram/api:prod
-    build:
-      context: ./foxogram-api
-    restart: always
-    networks:
-      - db_network
-      - broker_network
-      - imgproxy_network
-      - traefik
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
@@ -18,16 +26,9 @@ services:
       traefik.http.routers.foxogram-api.middlewares: ratelimit@file
 
   foxogram-api-dev:
+    <<: *api-settings
     container_name: foxogram-api-dev
     image: foxogram/api:dev
-    build:
-      context: ./foxogram-api
-    restart: always
-    networks:
-      - db_network
-      - broker_network
-      - imgproxy_network
-      - traefik
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
@@ -36,15 +37,9 @@ services:
       traefik.http.routers.foxogram-api-dev.middlewares: ratelimit@file
 
   foxogram-gateway:
+    <<: *gateway-settings
     container_name: foxogram-gateway
     image: foxogram/gateway:prod
-    build:
-      context: ./foxogram-gateway
-    restart: always
-    networks:
-      - db_network
-      - broker_network
-      - traefik
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-gateway.rule: Host(`gateway.foxogram.su`)
@@ -53,15 +48,9 @@ services:
       traefik.http.routers.foxogram-gateway.middlewares: ratelimit@file
 
   foxogram-gateway-dev:
+    <<: *gateway-settings
     container_name: foxogram-gateway-dev
     image: foxogram/gateway:dev
-    build:
-      context: ./foxogram-gateway
-    restart: always
-    networks:
-      - db_network
-      - broker_network
-      - traefik
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-gateway-dev.rule: Host(`gateway.dev.foxogram.su`)
@@ -70,11 +59,5 @@ services:
       traefik.http.routers.foxogram-gateway-dev.middlewares: ratelimit@file
 
 networks:
-  db_network:
-    external: true
-  broker_network:
-    external: true
-  imgproxy_network:
-    external: true
-  traefik:
+  foxogram:
     external: true

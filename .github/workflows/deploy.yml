@@ -49,21 +49,14 @@ jobs:
           api.app.development_url=https://app.dev.foxogram.su
           EOF
 
-      - name: Build project
+      - name: Build
         env:
           JAVA_HOME: ${{ vars.JAVA_HOME }}
         run: |
           export PATH="${{ vars.JAVA_HOME }}/bin:$PATH"
           ./gradlew build
 
-      - name: Build images
-        run: |
-          docker buildx build --push -t localhost:5000/foxogram/api:${{ vars.ENV }}-${{ github.sha }} foxogram-api
-          docker buildx build --push -t localhost:5000/foxogram/gateway:${{ vars.ENV }}-${{ github.sha }} foxogram-gateway
-
       - name: Run
         env:
-          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
-          NOMAD_VAR_env: ${{ vars.ENV }}
-          NOMAD_VAR_commit: ${{ github.sha }}
-        run: nomad job run nomad.hcl
+          SUFFIX: ${{ vars.ENV == 'dev' && '-dev' || '' }}
+        run: docker compose up foxogram-api$SUFFIX foxogram-gateway$SUFFIX -d --build

@@ -1,5 +1,6 @@
 package su.foxogram.controllers;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -34,5 +35,11 @@ public class CommonController {
 		if (apiConfig.isDevelopment()) appURL = apiConfig.getDevAppURL();
 
 		return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
+	}
+
+	@Hidden
+	@GetMapping("/actuator/health")
+	public String health() {
+		return "{\"status\":\"UP\"}";
 	}
 }
