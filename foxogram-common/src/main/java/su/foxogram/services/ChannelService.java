@@ -26,10 +26,7 @@ import su.foxogram.models.Attachment;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;
-import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.ChannelRepository;
-import su.foxogram.repositories.MemberRepository;
-import su.foxogram.repositories.UserRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -41,24 +38,21 @@ import java.util.stream.Collectors;
 public class ChannelService {
 	private final ChannelRepository channelRepository;
 
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 
-	private final UserRepository userRepository;
+	private final UserService userService;
 
 	private final RabbitService rabbitService;
 
 	private final AttachmentService attachmentService;
 
-	private final AttachmentRepository attachmentRepository;
-
 	@Autowired
-	public ChannelService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, RabbitService rabbitService, AttachmentService attachmentService, AttachmentRepository attachmentRepository) {
+	public ChannelService(ChannelRepository channelRepository, MemberService memberService, UserService userService, RabbitService rabbitService, AttachmentService attachmentService) {
 		this.channelRepository = channelRepository;
-		this.memberRepository = memberRepository;
-		this.userRepository = userRepository;
+		this.memberService = memberService;
+		this.userService = userService;
 		this.rabbitService = rabbitService;
 		this.attachmentService = attachmentService;
-		this.attachmentRepository = attachmentRepository;
 	}
 
 	public Channel createChannel(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
@@ -75,10 +69,10 @@ public class ChannelService {
 			throw new ChannelAlreadyExistException();
 		}
 
-		user = userRepository.findById(user.getId()).orElseThrow(ChannelNotFoundException::new);
+		user = userService.getById(user.getId()).orElseThrow(ChannelNotFoundException::new);
 
 		Member member = new Member(user, channel, MemberConstants.Permissions.ADMIN.getBit());
-		memberRepository.save(member);
+		memberService.add(member);
 
 		log.debug("Channel ({}) by user ({}) created successfully", channel.getName(), user.getUsername());
 		return channel;
@@ -103,7 +97,7 @@ public class ChannelService {
 			if (body.getDisplayName() != null) channel.setDisplayName(body.getDisplayName());
 			if (body.getName() != null) channel.setName(body.getName());
 			if (body.getIcon() <= 0) {
-				Attachment attachment = attachmentRepository.findById(body.getIcon());
+				Attachment attachment = attachmentService.getById(body.getIcon());
 
 				if (attachment == null) throw new UnknownAttachmentsException();
 
@@ -129,7 +123,7 @@ public class ChannelService {
 	}
 
 	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException {
-		Member member = memberRepository.findByChannelAndUser(channel, user);
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN)) throw new MissingPermissionsException();
 
@@ -139,38 +133,30 @@ public class ChannelService {
 	}
 
 	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
-		Member member = memberRepository.findByChannelAndId(channel, user.getId());
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
 
 		if (member != null) throw new MemberAlreadyInChannelException();
 
-		user = userRepository.findById(user.getId()).orElseThrow(ChannelNotFoundException::new);
+		user = userService.getById(user.getId()).orElseThrow(ChannelNotFoundException::new);
 
 		member = new Member(user, channel, 0);
 		member.setPermissions(MemberConstants.Permissions.ATTACH_FILES, MemberConstants.Permissions.SEND_MESSAGES);
 		log.debug("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
-		return memberRepository.save(member);
+		return memberService.add(member);
 	}
 
 	public void leaveUser(Channel channel, User user) throws MemberInChannelNotFoundException, JsonProcessingException {
-		Member member = memberRepository.findByChannelAndUser(channel, user);
-
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
 		if (member == null) throw new MemberInChannelNotFoundException();
 
-		member = memberRepository.findByChannelAndUser(channel, user);
-		memberRepository.delete(member);
+		memberService.delete(member);
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_REMOVE.getValue());
 		log.debug("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 	}
 
-	public List<MemberDTO> getMembers(Channel channel) {
-		return memberRepository.findAllByChannel(channel).stream()
-				.map(member -> new MemberDTO(member, false))
-				.toList();
-	}
-
 	public Member getMember(Channel channel, long memberId) {
-		return memberRepository.findByChannelAndId(channel, memberId);
+		return memberService.getByChannelAndUser(channel.getId(), memberId);
 	}
 
 	private List<Long> getRecipients(Channel channel) {

@@ -24,4 +24,20 @@ public class MemberService {
 				.map(Member::getChannel)
 				.collect(Collectors.toList());
 	}
+
+	public List<Member> getMembers(Channel channel) {
+		return memberRepository.findAllByChannelId(channel.getId());
+	}
+
+	public Member getByChannelAndUser(long channel, long user) {
+		return memberRepository.findByChannelIdAndUserId(channel, user);
+	}
+
+	public Member add(Member member) {
+		return memberRepository.save(member);
+	}
+
+	public void delete(Member member) {
+		memberRepository.delete(member);
+	}
 }

@@ -28,6 +28,7 @@ import su.foxogram.models.Member;
 import su.foxogram.models.Message;
 import su.foxogram.models.User;
 import su.foxogram.services.ChannelService;
+import su.foxogram.services.MemberService;
 import su.foxogram.services.MessageService;
 
 import java.util.List;
@@ -43,9 +44,12 @@ public class ChannelsController {
 
 	private final MessageService messageService;
 
-	public ChannelsController(ChannelService channelService, MessageService messageService) {
+	private final MemberService memberService;
+
+	public ChannelsController(ChannelService channelService, MessageService messageService, MemberService memberService) {
 		this.channelService = channelService;
 		this.messageService = messageService;
+		this.memberService = memberService;
 	}
 
 	@Operation(summary = "Create channel")
@@ -123,7 +127,9 @@ public class ChannelsController {
 	@Operation(summary = "Get members")
 	@GetMapping("/{channelId}/members")
 	public List<MemberDTO> getMembers(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) {
-		return channelService.getMembers(channel);
+		return memberService.getMembers(channel).stream()
+				.map(member -> new MemberDTO(member, false))
+				.toList();
 	}
 
 	@Operation(summary = "Get messages")

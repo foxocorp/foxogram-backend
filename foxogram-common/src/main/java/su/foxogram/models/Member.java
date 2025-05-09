@@ -25,7 +25,7 @@ public class Member {
 	private User user;
 
 	@ManyToOne()
-	@JoinColumn(name = "channel", nullable = false)
+	@JoinColumn(name = "channel_id", nullable = false)
 	private Channel channel;
 
 	@Column()

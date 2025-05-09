@@ -70,4 +70,8 @@ public class AttachmentService {
 
 		return attachments;
 	}
+
+	public Attachment getById(long id) {
+		return attachmentRepository.findById(id);
+	}
 }
