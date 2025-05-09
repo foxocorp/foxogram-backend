@@ -16,9 +16,6 @@ import su.foxogram.exceptions.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exceptions.message.MessageNotFoundException;
 import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.*;
-import su.foxogram.repositories.AttachmentRepository;
-import su.foxogram.repositories.ChannelRepository;
-import su.foxogram.repositories.MemberRepository;
 import su.foxogram.repositories.MessageRepository;
 
 import java.util.ArrayList;
@@ -34,21 +31,18 @@ public class MessageService {
 
 	private final RabbitService rabbitService;
 
-	private final ChannelRepository channelRepository;
+	private final ChannelService channelService;
 
-	private final MemberRepository memberRepository;
-
-	private final AttachmentRepository attachmentRepository;
+	private final MemberService memberService;
 
 	private final AttachmentService attachmentService;
 
 	@Autowired
-	public MessageService(MessageRepository messageRepository, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository, AttachmentService attachmentService) {
+	public MessageService(MessageRepository messageRepository, RabbitService rabbitService, ChannelService channelService, MemberService memberService, AttachmentService attachmentService) {
 		this.messageRepository = messageRepository;
 		this.rabbitService = rabbitService;
-		this.channelRepository = channelRepository;
-		this.memberRepository = memberRepository;
-		this.attachmentRepository = attachmentRepository;
+		this.channelService = channelService;
+		this.memberService = memberService;
 		this.attachmentService = attachmentService;
 	}
 
@@ -61,7 +55,7 @@ public class MessageService {
 				.map(message -> {
 					List<Attachment> attachments = new ArrayList<>();
 					if (message.getAttachments() != null) {
-						message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment.getId())));
+						message.getAttachments().forEach(attachment -> attachments.add(attachmentService.getById(attachment.getId())));
 					}
 					return new MessageDTO(message, attachments, true);
 				})
@@ -74,7 +68,7 @@ public class MessageService {
 		if (message == null) throw new MessageNotFoundException();
 
 		List<Attachment> attachments = new ArrayList<>();
-		message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment.getId())));
+		message.getAttachments().forEach(attachment -> attachments.add(attachmentService.getById(attachment.getId())));
 
 		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
@@ -82,7 +76,7 @@ public class MessageService {
 	}
 
 	public Message addMessage(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException {
-		Member member = memberRepository.findByChannelIdAndUserId(channel.getId(), user.getId());
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
@@ -99,7 +93,7 @@ public class MessageService {
 	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentsAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty {
 		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
 
-		Member member = memberRepository.findByChannelIdAndUserId(channel.getId(), user.getId());
+		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId());
 
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
@@ -136,8 +130,8 @@ public class MessageService {
 	}
 
 	private List<Long> getRecipients(Channel channel) throws ChannelNotFoundException {
-		channel = channelRepository.findById(channel.getId()).orElseThrow(ChannelNotFoundException::new);
-		return channel.getMembers().stream()
+		return channelService.getChannelById(channel.getId())
+				.getMembers().stream()
 				.map(Member::getUser)
 				.map(User::getId)
 				.collect(Collectors.toList());
