@@ -11,15 +11,15 @@ import su.foxogram.repositories.OTPRepository;
 @Service
 public class OTPService {
 
-	private final OTPRepository OTPRepository;
+	private final OTPRepository otpRepository;
 
-	public OTPService(OTPRepository OTPRepository) {
-		this.OTPRepository = OTPRepository;
+	public OTPService(OTPRepository otpRepository) {
+		this.otpRepository = otpRepository;
 	}
 
 	public OTP validateCode(String pathCode) throws OTPsInvalidException, OTPExpiredException {
 
-		OTP OTP = OTPRepository.findByValue(pathCode);
+		OTP OTP = otpRepository.findByValue(pathCode);
 
 		if (OTP == null)
 			throw new OTPsInvalidException();
@@ -33,17 +33,17 @@ public class OTPService {
 	}
 
 	public void delete(OTP OTP) {
-		OTPRepository.delete(OTP);
+		otpRepository.delete(OTP);
 		log.debug("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
 	}
 
 	public void save(long id, String type, String digitCode, long issuedAt, long expiresAt) {
 		OTP OTP = new OTP(id, type, digitCode, issuedAt, expiresAt);
-		OTPRepository.save(OTP);
+		otpRepository.save(OTP);
 		log.debug("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
 	}
 
 	public OTP getByUserId(long userId) {
-		return OTPRepository.findByUserId(userId);
+		return otpRepository.findByUserId(userId);
 	}
 }
