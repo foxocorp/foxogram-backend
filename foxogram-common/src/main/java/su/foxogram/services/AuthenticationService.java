@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.EmailConstants;
@@ -22,33 +21,29 @@ import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.models.OTP;
 import su.foxogram.models.User;
-import su.foxogram.repositories.OTPRepository;
-import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
 @Slf4j
 @Service
 public class AuthenticationService {
-	private final UserRepository userRepository;
 
-	private final OTPRepository OTPRepository;
+	private final UserService userService;
 
 	private final EmailService emailService;
 
 	private final JwtService jwtService;
 
-	private final OTPService OTPService;
+	private final OTPService otpService;
 
 	private final APIConfig apiConfig;
 
 	@Autowired
-	public AuthenticationService(UserRepository userRepository, OTPRepository OTPRepository, EmailService emailService, JwtService jwtService, OTPService OTPService, APIConfig apiConfig) {
-		this.userRepository = userRepository;
-		this.OTPRepository = OTPRepository;
+	public AuthenticationService(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig) {
+		this.userService = userService;
 		this.emailService = emailService;
 		this.jwtService = jwtService;
-		this.OTPService = OTPService;
+		this.otpService = otpService;
 		this.apiConfig = apiConfig;
 	}
 
@@ -72,7 +67,7 @@ public class AuthenticationService {
 			throw new UserUnauthorizedException();
 		}
 
-		User user = userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
+		User user = userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
 
 		if (!user.getPassword().equals(passwordHash)) {
 			throw new UserUnauthorizedException();
@@ -81,16 +76,11 @@ public class AuthenticationService {
 		if (!ignoreEmailVerification && user.hasFlag(UserConstants.Flags.EMAIL_VERIFIED))
 			throw new UserEmailNotVerifiedException();
 
-		return userRepository.findById(userId).orElseThrow(UserUnauthorizedException::new);
+		return userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
 	}
 
 	public String userRegister(String username, String email, String password) throws UserCredentialsDuplicateException {
-		User user = createUser(username, email, password);
-		try {
-			userRepository.save(user);
-		} catch (DataIntegrityViolationException e) {
-			throw new UserCredentialsDuplicateException();
-		}
+		User user = userService.add(username, email, password);
 
 		log.debug("User ({}) created successfully", user.getUsername());
 
@@ -101,15 +91,6 @@ public class AuthenticationService {
 		}
 
 		return jwtService.generate(user.getId(), user.getPassword());
-	}
-
-	private User createUser(String username, String email, String password) {
-		long deletion = 0;
-		long flags = UserConstants.Flags.AWAITING_CONFIRMATION.getBit();
-		if (apiConfig.isDevelopment()) flags = UserConstants.Flags.EMAIL_VERIFIED.getBit();
-		int type = UserConstants.Type.USER.getType();
-
-		return new User(0, null, username, email, PasswordHasher.hashPassword(password), flags, type, deletion, null);
 	}
 
 	private void sendConfirmationEmail(User user) {
@@ -123,37 +104,27 @@ public class AuthenticationService {
 	}
 
 	public String loginUser(String email, String password) throws UserCredentialsIsInvalidException {
-		User user = findUserByEmail(email);
-		validatePassword(user, password);
+		User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
+		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
+			throw new UserCredentialsIsInvalidException();
 
 		log.debug("User ({}) login successfully", user.getUsername());
 		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
-	public User findUserByEmail(String email) throws UserCredentialsIsInvalidException {
-		return userRepository.findByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
-	}
-
-	private void validatePassword(User user, String password) throws UserCredentialsIsInvalidException {
-		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
-			throw new UserCredentialsIsInvalidException();
-	}
-
 	public void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
-		OTP OTP = OTPService.validateCode(pathCode);
+		OTP OTP = otpService.validateCode(pathCode);
 
-		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
-		user.addFlag(UserConstants.Flags.EMAIL_VERIFIED);
-		userRepository.save(user);
+		userService.updateFlags(user, UserConstants.Flags.AWAITING_CONFIRMATION, UserConstants.Flags.EMAIL_VERIFIED);
 		log.debug("User ({}) email verified successfully", user.getUsername());
 
-		OTPService.delete(OTP);
+		otpService.delete(OTP);
 	}
 
 	public void resendEmail(User user, String accessToken) throws OTPsInvalidException, NeedToWaitBeforeResendException {
 		if (apiConfig.isDevelopment()) return;
 
-		OTP OTP = OTPRepository.findByUserId(user.getId());
+		OTP OTP = otpService.getByUserId(user.getId());
 
 		if (OTP == null) throw new OTPsInvalidException();
 
@@ -166,7 +137,7 @@ public class AuthenticationService {
 	}
 
 	public void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
-		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
+		User user = userService.getByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 
 		String type = EmailConstants.Type.EMAIL_VERIFY.getValue();
 		String value = OTPGenerator.generateDigitCode();
@@ -180,13 +151,13 @@ public class AuthenticationService {
 	}
 
 	public void confirmResetPassword(UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
-		User user = userRepository.findByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
-		OTP OTP = OTPService.validateCode(body.getOTP());
+		User user = userService.getByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
+		OTP OTP = otpService.validateCode(body.getOTP());
 
 		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
-		OTPService.delete(OTP);
+		otpService.delete(OTP);
 		log.debug("User ({}) password reset successfully", user.getUsername());
 	}
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import su.foxogram.configs.APIConfig;
 import su.foxogram.constants.EmailConstants;
 import su.foxogram.constants.OTPConstants;
 import su.foxogram.constants.UserConstants;
@@ -17,7 +18,6 @@ import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
-import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.*;
 import su.foxogram.repositories.AttachmentRepository;
 import su.foxogram.repositories.MemberRepository;
@@ -27,6 +27,7 @@ import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,8 +47,10 @@ public class UserService {
 
 	private final AttachmentRepository attachmentRepository;
 
+	private final APIConfig apiConfig;
+
 	@Autowired
-	public UserService(UserRepository userRepository, EmailService emailService, OTPService OTPService, MemberRepository memberRepository, MessageRepository messageRepository, AttachmentService attachmentService, AttachmentRepository attachmentRepository) {
+	public UserService(UserRepository userRepository, EmailService emailService, OTPService OTPService, MemberRepository memberRepository, MessageRepository messageRepository, AttachmentService attachmentService, AttachmentRepository attachmentRepository, APIConfig apiConfig) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.OTPService = OTPService;
@@ -55,14 +58,19 @@ public class UserService {
 		this.messageRepository = messageRepository;
 		this.attachmentService = attachmentService;
 		this.attachmentRepository = attachmentRepository;
+		this.apiConfig = apiConfig;
 	}
 
-	public User getUserById(long id) throws UserNotFoundException {
-		return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+	public Optional<User> getById(long id) {
+		return userRepository.findById(id);
 	}
 
-	public User getUserByUsername(String username) throws UserNotFoundException {
-		return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+	public Optional<User> getByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	public Optional<User> getByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 
 	public List<ChannelDTO> getChannels(User user) {
@@ -75,7 +83,30 @@ public class UserService {
 				.collect(Collectors.toList());
 	}
 
-	public User editUser(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
+	public void updateFlags(User user, UserConstants.Flags removeFlag, UserConstants.Flags addFlag) {
+		user.removeFlag(removeFlag);
+		user.addFlag(addFlag);
+		userRepository.save(user);
+	}
+
+	public User add(String username, String email, String password) throws UserCredentialsDuplicateException {
+		long deletion = 0;
+		long flags = UserConstants.Flags.AWAITING_CONFIRMATION.getBit();
+		if (apiConfig.isDevelopment()) flags = UserConstants.Flags.EMAIL_VERIFIED.getBit();
+		int type = UserConstants.Type.USER.getType();
+
+		User user = new User(0, null, username, email, PasswordHasher.hashPassword(password), flags, type, deletion, null);
+
+		try {
+			userRepository.save(user);
+		} catch (DataIntegrityViolationException e) {
+			throw new UserCredentialsDuplicateException();
+		}
+
+		return user;
+	}
+
+	public User update(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
 		if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
 		if (body.getUsername() != null) user.setUsername(body.getUsername());
 		if (body.getEmail() != null) changeEmail(user, body);
@@ -105,7 +136,7 @@ public class UserService {
 		return attachmentService.uploadAttachment(user, attachment);
 	}
 
-	public void requestUserDelete(User user, String password) throws UserCredentialsIsInvalidException {
+	public void requestDelete(User user, String password) throws UserCredentialsIsInvalidException {
 		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
 			throw new UserCredentialsIsInvalidException();
 
@@ -113,7 +144,7 @@ public class UserService {
 		log.debug("User ({}) delete requested successfully", user.getUsername());
 	}
 
-	public void confirmUserDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
+	public void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
 		OTP OTP = OTPService.validateCode(pathCode);
 
 		userRepository.delete(user);

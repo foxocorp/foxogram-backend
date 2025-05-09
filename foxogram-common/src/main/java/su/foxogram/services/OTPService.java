@@ -42,4 +42,8 @@ public class OTPService {
 		OTPRepository.save(OTP);
 		log.debug("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
 	}
+
+	public OTP getByUserId(long userId) {
+		return OTPRepository.findByUserId(userId);
+	}
 }

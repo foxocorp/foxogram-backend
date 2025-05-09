@@ -59,13 +59,16 @@ public class UsersController {
 	@Operation(summary = "Get user by id")
 	@GetMapping("/{id}")
 	public UserDTO getUserById(@PathVariable long id) throws UserNotFoundException {
-		return new UserDTO(userService.getUserById(id), null, false, false);
+		return new UserDTO(userService.getById(id).orElseThrow(UserNotFoundException::new),
+				null,
+				false,
+				false);
 	}
 
 	@Operation(summary = "Get user by username")
 	@GetMapping("/@{username}")
 	public UserDTO getUserByUsername(@PathVariable String username) throws UserNotFoundException {
-		return new UserDTO(userService.getUserByUsername(username), null, false, false);
+		return new UserDTO(userService.getByUsername(username).orElseThrow(UserNotFoundException::new), null, false, false);
 	}
 
 	@Operation(summary = "Get user channels")
@@ -77,7 +80,7 @@ public class UsersController {
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
 	public UserDTO editUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @Valid @ModelAttribute UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException, UnknownAttachmentsException {
-		authenticatedUser = userService.editUser(authenticatedUser, body);
+		authenticatedUser = userService.update(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, true, true);
 	}
@@ -94,7 +97,7 @@ public class UsersController {
 		String password = body.getPassword();
 		log.debug("USER deletion requested ({}) request", user.getId());
 
-		userService.requestUserDelete(user, password);
+		userService.requestDelete(user, password);
 
 		return new OkDTO(true);
 	}
@@ -104,7 +107,7 @@ public class UsersController {
 	public OkDTO deleteUserConfirm(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
 		log.debug("USER deletion confirm ({}) request", user.getId());
 
-		userService.confirmUserDelete(user, body.getOTP());
+		userService.confirmDelete(user, body.getOTP());
 
 		return new OkDTO(true);
 	}
