@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constants.AttributesConstants;
 import su.foxogram.exceptions.channel.ChannelNotFoundException;
-import su.foxogram.services.ChannelsService;
+import su.foxogram.services.ChannelService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,13 +19,13 @@ import java.util.regex.Pattern;
 @Component
 public class ChannelInterceptor implements HandlerInterceptor {
 
-	private final ChannelsService channelsService;
+	private final ChannelService channelService;
 
 	private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
 
 	@Autowired
-	public ChannelInterceptor(ChannelsService channelsService) {
-		this.channelsService = channelsService;
+	public ChannelInterceptor(ChannelService channelService) {
+		this.channelService = channelService;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
 		}
 
 		long id = Long.parseLong(matcher.group(1));
-		request.setAttribute(AttributesConstants.CHANNEL, channelsService.getChannelById(id));
+		request.setAttribute(AttributesConstants.CHANNEL, channelService.getChannelById(id));
 
 		return true;
 	}

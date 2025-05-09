@@ -12,18 +12,18 @@ import su.foxogram.exceptions.channel.ChannelNotFoundException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Member;
 import su.foxogram.models.User;
-import su.foxogram.services.ChannelsService;
+import su.foxogram.services.ChannelService;
 
 import java.util.Objects;
 
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
 
-	private final ChannelsService channelsService;
+	private final ChannelService channelService;
 
 	@Autowired
-	public MemberInterceptor(ChannelsService channelsService) {
-		this.channelsService = channelsService;
+	public MemberInterceptor(ChannelService channelService) {
+		this.channelService = channelService;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class MemberInterceptor implements HandlerInterceptor {
 		User user = (User) request.getAttribute(AttributesConstants.USER);
 		Channel channel = (Channel) request.getAttribute(AttributesConstants.CHANNEL);
 
-		Member member = channelsService.getMember(channel, user.getId());
+		Member member = channelService.getMember(channel, user.getId());
 
 		if (member == null) throw new ChannelNotFoundException();
 

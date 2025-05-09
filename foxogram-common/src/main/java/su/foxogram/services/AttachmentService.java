@@ -16,13 +16,13 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class AttachmentsService {
+public class AttachmentService {
 
 	public final AttachmentRepository attachmentRepository;
 
 	public final StorageService storageService;
 
-	public AttachmentsService(AttachmentRepository attachmentRepository, StorageService storageService) {
+	public AttachmentService(AttachmentRepository attachmentRepository, StorageService storageService) {
 		this.attachmentRepository = attachmentRepository;
 		this.storageService = storageService;
 	}

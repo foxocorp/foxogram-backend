@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ChannelsService {
+public class ChannelService {
 	private final ChannelRepository channelRepository;
 
 	private final MemberRepository memberRepository;
@@ -47,17 +47,17 @@ public class ChannelsService {
 
 	private final RabbitService rabbitService;
 
-	private final AttachmentsService attachmentsService;
+	private final AttachmentService attachmentService;
 
 	private final AttachmentRepository attachmentRepository;
 
 	@Autowired
-	public ChannelsService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, RabbitService rabbitService, AttachmentsService attachmentsService, AttachmentRepository attachmentRepository) {
+	public ChannelService(ChannelRepository channelRepository, MemberRepository memberRepository, UserRepository userRepository, RabbitService rabbitService, AttachmentService attachmentService, AttachmentRepository attachmentRepository) {
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.userRepository = userRepository;
 		this.rabbitService = rabbitService;
-		this.attachmentsService = attachmentsService;
+		this.attachmentService = attachmentService;
 		this.attachmentRepository = attachmentRepository;
 	}
 
@@ -125,7 +125,7 @@ public class ChannelsService {
 	public AttachmentsDTO uploadIcon(AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		if (attachment == null) throw new AttachmentsCannotBeEmpty();
 
-		return attachmentsService.uploadAttachment(null, attachment);
+		return attachmentService.uploadAttachment(null, attachment);
 	}
 
 	public void deleteChannel(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException {

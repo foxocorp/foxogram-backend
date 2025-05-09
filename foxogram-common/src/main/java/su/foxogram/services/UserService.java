@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UsersService {
+public class UserService {
 	private final UserRepository userRepository;
 
 	private final EmailService emailService;
@@ -42,18 +42,18 @@ public class UsersService {
 
 	private final MessageRepository messageRepository;
 
-	private final AttachmentsService attachmentsService;
+	private final AttachmentService attachmentService;
 
 	private final AttachmentRepository attachmentRepository;
 
 	@Autowired
-	public UsersService(UserRepository userRepository, EmailService emailService, OTPService OTPService, MemberRepository memberRepository, MessageRepository messageRepository, AttachmentsService attachmentsService, AttachmentRepository attachmentRepository) {
+	public UserService(UserRepository userRepository, EmailService emailService, OTPService OTPService, MemberRepository memberRepository, MessageRepository messageRepository, AttachmentService attachmentService, AttachmentRepository attachmentRepository) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.OTPService = OTPService;
 		this.memberRepository = memberRepository;
 		this.messageRepository = messageRepository;
-		this.attachmentsService = attachmentsService;
+		this.attachmentService = attachmentService;
 		this.attachmentRepository = attachmentRepository;
 	}
 
@@ -102,7 +102,7 @@ public class UsersService {
 	public AttachmentsDTO uploadAvatar(User user, AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		if (attachment == null) throw new AttachmentsCannotBeEmpty();
 
-		return attachmentsService.uploadAttachment(user, attachment);
+		return attachmentService.uploadAttachment(user, attachment);
 	}
 
 	public void requestUserDelete(User user, String password) throws UserCredentialsIsInvalidException {

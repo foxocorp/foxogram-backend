@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class MessagesService {
+public class MessageService {
 
 	private final MessageRepository messageRepository;
 
@@ -40,16 +40,16 @@ public class MessagesService {
 
 	private final AttachmentRepository attachmentRepository;
 
-	private final AttachmentsService attachmentsService;
+	private final AttachmentService attachmentService;
 
 	@Autowired
-	public MessagesService(MessageRepository messageRepository, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository, AttachmentsService attachmentsService) {
+	public MessageService(MessageRepository messageRepository, RabbitService rabbitService, ChannelRepository channelRepository, MemberRepository memberRepository, AttachmentRepository attachmentRepository, AttachmentService attachmentService) {
 		this.messageRepository = messageRepository;
 		this.rabbitService = rabbitService;
 		this.channelRepository = channelRepository;
 		this.memberRepository = memberRepository;
 		this.attachmentRepository = attachmentRepository;
-		this.attachmentsService = attachmentsService;
+		this.attachmentService = attachmentService;
 	}
 
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
@@ -87,7 +87,7 @@ public class MessagesService {
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		Message message = new Message(channel, body.getContent(), member, attachmentsService.getAttachments(user, body.getAttachments()));
+		Message message = new Message(channel, body.getContent(), member, attachmentService.getAttachments(user, body.getAttachments()));
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
@@ -104,7 +104,7 @@ public class MessagesService {
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		return attachmentsService.uploadAttachments(user, attachments);
+		return attachmentService.uploadAttachments(user, attachments);
 	}
 
 	public void deleteMessage(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {

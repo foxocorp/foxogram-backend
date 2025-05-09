@@ -26,7 +26,7 @@ import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Channel;
 import su.foxogram.models.User;
 import su.foxogram.services.MemberService;
-import su.foxogram.services.UsersService;
+import su.foxogram.services.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,12 +36,12 @@ import java.util.stream.Collectors;
 @Tag(name = "Users")
 @RequestMapping(value = APIConstants.USERS, produces = "application/json")
 public class UsersController {
-	private final UsersService usersService;
+	private final UserService userService;
 
 	private final MemberService memberService;
 
-	public UsersController(UsersService usersService, MemberService memberService) {
-		this.usersService = usersService;
+	public UsersController(UserService userService, MemberService memberService) {
+		this.userService = userService;
 		this.memberService = memberService;
 	}
 
@@ -59,25 +59,25 @@ public class UsersController {
 	@Operation(summary = "Get user by id")
 	@GetMapping("/{id}")
 	public UserDTO getUserById(@PathVariable long id) throws UserNotFoundException {
-		return new UserDTO(usersService.getUserById(id), null, false, false);
+		return new UserDTO(userService.getUserById(id), null, false, false);
 	}
 
 	@Operation(summary = "Get user by username")
 	@GetMapping("/@{username}")
 	public UserDTO getUserByUsername(@PathVariable String username) throws UserNotFoundException {
-		return new UserDTO(usersService.getUserByUsername(username), null, false, false);
+		return new UserDTO(userService.getUserByUsername(username), null, false, false);
 	}
 
 	@Operation(summary = "Get user channels")
 	@GetMapping("/@me/channels")
 	public List<ChannelDTO> getUserChannels(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser) {
-		return usersService.getChannels(authenticatedUser);
+		return userService.getChannels(authenticatedUser);
 	}
 
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
 	public UserDTO editUser(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @Valid @ModelAttribute UserEditDTO body) throws UserCredentialsDuplicateException, UploadFailedException, UnknownAttachmentsException {
-		authenticatedUser = usersService.editUser(authenticatedUser, body);
+		authenticatedUser = userService.editUser(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, true, true);
 	}
@@ -85,7 +85,7 @@ public class UsersController {
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
 	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributesConstants.USER) User authenticatedUser, @RequestBody AttachmentsAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		return usersService.uploadAvatar(authenticatedUser, attachment);
+		return userService.uploadAvatar(authenticatedUser, attachment);
 	}
 
 	@Operation(summary = "Delete")
@@ -94,7 +94,7 @@ public class UsersController {
 		String password = body.getPassword();
 		log.debug("USER deletion requested ({}) request", user.getId());
 
-		usersService.requestUserDelete(user, password);
+		userService.requestUserDelete(user, password);
 
 		return new OkDTO(true);
 	}
@@ -104,7 +104,7 @@ public class UsersController {
 	public OkDTO deleteUserConfirm(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
 		log.debug("USER deletion confirm ({}) request", user.getId());
 
-		usersService.confirmUserDelete(user, body.getOTP());
+		userService.confirmUserDelete(user, body.getOTP());
 
 		return new OkDTO(true);
 	}
