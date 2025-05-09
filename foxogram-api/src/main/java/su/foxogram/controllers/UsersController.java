@@ -24,9 +24,8 @@ import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
 import su.foxogram.exceptions.user.UserNotFoundException;
 import su.foxogram.models.Channel;
-import su.foxogram.models.Member;
 import su.foxogram.models.User;
-import su.foxogram.repositories.MemberRepository;
+import su.foxogram.services.MemberService;
 import su.foxogram.services.UsersService;
 
 import java.util.List;
@@ -39,19 +38,18 @@ import java.util.stream.Collectors;
 public class UsersController {
 	private final UsersService usersService;
 
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 
-	public UsersController(UsersService usersService, MemberRepository memberRepository) {
+	public UsersController(UsersService usersService, MemberService memberService) {
 		this.usersService = usersService;
-		this.memberRepository = memberRepository;
+		this.memberService = memberService;
 	}
 
 	@Operation(summary = "Get me")
 	@GetMapping("/@me")
 	public UserDTO getMe(@RequestAttribute(value = AttributesConstants.USER) User user) {
-		List<Long> channels = memberRepository.findAllByUserId(user.getId())
+		List<Long> channels = memberService.getChannelsByUserId(user.getId())
 				.stream()
-				.map(Member::getChannel)
 				.map(Channel::getId)
 				.collect(Collectors.toList());
 
