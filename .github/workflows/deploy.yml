@@ -30,6 +30,8 @@ jobs:
           spring.jpa.open-in-view=false
           spring.data.jpa.repositories.bootstrap-mode: deferred
           spring.rabbitmq.host=${{ vars.RABBIT_HOST }}
+          logging.level.root=${{ vars.ENV == 'dev' && 'INFO' || 'WARN' }}
+          logging.level.org.springframework=${{ vars.ENV == 'dev' && 'INFO' || 'WARN' }}
           rabbit.queue=${{ vars.RABBIT_QUEUE }}
           spring.jackson.property-naming-strategy=SNAKE_CASE
           springdoc.swagger-ui.enabled=false
