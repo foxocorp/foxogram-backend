@@ -55,7 +55,7 @@ public class MessagesService {
 	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
 		List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit);
 
-		log.info("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
+		log.debug("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
 		return messagesArray.reversed().stream()
 				.map(message -> {
@@ -76,7 +76,7 @@ public class MessagesService {
 		List<Attachment> attachments = new ArrayList<>();
 		message.getAttachments().forEach(attachment -> attachments.add(attachmentRepository.findById(attachment.getId())));
 
-		log.info("Message ({}) in channel ({}) found successfully", id, channel.getId());
+		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
 		return new MessageDTO(message, attachments, true);
 	}
@@ -91,7 +91,7 @@ public class MessagesService {
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
-		log.info("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
+		log.debug("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 
 		return message;
 	}
@@ -116,7 +116,7 @@ public class MessagesService {
 
 		messageRepository.delete(message);
 		rabbitService.send(getRecipients(channel), Map.of("id", id), GatewayConstants.Event.MESSAGE_DELETE.getValue());
-		log.info("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
+		log.debug("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
 	}
 
 	public Message editMessage(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
@@ -130,7 +130,7 @@ public class MessagesService {
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
-		log.info("Message ({}) in channel ({}) edited successfully", id, channel.getId());
+		log.debug("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;
 	}

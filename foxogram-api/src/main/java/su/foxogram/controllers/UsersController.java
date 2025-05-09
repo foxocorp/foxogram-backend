@@ -94,7 +94,7 @@ public class UsersController {
 	@DeleteMapping("/@me")
 	public OkDTO deleteUser(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody UserDeleteDTO body) throws UserCredentialsIsInvalidException {
 		String password = body.getPassword();
-		log.info("USER deletion requested ({}, {}) request", user.getId(), user.getEmail());
+		log.debug("USER deletion requested ({}) request", user.getId());
 
 		usersService.requestUserDelete(user, password);
 
@@ -104,7 +104,7 @@ public class UsersController {
 	@Operation(summary = "Confirm delete")
 	@PostMapping("/@me/delete-confirm")
 	public OkDTO deleteUserConfirm(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
-		log.info("USER deletion confirm ({}, {}) request", user.getId(), user.getEmail());
+		log.debug("USER deletion confirm ({}) request", user.getId());
 
 		usersService.confirmUserDelete(user, body.getOTP());
 

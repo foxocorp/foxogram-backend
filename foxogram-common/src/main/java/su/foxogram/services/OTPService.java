@@ -27,19 +27,19 @@ public class OTPService {
 		if (OTP.expiresAt <= System.currentTimeMillis())
 			throw new OTPExpiredException();
 
-		log.info("OTP ({}) for user ({}) validated successfully", OTP.getValue(), OTP.getUserId());
+		log.debug("OTP ({}) for user ({}) validated successfully", OTP.getValue(), OTP.getUserId());
 
 		return OTP;
 	}
 
 	public void delete(OTP OTP) {
 		OTPRepository.delete(OTP);
-		log.info("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
+		log.debug("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
 	}
 
 	public void save(long id, String type, String digitCode, long issuedAt, long expiresAt) {
 		OTP OTP = new OTP(id, type, digitCode, issuedAt, expiresAt);
 		OTPRepository.save(OTP);
-		log.info("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
+		log.debug("OTP ({}, {}) saved successfully", OTP.getValue(), OTP.getUserId());
 	}
 }

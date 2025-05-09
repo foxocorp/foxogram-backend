@@ -80,7 +80,7 @@ public class ChannelsService {
 		Member member = new Member(user, channel, MemberConstants.Permissions.ADMIN.getBit());
 		memberRepository.save(member);
 
-		log.info("Channel ({}) by user ({}) created successfully", channel.getName(), user.getUsername());
+		log.debug("Channel ({}) by user ({}) created successfully", channel.getName(), user.getUsername());
 		return channel;
 	}
 
@@ -118,7 +118,7 @@ public class ChannelsService {
 		}
 
 		rabbitService.send(getRecipients(channel), new ChannelDTO(channel, null), GatewayConstants.Event.CHANNEL_UPDATE.getValue());
-		log.info("Channel ({}) edited successfully", channel.getName());
+		log.debug("Channel ({}) edited successfully", channel.getName());
 		return channel;
 	}
 
@@ -135,7 +135,7 @@ public class ChannelsService {
 
 		channelRepository.delete(channel);
 		rabbitService.send(getRecipients(channel), Map.of("id", channel.getId()), GatewayConstants.Event.CHANNEL_DELETE.getValue());
-		log.info("Channel ({}) deleted successfully", channel.getName());
+		log.debug("Channel ({}) deleted successfully", channel.getName());
 	}
 
 	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException, ChannelNotFoundException {
@@ -147,7 +147,7 @@ public class ChannelsService {
 
 		member = new Member(user, channel, 0);
 		member.setPermissions(MemberConstants.Permissions.ATTACH_FILES, MemberConstants.Permissions.SEND_MESSAGES);
-		log.info("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
+		log.debug("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_ADD.getValue());
 		return memberRepository.save(member);
 	}
@@ -160,7 +160,7 @@ public class ChannelsService {
 		member = memberRepository.findByChannelAndUser(channel, user);
 		memberRepository.delete(member);
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstants.Event.MEMBER_REMOVE.getValue());
-		log.info("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
+		log.debug("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
 	}
 
 	public List<MemberDTO> getMembers(Channel channel) {

@@ -53,7 +53,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 		request.setAttribute(AttributesConstants.USER, user);
 		request.setAttribute(AttributesConstants.ACCESS_TOKEN, accessToken);
 
-		log.info("Authenticated user ({}, {}) successfully", user.getUsername(), user.getEmail());
+		log.debug("Authenticated user ({}) successfully", user.getUsername());
 		return true;
 	}
 }

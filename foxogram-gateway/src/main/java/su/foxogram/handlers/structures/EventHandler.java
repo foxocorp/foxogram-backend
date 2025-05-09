@@ -50,7 +50,7 @@ public class EventHandler extends TextWebSocketHandler {
 				if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
 					try {
 						session.getWebSocketSession().close(CloseCodesConstants.HEARTBEAT_TIMEOUT);
-						log.info("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
+						log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
 					} catch (IOException e) {
 						log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
 						throw new RuntimeException(e);
@@ -64,13 +64,13 @@ public class EventHandler extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-		log.info("Connection for session ({}) established", session.getId());
+		log.debug("Connection for session ({}) established", session.getId());
 		sessions.put(session.getId(), new Session(0, session));
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) {
-		log.info("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
+		log.debug("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
 		sessions.remove(session.getId());
 	}
 

@@ -39,7 +39,7 @@ public class HeartbeatHandler implements BaseHandler {
 			userSession.setLastPingTimestamp(System.currentTimeMillis());
 
 			session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HeartbeatACKDTO())));
-			log.info("Got heartbeat from session ({})", session.getId());
+			log.debug("Got heartbeat from session ({})", session.getId());
 		}
 	}
 }

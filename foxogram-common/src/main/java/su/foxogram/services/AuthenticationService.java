@@ -92,12 +92,12 @@ public class AuthenticationService {
 			throw new UserCredentialsDuplicateException();
 		}
 
-		log.info("User ({}, {}) created successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) created successfully", user.getUsername());
 
 		if (!apiConfig.isDevelopment()) {
 			sendConfirmationEmail(user);
 
-			log.info("User ({}, {}) email verification message sent successfully", user.getUsername(), user.getEmail());
+			log.debug("User ({}) email verification message sent successfully", user.getUsername());
 		}
 
 		return jwtService.generate(user.getId(), user.getPassword());
@@ -126,7 +126,7 @@ public class AuthenticationService {
 		User user = findUserByEmail(email);
 		validatePassword(user, password);
 
-		log.info("User ({}, {}) login successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) login successfully", user.getUsername());
 		return jwtService.generate(user.getId(), user.getPassword());
 	}
 
@@ -145,7 +145,7 @@ public class AuthenticationService {
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 		user.addFlag(UserConstants.Flags.EMAIL_VERIFIED);
 		userRepository.save(user);
-		log.info("User ({}, {}) email verified successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) email verified successfully", user.getUsername());
 
 		OTPService.delete(OTP);
 	}
@@ -161,7 +161,7 @@ public class AuthenticationService {
 		if (System.currentTimeMillis() - issuedAt < OTPConstants.Lifetime.RESEND.getValue())
 			throw new NeedToWaitBeforeResendException();
 
-		log.info("User ({}, {}) email resend successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) email resend successfully", user.getUsername());
 		emailService.sendEmail(user.getEmail(), user.getId(), OTP.getType(), user.getUsername(), OTP.getValue(), System.currentTimeMillis(), OTP.getExpiresAt(), accessToken);
 	}
 
@@ -176,7 +176,7 @@ public class AuthenticationService {
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		emailService.sendEmail(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, null);
-		log.info("User ({}, {}) reset password requested successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) reset password requested successfully", user.getUsername());
 	}
 
 	public void confirmResetPassword(UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
@@ -187,7 +187,7 @@ public class AuthenticationService {
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
 		OTPService.delete(OTP);
-		log.info("User ({}, {}) password reset successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) password reset successfully", user.getUsername());
 	}
 
 	public User authUser(String accessToken, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {

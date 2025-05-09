@@ -94,7 +94,7 @@ public class UsersService {
 			throw new UserCredentialsDuplicateException();
 		}
 
-		log.info("User ({}, {}) edited successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) edited successfully", user.getUsername());
 
 		return user;
 	}
@@ -110,7 +110,7 @@ public class UsersService {
 			throw new UserCredentialsIsInvalidException();
 
 		sendEmail(user, EmailConstants.Type.ACCOUNT_DELETE);
-		log.info("User ({}, {}) delete requested successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) delete requested successfully", user.getUsername());
 	}
 
 	public void confirmUserDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
@@ -118,7 +118,7 @@ public class UsersService {
 
 		userRepository.delete(user);
 
-		log.info("User ({}, {}) deleted successfully", user.getUsername(), user.getEmail());
+		log.debug("User ({}) deleted successfully", user.getUsername());
 
 		if (OTP == null) return; // is dev
 
