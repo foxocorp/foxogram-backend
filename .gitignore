@@ -6,7 +6,6 @@ build/
 
 ### IntelliJ IDEA ###
 .idea
-!.idea/codeStyles
 
 ### Eclipse ###
 .apt_generated
