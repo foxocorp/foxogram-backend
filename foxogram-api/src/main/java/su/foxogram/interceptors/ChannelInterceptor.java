@@ -3,9 +3,9 @@ package su.foxogram.interceptors;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constants.AttributesConstants;
@@ -29,7 +29,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
 	}
 
 	@Override
-	public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws ChannelNotFoundException {
+	public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws ChannelNotFoundException {
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) return true;
 
 		String uri = request.getRequestURI();

@@ -1,6 +1,6 @@
 package su.foxogram.repositories;
 
-import org.jetbrains.annotations.NotNull;
+import org.springframework.lang.NonNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +22,6 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
 	@Query("SELECT m FROM Message m WHERE m.channel = :ch ORDER BY m.id DESC LIMIT 1")
 	Optional<Message> getLastMessageByChannel(@Param("ch") Channel channel);
 
-	@NotNull
+	@NonNull
 	List<Message> findAll();
 }

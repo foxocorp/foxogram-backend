@@ -1,5 +1,4 @@
 dependencies {
-    implementation 'org.jetbrains:annotations:26.0.1'
     implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
