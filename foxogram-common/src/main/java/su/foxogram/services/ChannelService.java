@@ -115,7 +115,7 @@ public class ChannelService {
 
 	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
 		// check if member not exist in channel
-		memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberAlreadyInChannelException::new);
+		if (memberService.getByChannelAndUser(channel.getId(), user.getId()).isPresent()) throw new MemberAlreadyInChannelException();
 
 		Member member = new Member(user, channel, 0);
 		member.setPermissions(MemberConstants.Permissions.ATTACH_FILES, MemberConstants.Permissions.SEND_MESSAGES);
