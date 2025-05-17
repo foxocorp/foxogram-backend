@@ -6,6 +6,7 @@ import lombok.Setter;
 import su.foxogram.models.Attachment;
 import su.foxogram.models.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ public class MessageDTO {
 							attachment.getFlags()
 					))
 					.collect(Collectors.toList());
-		} else this.attachments = null;
+		} else this.attachments = new ArrayList<>();
 		this.createdAt = message.getTimestamp();
 	}
 }
