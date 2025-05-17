@@ -86,7 +86,10 @@ public class MessageService {
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		Message message = new Message(channel, body.getContent(), member, attachmentService.getAttachments(user, body.getAttachments()));
+		List<Attachment> attachments = null;
+		if (body.getAttachments() != null) attachments = attachmentService.getAttachments(user, body.getAttachments());
+
+		Message message = new Message(channel, body.getContent(), member, attachments);
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());

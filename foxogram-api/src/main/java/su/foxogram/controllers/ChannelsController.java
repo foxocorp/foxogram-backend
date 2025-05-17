@@ -158,7 +158,7 @@ public class ChannelsController {
 	@Operation(summary = "Create message")
 	@PostMapping("/{channelId}/messages")
 	public MessageDTO createMessage(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @RequestBody @Valid MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
-		if (body.getContent().isBlank() && body.getAttachments().isEmpty()) {
+		if (body.getContent() == null && body.getAttachments() == null) {
 			throw new MessageCannotBeEmpty();
 		}
 
