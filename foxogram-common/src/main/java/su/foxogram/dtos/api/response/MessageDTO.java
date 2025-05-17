@@ -41,6 +41,16 @@ public class MessageDTO {
 							attachment.getFlags()
 					))
 					.collect(Collectors.toList());
+		} else if (message.getAttachments() != null) {
+			this.attachments = message.getAttachments().stream()
+					.map(attachment -> new AttachmentDTO(
+							attachment.getId(),
+							attachment.getUuid(),
+							attachment.getFilename(),
+							attachment.getContentType(),
+							attachment.getFlags()
+					))
+					.collect(Collectors.toList());
 		} else this.attachments = null;
 		this.createdAt = message.getTimestamp();
 	}
