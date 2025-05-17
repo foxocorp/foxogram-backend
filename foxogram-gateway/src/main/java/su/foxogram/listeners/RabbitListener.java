@@ -36,6 +36,7 @@ public class RabbitListener {
 		Map<String, Object> data = objectMapper.convertValue(dto.getData(), new TypeReference<>() {
 		});
 
+		log.info("Got {} with opcode {} sent to {}", type, opcode, recipients);
 		webSocketService.sendMessageToSessions(recipients, opcode, data, type);
 	}
 }

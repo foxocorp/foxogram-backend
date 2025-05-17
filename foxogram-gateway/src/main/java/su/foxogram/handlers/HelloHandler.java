@@ -46,6 +46,6 @@ public class HelloHandler implements BaseHandler {
 		userSession.setLastPingTimestamp(System.currentTimeMillis());
 
 		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HelloDTO())));
-		log.debug("Authenticated session ({}) with user id {}", session.getId(), user.getId());
+		log.info("Authenticated session ({}) with user id {}", session.getId(), user.getId());
 	}
 }
