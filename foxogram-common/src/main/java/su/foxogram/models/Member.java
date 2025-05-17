@@ -10,7 +10,7 @@ import su.foxogram.exceptions.member.MissingPermissionsException;
 @Getter
 @Entity
 @Table(name = "members", indexes = {
-		@Index(name = "idx_member_user_channel", columnList = "user_id, channel")
+		@Index(name = "idx_member_user_channel", columnList = "user_id, channel_id")
 })
 public class Member {
 	@Id

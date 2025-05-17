@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "messages", indexes = {
-		@Index(name = "idx_message_id_channel_id", columnList = "id, channel")
+		@Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
 })
 public class Message {
 	@Id
@@ -27,22 +28,23 @@ public class Message {
 	@Column()
 	public long timestamp;
 
-	@OneToMany(mappedBy = "id", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
-	public List<Attachment> attachments;
+	@OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	public List<MessageAttachment> attachments;
 
 	@ManyToOne
 	@JoinColumn(name = "channel_id", nullable = false)
 	private Channel channel;
 
-	public Message() {
-	}
+	public Message() {}
 
 	public Message(Channel channel, String content, Member member, List<Attachment> attachments) {
 		this.channel = channel;
 		this.author = member;
 		this.content = content;
 		this.timestamp = System.currentTimeMillis();
-		this.attachments = attachments;
+		this.attachments = attachments.stream()
+				.map(attachment -> new MessageAttachment(this, attachment))
+				.collect(Collectors.toList());
 	}
 
 	public boolean isAuthor(Member member) {

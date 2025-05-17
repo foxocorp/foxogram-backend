@@ -32,12 +32,12 @@ public class MessageDTO {
 		this.author = new MemberDTO(message.getAuthor(), false);
 		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
 		if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
-					.map(attachment -> new AttachmentDTO(
-							attachment.getId(),
-							attachment.getUuid(),
-							attachment.getFilename(),
-							attachment.getContentType(),
-							attachment.getFlags()
+					.map(messageAttachment -> new AttachmentDTO(
+							messageAttachment.getAttachment().getId(),
+							messageAttachment.getAttachment().getUuid(),
+							messageAttachment.getAttachment().getFilename(),
+							messageAttachment.getAttachment().getContentType(),
+							messageAttachment.getAttachment().getFlags()
 					))
 					.collect(Collectors.toList());
 		else this.attachments = new ArrayList<>();
