@@ -1,6 +1,4 @@
 spring:
-  main:
-    lazy-initialization: true
   threads:
     virtual:
       enabled: true
