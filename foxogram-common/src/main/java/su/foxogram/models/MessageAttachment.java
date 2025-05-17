@@ -19,7 +19,7 @@ public class MessageAttachment {
 	@JoinColumn(name = "message_id", nullable = false)
 	private Message message;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "attachment_id", nullable = false)
 	private Attachment attachment;
 
