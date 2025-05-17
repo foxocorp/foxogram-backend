@@ -25,7 +25,7 @@ public class Channel {
 	@Column()
 	public String name;
 
-	@JoinColumn(name = "icon", nullable = false)
+	@JoinColumn(name = "icon")
 	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	public Attachment icon;
 
