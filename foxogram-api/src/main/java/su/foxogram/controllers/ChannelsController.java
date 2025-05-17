@@ -164,7 +164,7 @@ public class ChannelsController {
 
 		Message message = messageService.add(channel, user, body);
 
-		return new MessageDTO(message, null, true);
+		return new MessageDTO(message, true);
 	}
 
 	@Operation(summary = "Add attachments")

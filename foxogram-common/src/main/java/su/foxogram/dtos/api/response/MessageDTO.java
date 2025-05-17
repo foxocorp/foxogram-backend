@@ -3,7 +3,6 @@ package su.foxogram.dtos.api.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import su.foxogram.models.Attachment;
 import su.foxogram.models.Message;
 
 import java.util.ArrayList;
@@ -27,13 +26,12 @@ public class MessageDTO {
 
 	private long createdAt;
 
-	public MessageDTO(Message message, List<Attachment> attachments, boolean includeChannel) {
+	public MessageDTO(Message message, boolean includeChannel) {
 		this.id = message.getId();
 		this.content = message.getContent();
 		this.author = new MemberDTO(message.getAuthor(), false);
 		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
-		if (attachments != null) {
-			this.attachments = attachments.stream()
+		if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
 					.map(attachment -> new AttachmentDTO(
 							attachment.getId(),
 							attachment.getUuid(),
@@ -42,17 +40,7 @@ public class MessageDTO {
 							attachment.getFlags()
 					))
 					.collect(Collectors.toList());
-		} else if (message.getAttachments() != null) {
-			this.attachments = message.getAttachments().stream()
-					.map(attachment -> new AttachmentDTO(
-							attachment.getId(),
-							attachment.getUuid(),
-							attachment.getFilename(),
-							attachment.getContentType(),
-							attachment.getFlags()
-					))
-					.collect(Collectors.toList());
-		} else this.attachments = new ArrayList<>();
+		else this.attachments = new ArrayList<>();
 		this.createdAt = message.getTimestamp();
 	}
 }

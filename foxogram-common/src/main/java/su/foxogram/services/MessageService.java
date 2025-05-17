@@ -19,7 +19,6 @@ import su.foxogram.exceptions.message.UnknownAttachmentsException;
 import su.foxogram.models.*;
 import su.foxogram.repositories.MessageRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,13 +53,7 @@ public class MessageService {
 
 		return messagesArray.reversed().stream()
 				.map(message -> {
-					List<Attachment> attachments = new ArrayList<>();
-					for (Attachment attachment : message.getAttachments()) {
-						try {
-							attachments.add(attachmentService.getById(attachment.getId()));
-						} catch (Exception ignored) {}
-					}
-					return new MessageDTO(message, attachments, true);
+					return new MessageDTO(message, true);
 				})
 				.collect(Collectors.toList());
 	}
@@ -68,16 +61,9 @@ public class MessageService {
 	public MessageDTO getMessage(long id, Channel channel) throws MessageNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
-		List<Attachment> attachments = new ArrayList<>();
-		for (Attachment attachment : message.getAttachments()) {
-			try {
-				attachments.add(attachmentService.getById(attachment.getId()));
-			} catch (Exception ignored) {}
-		}
-
 		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
-		return new MessageDTO(message, attachments, true);
+		return new MessageDTO(message, true);
 	}
 
 	public Message add(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
@@ -92,7 +78,7 @@ public class MessageService {
 		Message message = new Message(channel, body.getContent(), member, attachments);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, true), GatewayConstants.Event.MESSAGE_CREATE.getValue());
 		log.debug("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
 
 		return message;
@@ -129,7 +115,7 @@ public class MessageService {
 		message.setContent(content);
 		messageRepository.save(message);
 
-		rabbitService.send(getRecipients(channel), new MessageDTO(message, null, true), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
+		rabbitService.send(getRecipients(channel), new MessageDTO(message, true), GatewayConstants.Event.MESSAGE_UPDATE.getValue());
 		log.debug("Message ({}) in channel ({}) edited successfully", id, channel.getId());
 
 		return message;

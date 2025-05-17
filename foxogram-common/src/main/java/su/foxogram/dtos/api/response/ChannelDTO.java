@@ -50,7 +50,7 @@ public class ChannelDTO {
 			this.memberCount = channel.getMembers().size();
 		}
 		if (lastMessage != null) {
-			this.lastMessage = new MessageDTO(lastMessage, null, false);
+			this.lastMessage = new MessageDTO(lastMessage, false);
 		}
 		this.owner = new UserDTO(channel.getOwner(), null, false, false);
 		this.createdAt = channel.getCreatedAt();
