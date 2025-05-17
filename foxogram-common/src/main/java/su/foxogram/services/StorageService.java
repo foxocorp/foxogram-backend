@@ -37,7 +37,7 @@ public class StorageService {
 							.method(Method.PUT)
 							.bucket(bucketName)
 							.object(uuid)
-							.expiry(1, TimeUnit.HOURS)
+							.expiry(10, TimeUnit.MINUTES)
 							.extraQueryParams(reqParams)
 							.build());
 		} catch (Exception e) {
