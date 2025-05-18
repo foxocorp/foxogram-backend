@@ -48,6 +48,8 @@ public class AuthenticationService {
 	}
 
 	public User getUser(String token, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+		token = token.substring(7);
+
 		long userId;
 		String passwordHash;
 
