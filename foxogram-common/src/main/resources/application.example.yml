@@ -12,6 +12,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: true
   data:
     jpa:
       repositories:
