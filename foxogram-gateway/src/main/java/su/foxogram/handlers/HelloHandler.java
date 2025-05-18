@@ -8,11 +8,9 @@ import org.springframework.web.socket.WebSocketSession;
 import su.foxogram.constants.GatewayConstants;
 import su.foxogram.dtos.gateway.EventDTO;
 import su.foxogram.dtos.gateway.response.HelloDTO;
-import su.foxogram.exceptions.user.UserEmailNotVerifiedException;
 import su.foxogram.exceptions.user.UserUnauthorizedException;
 import su.foxogram.handlers.structures.BaseHandler;
 import su.foxogram.models.Session;
-import su.foxogram.models.User;
 import su.foxogram.services.AuthenticationService;
 
 import java.io.IOException;
@@ -37,15 +35,15 @@ public class HelloHandler implements BaseHandler {
 	}
 
 	@Override
-	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws UserEmailNotVerifiedException, UserUnauthorizedException, IOException {
+	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws UserUnauthorizedException, IOException {
 		String accessToken = (String) payload.getD().get("token");
 
-		User user = authenticationService.authenticate(accessToken);
+		Long userId = authenticationService.authenticate(accessToken);
 		Session userSession = sessions.get(session.getId());
-		userSession.setUserId(user.getId());
+		userSession.setUserId(userId);
 		userSession.setLastPingTimestamp(System.currentTimeMillis());
 
 		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HelloDTO())));
-		log.info("Authenticated session ({}) with user id {}", session.getId(), user.getId());
+		log.info("Authenticated session ({}) with user id {}", session.getId(), userId);
 	}
 }

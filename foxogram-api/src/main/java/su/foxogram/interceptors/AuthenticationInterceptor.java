@@ -48,7 +48,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 		String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-		User user = authenticationService.authUser(accessToken, ignoreEmailVerification, false);
+		User user = authenticationService.authUser(accessToken, ignoreEmailVerification);
 
 		request.setAttribute(AttributesConstants.USER, user);
 		request.setAttribute(AttributesConstants.ACCESS_TOKEN, accessToken);

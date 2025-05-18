@@ -47,15 +47,11 @@ public class AuthenticationService {
 		this.apiConfig = apiConfig;
 	}
 
-	public User getUser(String header, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+	public User getUser(String token, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		long userId;
 		String passwordHash;
 
 		try {
-			String token = header.substring(7);
-
-			if (ignoreBearer) token = header;
-
 			Jws<Claims> claimsJws = Jwts.parser()
 					.verifyWith(jwtService.getSigningKey())
 					.build()
@@ -161,13 +157,13 @@ public class AuthenticationService {
 		log.debug("User ({}) password reset successfully", user.getUsername());
 	}
 
-	public User authUser(String accessToken, boolean ignoreEmailVerification, boolean ignoreBearer) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+	public User authUser(String accessToken, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		if (accessToken == null)
 			throw new UserUnauthorizedException();
 
-		if (accessToken.startsWith("Bearer ") && ignoreBearer)
+		if (!accessToken.startsWith("Bearer "))
 			throw new UserUnauthorizedException();
 
-		return getUser(accessToken, ignoreEmailVerification, ignoreBearer);
+		return getUser(accessToken, ignoreEmailVerification);
 	}
 }
