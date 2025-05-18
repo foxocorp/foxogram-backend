@@ -15,6 +15,9 @@ ij_smart_tabs = false
 ij_visual_guides =
 ij_wrap_on_typing = false
 
+[*.yml]
+tab_width = 2
+
 [*.java]
 indent_style = tab
 ij_java_align_consecutive_assignments = false

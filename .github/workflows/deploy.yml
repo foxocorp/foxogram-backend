@@ -45,6 +45,7 @@ jobs:
           minio.secret=${{ secrets.MINIO_SECRET }}
           api.version=1
           api.env=${{ vars.ENV }}
+          api.url=${{ vars.ENV == 'dev' && 'https://api.dev.foxogram.su' || 'https://api.foxogram.su' }}
           api.cdn.url=https://cdn.foxogram.su
           api.gateway.production_url=wss://gateway.foxogram.su
           api.gateway.development_url=wss://gateway.dev.foxogram.su

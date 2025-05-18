@@ -52,6 +52,7 @@ jwt:
 api:
   version: 1
   env: dev # dev or prod
+  url: http://localhost:8080
   cdn:
     url: https://cdn.foxogram.su
   gateway:

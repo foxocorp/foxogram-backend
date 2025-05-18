@@ -16,6 +16,8 @@ public class APIConfig {
 
 	private String env;
 
+	private String url;
+
 	@Value("${api.cdn.url}")
 	private String cdnURL;
 
