@@ -33,6 +33,9 @@ public class UserDTO {
 
 	private long createdAt;
 
+	@SuppressWarnings("unused")
+	public UserDTO() {}
+
 	public UserDTO(User user, List<Long> channels, boolean includeEmail, boolean includeChannels) {
 		this.id = user.getId();
 		if (this.avatar != null) {
