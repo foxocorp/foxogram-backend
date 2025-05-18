@@ -28,11 +28,8 @@ public class CommonController {
 	@Operation(summary = "Get info")
 	@GetMapping("/info")
 	public InfoDTO getInfo() {
-		String gatewayURL = apiConfig.getGatewayURL();
-		String appURL = apiConfig.getAppURL();
-
-		if (apiConfig.isDevelopment()) gatewayURL = apiConfig.getDevGatewayURL();
-		if (apiConfig.isDevelopment()) appURL = apiConfig.getDevAppURL();
+		String gatewayURL = apiConfig.isDevelopment() ? apiConfig.getDevGatewayURL() : apiConfig.getGatewayURL();
+		String appURL = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
 
 		return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
 	}

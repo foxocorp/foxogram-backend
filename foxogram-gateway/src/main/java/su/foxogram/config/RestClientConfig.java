@@ -1,18 +1,22 @@
 package su.foxogram.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClient;
 import su.foxogram.configs.APIConfig;
 
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 
+@Slf4j
 @Configuration
 public class RestClientConfig {
 	private final APIConfig apiConfig;
@@ -29,13 +33,18 @@ public class RestClientConfig {
 	public RestClient restClient() {
 		String baseUrl = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
 
+		log.info("Using API URL: {}", baseUrl);
+
 		HttpClient httpClient = HttpClient.newBuilder()
 				.connectTimeout(Duration.ofMillis(1000))
 				.build();
 
 		return RestClient.builder()
 				.requestFactory(new JdkClientHttpRequestFactory(httpClient))
-				.messageConverters(List.of(new MappingJackson2HttpMessageConverter(objectMapper)))
+				.messageConverters(List.of(
+						new StringHttpMessageConverter(StandardCharsets.UTF_8),
+						new MappingJackson2HttpMessageConverter(objectMapper)
+				))
 				.baseUrl(baseUrl)
 				.build();
 	}

@@ -20,16 +20,20 @@ public class AuthenticationService {
 
 	public Long authenticate(String token) throws UserUnauthorizedException {
 		try {
-			UserDTO user = restClient.get()
+			RestClient.ResponseSpec resp = restClient.get()
 					.uri("/users/@me")
 					.header("Authorization", "Bearer " + token)
-					.retrieve()
-					.body(UserDTO.class);
+					.retrieve();
 
-			return Objects.requireNonNull(user).getId();
+			log.info(resp.body(String.class));
+
+			return Objects.requireNonNull(resp.body(UserDTO.class)).getId();
 		} catch (RestClientResponseException e) {
 			log.error("{}: {}", e.getStatusCode().value(), e.getResponseBodyAsString());
-			throw new UserUnauthorizedException();
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
+
+		throw new UserUnauthorizedException();
 	}
 }
