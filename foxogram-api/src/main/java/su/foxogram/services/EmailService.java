@@ -43,7 +43,7 @@ public class EmailService {
 	}
 
 	@Async
-	public void sendEmail(String to, long id, String type, String username, String digitCode, long issuedAt, long expiresAt, String token) {
+	public void send(String to, long id, String type, String username, String digitCode, long issuedAt, long expiresAt, String token) {
 		if (apiConfig.isDevelopment()) return;
 
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -54,7 +54,7 @@ public class EmailService {
 			helper.setFrom(emailConfig.getEmail());
 
 			String subject = getSubjectByType(type);
-			String htmlContent = getEmailContentByType(username, digitCode, token);
+			String htmlContent = getContentByType(username, digitCode, token);
 
 			helper.setSubject(subject);
 			helper.setText(htmlContent, true);
@@ -78,7 +78,7 @@ public class EmailService {
 		};
 	}
 
-	private String getEmailContentByType(String username, String digitCode, String token) throws IOException {
+	private String getContentByType(String username, String digitCode, String token) throws IOException {
 		return readHTML().replace("{0}", username).replace("{1}", digitCode);//.replace("{2}", token);
 	}
 

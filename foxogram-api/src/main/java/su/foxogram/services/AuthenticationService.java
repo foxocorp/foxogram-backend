@@ -77,7 +77,7 @@ public class AuthenticationService {
 		return userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
 	}
 
-	public String userRegister(String username, String email, String password) throws UserCredentialsDuplicateException {
+	public String register(String username, String email, String password) throws UserCredentialsDuplicateException {
 		User user = userService.add(username, email, password);
 
 		log.debug("User ({}) created successfully", user.getUsername());
@@ -98,10 +98,10 @@ public class AuthenticationService {
 		long expiresAt = issuedAt + OTPConstants.Lifetime.BASE.getValue();
 		String accessToken = jwtService.generate(user.getId(), user.getPassword());
 
-		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
+		emailService.send(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
 	}
 
-	public String loginUser(String email, String password) throws UserCredentialsIsInvalidException {
+	public String login(String email, String password) throws UserCredentialsIsInvalidException {
 		User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
 		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
 			throw new UserCredentialsIsInvalidException();
@@ -111,7 +111,7 @@ public class AuthenticationService {
 	}
 
 	public void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
-		OTP OTP = otpService.validateCode(pathCode);
+		OTP OTP = otpService.validate(pathCode);
 
 		userService.updateFlags(user, UserConstants.Flags.AWAITING_CONFIRMATION, UserConstants.Flags.EMAIL_VERIFIED);
 		log.debug("User ({}) email verified successfully", user.getUsername());
@@ -131,7 +131,7 @@ public class AuthenticationService {
 			throw new NeedToWaitBeforeResendException();
 
 		log.debug("User ({}) email resend successfully", user.getUsername());
-		emailService.sendEmail(user.getEmail(), user.getId(), OTP.getType(), user.getUsername(), OTP.getValue(), System.currentTimeMillis(), OTP.getExpiresAt(), accessToken);
+		emailService.send(user.getEmail(), user.getId(), OTP.getType(), user.getUsername(), OTP.getValue(), System.currentTimeMillis(), OTP.getExpiresAt(), accessToken);
 	}
 
 	public void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
@@ -144,13 +144,13 @@ public class AuthenticationService {
 
 		user.addFlag(UserConstants.Flags.AWAITING_CONFIRMATION);
 
-		emailService.sendEmail(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, null);
+		emailService.send(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, null);
 		log.debug("User ({}) reset password requested successfully", user.getUsername());
 	}
 
 	public void confirmResetPassword(UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		User user = userService.getByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
-		OTP OTP = otpService.validateCode(body.getOTP());
+		OTP OTP = otpService.validate(body.getOTP());
 
 		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.removeFlag(UserConstants.Flags.AWAITING_CONFIRMATION);

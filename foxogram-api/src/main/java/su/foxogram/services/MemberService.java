@@ -26,7 +26,7 @@ public class MemberService {
 				.collect(Collectors.toList());
 	}
 
-	public List<Member> getMembers(long channelId) {
+	public List<Member> getAllByChannelId(long channelId) {
 		return memberRepository.findAllByChannelId(channelId);
 	}
 

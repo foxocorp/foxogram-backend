@@ -46,7 +46,7 @@ public class MessageService {
 		this.attachmentService = attachmentService;
 	}
 
-	public List<MessageDTO> getMessages(long before, int limit, Channel channel) {
+	public List<MessageDTO> getAllByChannel(long before, int limit, Channel channel) {
 		List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit);
 
 		log.debug("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
@@ -58,7 +58,7 @@ public class MessageService {
 				.collect(Collectors.toList());
 	}
 
-	public MessageDTO getMessage(long id, Channel channel) throws MessageNotFoundException {
+	public MessageDTO getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
 		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
@@ -73,7 +73,7 @@ public class MessageService {
 			throw new MissingPermissionsException();
 
 		List<Attachment> attachments = null;
-		if (body.getAttachments() != null) attachments = attachmentService.getAttachments(user, body.getAttachments());
+		if (body.getAttachments() != null) attachments = attachmentService.get(user, body.getAttachments());
 
 		Message message = new Message(channel, body.getContent(), member, attachments);
 		messageRepository.save(message);
@@ -92,7 +92,7 @@ public class MessageService {
 		if (!member.hasAnyPermission(MemberConstants.Permissions.ADMIN, MemberConstants.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		return attachmentService.uploadAttachments(user, attachments);
+		return attachmentService.uploadAll(user, attachments);
 	}
 
 	public void delete(long id, Member member, Channel channel) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
@@ -129,7 +129,7 @@ public class MessageService {
 				.collect(Collectors.toList());
 	}
 
-	public Message getLastMessageByChannel(Channel channel) {
+	public Message getLastByChannel(Channel channel) {
 		return messageRepository.getLastMessageByChannel(channel).orElse(null);
 	}
 }

@@ -58,7 +58,7 @@ public class ChannelsController {
 
 	@Operation(summary = "Create channel")
 	@PostMapping("/")
-	public ChannelDTO createChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
+	public ChannelDTO create(@RequestAttribute(value = AttributesConstants.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
 		Channel channel = channelService.add(user, body);
 
 		return new ChannelDTO(channel, null);
@@ -66,19 +66,19 @@ public class ChannelsController {
 
 	@Operation(summary = "Get channel by id")
 	@GetMapping("/{channelId}")
-	public ChannelDTO getChannelById(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) {
+	public ChannelDTO getById(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) {
 		return new ChannelDTO(channel, null);
 	}
 
 	@Operation(summary = "Get channel by name")
 	@GetMapping("/@{name}")
-	public ChannelDTO getChannelByName(@PathVariable String name) throws ChannelNotFoundException {
+	public ChannelDTO getByName(@PathVariable String name) throws ChannelNotFoundException {
 		return new ChannelDTO(channelService.getByName(name), null);
 	}
 
 	@Operation(summary = "Edit channel")
 	@PatchMapping("/{channelId}")
-	public ChannelDTO editChannel(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body, @PathVariable String channelId) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
+	public ChannelDTO edit(@RequestAttribute(value = AttributesConstants.MEMBER) Member member, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body, @PathVariable String channelId) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
 		channel = channelService.update(member, channel, body);
 
 		return new ChannelDTO(channel, null);
@@ -87,12 +87,12 @@ public class ChannelsController {
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{channelId}/icon")
 	public AttachmentsDTO uploadAvatar(@RequestBody AttachmentsAddDTO attachment, @PathVariable String channelId) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		return attachmentService.uploadAttachment(null, attachment);
+		return attachmentService.upload(null, attachment);
 	}
 
 	@Operation(summary = "Delete channel")
 	@DeleteMapping("/{channelId}")
-	public OkDTO deleteChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MissingPermissionsException, JsonProcessingException, MemberInChannelNotFoundException {
+	public OkDTO delete(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MissingPermissionsException, JsonProcessingException, MemberInChannelNotFoundException {
 		channelService.delete(channel, user);
 
 		return new OkDTO(true);
@@ -100,16 +100,16 @@ public class ChannelsController {
 
 	@Operation(summary = "Join channel")
 	@PutMapping("/{channelId}/members/@me")
-	public MemberDTO joinChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MemberAlreadyInChannelException, JsonProcessingException {
-		Member member = channelService.joinUser(channel, user);
+	public MemberDTO addMember(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MemberAlreadyInChannelException, JsonProcessingException {
+		Member member = channelService.addMember(channel, user);
 
 		return new MemberDTO(member, true);
 	}
 
 	@Operation(summary = "Leave channel")
 	@DeleteMapping("/{channelId}/members/@me")
-	public OkDTO leaveChannel(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MemberInChannelNotFoundException, JsonProcessingException {
-		channelService.leaveUser(channel, user);
+	public OkDTO removeMember(@RequestAttribute(value = AttributesConstants.USER) User user, @RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) throws MemberInChannelNotFoundException, JsonProcessingException {
+		channelService.removeMember(channel, user);
 
 		return new OkDTO(true);
 	}
@@ -130,7 +130,7 @@ public class ChannelsController {
 	@Operation(summary = "Get members")
 	@GetMapping("/{channelId}/members")
 	public List<MemberDTO> getMembers(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId) {
-		return memberService.getMembers(channel.getId()).stream()
+		return memberService.getAllByChannelId(channel.getId()).stream()
 				.map(member -> new MemberDTO(member, false))
 				.toList();
 	}
@@ -146,13 +146,13 @@ public class ChannelsController {
 			limit = 25;
 		}
 
-		return messageService.getMessages(before, limit, channel);
+		return messageService.getAllByChannel(before, limit, channel);
 	}
 
 	@Operation(summary = "Get message")
 	@GetMapping("/{channelId}/messages/{messageId}")
 	public MessageDTO getMessage(@RequestAttribute(value = AttributesConstants.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId) throws MessageNotFoundException {
-		return messageService.getMessage(messageId, channel);
+		return messageService.getByIdAndChannel(messageId, channel);
 	}
 
 	@Operation(summary = "Create message")

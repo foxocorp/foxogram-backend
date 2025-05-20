@@ -27,7 +27,7 @@ public class CommonController {
 
 	@Operation(summary = "Get info")
 	@GetMapping("/info")
-	public InfoDTO getInfo() {
+	public InfoDTO get() {
 		String gatewayURL = apiConfig.isDevelopment() ? apiConfig.getDevGatewayURL() : apiConfig.getGatewayURL();
 		String appURL = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
 

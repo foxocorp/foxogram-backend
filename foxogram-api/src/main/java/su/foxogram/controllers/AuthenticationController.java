@@ -39,7 +39,7 @@ public class AuthenticationController {
 		String username = body.getUsername();
 		String email = body.getEmail();
 		String password = body.getPassword();
-		String accessToken = authenticationService.userRegister(username, email, password);
+		String accessToken = authenticationService.register(username, email, password);
 
 		return new TokenDTO(accessToken);
 	}
@@ -51,7 +51,7 @@ public class AuthenticationController {
 		String email = body.getEmail();
 		String password = body.getPassword();
 
-		String accessToken = authenticationService.loginUser(email, password);
+		String accessToken = authenticationService.login(email, password);
 
 		return new TokenDTO(accessToken);
 	}

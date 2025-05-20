@@ -17,7 +17,7 @@ public class OTPService {
 		this.otpRepository = otpRepository;
 	}
 
-	public OTP validateCode(String pathCode) throws OTPsInvalidException, OTPExpiredException {
+	public OTP validate(String pathCode) throws OTPsInvalidException, OTPExpiredException {
 
 		OTP OTP = otpRepository.findByValue(pathCode).orElseThrow(OTPsInvalidException::new);
 

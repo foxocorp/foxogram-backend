@@ -14,7 +14,8 @@ import su.foxogram.exceptions.otp.OTPExpiredException;
 import su.foxogram.exceptions.otp.OTPsInvalidException;
 import su.foxogram.exceptions.user.UserCredentialsDuplicateException;
 import su.foxogram.exceptions.user.UserCredentialsIsInvalidException;
-import su.foxogram.models.*;
+import su.foxogram.models.OTP;
+import su.foxogram.models.User;
 import su.foxogram.repositories.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
@@ -107,7 +108,7 @@ public class UserService {
 	}
 
 	public void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
-		OTP OTP = otpService.validateCode(pathCode);
+		OTP OTP = otpService.validate(pathCode);
 
 		userRepository.delete(user);
 
@@ -138,6 +139,6 @@ public class UserService {
 		long issuedAt = System.currentTimeMillis();
 		long expiresAt = issuedAt + OTPConstants.Lifetime.BASE.getValue();
 
-		emailService.sendEmail(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
+		emailService.send(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
 	}
 }

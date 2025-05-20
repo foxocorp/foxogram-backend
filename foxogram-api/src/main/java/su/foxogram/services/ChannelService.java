@@ -113,7 +113,7 @@ public class ChannelService {
 		log.debug("Channel ({}) deleted successfully", channel.getName());
 	}
 
-	public Member joinUser(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
+	public Member addMember(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
 		// check if member not exist in channel
 		if (memberService.getByChannelAndUser(channel.getId(), user.getId()).isPresent()) throw new MemberAlreadyInChannelException();
 
@@ -124,7 +124,7 @@ public class ChannelService {
 		return memberService.add(member);
 	}
 
-	public void leaveUser(Channel channel, User user) throws MemberInChannelNotFoundException, JsonProcessingException {
+	public void removeMember(Channel channel, User user) throws MemberInChannelNotFoundException, JsonProcessingException {
 		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		memberService.delete(member);
