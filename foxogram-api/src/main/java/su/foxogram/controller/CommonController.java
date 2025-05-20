@@ -1,0 +1,42 @@
+package su.foxogram.controller;
+
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import su.foxogram.config.APIConfig;
+import su.foxogram.constant.APIConstant;
+import su.foxogram.dto.api.response.InfoDTO;
+
+@Slf4j
+@RestController
+@Tag(name = "Common")
+@RequestMapping(value = APIConstant.COMMON, produces = "application/json")
+public class CommonController {
+
+	private final APIConfig apiConfig;
+
+	@Autowired
+	public CommonController(APIConfig apiConfig) {
+		this.apiConfig = apiConfig;
+	}
+
+	@Operation(summary = "Get info")
+	@GetMapping("/info")
+	public InfoDTO get() {
+		String gatewayURL = apiConfig.isDevelopment() ? apiConfig.getDevGatewayURL() : apiConfig.getGatewayURL();
+		String appURL = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
+
+		return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
+	}
+
+	@Hidden
+	@GetMapping("/actuator/health")
+	public String health() {
+		return "{\"status\":\"UP\"}";
+	}
+}

@@ -1,0 +1,6 @@
+package su.foxogram.constant;
+
+public class TokenConstant {
+
+	public static final long LIFETIME = 2628000000L;
+}

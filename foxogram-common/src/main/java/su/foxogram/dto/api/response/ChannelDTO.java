@@ -1,0 +1,58 @@
+package su.foxogram.dto.api.response;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
+import su.foxogram.constant.ChannelConstant;
+import su.foxogram.model.Channel;
+import su.foxogram.model.Message;
+
+@Getter
+@Setter
+@Schema(name = "Channel")
+public class ChannelDTO {
+
+	private long id;
+
+	private String displayName;
+
+	private String name;
+
+	private AttachmentDTO icon;
+
+	private int type;
+
+	private boolean isPublic;
+
+	private long flags;
+
+	private int memberCount;
+
+	private UserDTO owner;
+
+	private long createdAt;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private MessageDTO lastMessage;
+
+	public ChannelDTO(Channel channel, Message lastMessage) {
+		this.id = channel.getId();
+		this.displayName = channel.getDisplayName();
+		this.name = channel.getName();
+		if (channel.getIcon() != null) {
+			this.icon = new AttachmentDTO(channel.getIcon().getId(), channel.getIcon().getUuid(), channel.getIcon().getFilename(), channel.getIcon().getContentType(), channel.getIcon().getFlags());
+		}
+		this.type = channel.getType();
+		this.flags = channel.getFlags();
+		this.isPublic = channel.hasFlag(ChannelConstant.Flags.PUBLIC);
+		if (channel.getMembers() != null) {
+			this.memberCount = channel.getMembers().size();
+		}
+		if (lastMessage != null) {
+			this.lastMessage = new MessageDTO(lastMessage, false);
+		}
+		this.owner = new UserDTO(channel.getOwner(), null, false, false);
+		this.createdAt = channel.getCreatedAt();
+	}
+}
