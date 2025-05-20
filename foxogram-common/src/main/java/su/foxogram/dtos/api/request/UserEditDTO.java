@@ -11,6 +11,7 @@ import su.foxogram.constants.ValidationConstants;
 @Setter
 @Schema(name = "UserEdit")
 public class UserEditDTO {
+
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.DISPLAY_NAME, message = ValidationConstants.Messages.DISPLAY_NAME_WRONG_LENGTH)
 	private String displayName;
 

@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Tag(name = "Users")
 @RequestMapping(value = APIConstants.USERS, produces = "application/json")
 public class UsersController {
+
 	private final UserService userService;
 
 	private final MemberService memberService;

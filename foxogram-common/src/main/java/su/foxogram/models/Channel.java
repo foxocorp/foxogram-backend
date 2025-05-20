@@ -15,6 +15,7 @@ import java.util.List;
 		@Index(name = "idx_channel_name", columnList = "name", unique = true)
 })
 public class Channel {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;

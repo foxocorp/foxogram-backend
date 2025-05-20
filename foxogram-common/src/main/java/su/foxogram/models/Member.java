@@ -13,6 +13,7 @@ import su.foxogram.exceptions.member.MissingPermissionsException;
 		@Index(name = "idx_member_user_channel", columnList = "user_id, channel_id")
 })
 public class Member {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;

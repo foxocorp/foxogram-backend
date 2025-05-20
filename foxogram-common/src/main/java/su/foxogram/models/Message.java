@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 		@Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
 })
 public class Message {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;

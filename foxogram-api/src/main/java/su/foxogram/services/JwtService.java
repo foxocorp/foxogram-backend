@@ -13,6 +13,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+
 	private final JwtConfig jwtConfig;
 
 	@Autowired

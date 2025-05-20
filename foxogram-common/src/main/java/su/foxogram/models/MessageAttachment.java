@@ -11,6 +11,7 @@ import lombok.Setter;
 		@Index(name = "idx_message_attachment", columnList = "message_id, attachment_id")
 })
 public class MessageAttachment {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

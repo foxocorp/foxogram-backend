@@ -1,6 +1,7 @@
 package su.foxogram.constants;
 
 public class EmailConstants {
+
 	public enum Type {
 		RESET_PASSWORD("reset_password"),
 		EMAIL_VERIFY("email_verify"),

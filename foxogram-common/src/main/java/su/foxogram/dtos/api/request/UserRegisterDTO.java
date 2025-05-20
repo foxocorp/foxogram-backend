@@ -12,6 +12,7 @@ import su.foxogram.constants.ValidationConstants;
 @Getter
 @Schema(name = "UserRegister")
 public class UserRegisterDTO {
+
 	@NotNull(message = "Username" + ValidationConstants.Messages.MUST_NOT_BE_NULL)
 	@Size(min = ValidationConstants.Lengths.MIN, max = ValidationConstants.Lengths.USERNAME, message = ValidationConstants.Messages.USERNAME_WRONG_LENGTH)
 	@Pattern(regexp = ValidationConstants.Regex.NAME_REGEX, message = ValidationConstants.Messages.USERNAME_INCORRECT)

@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CommonController {
-    @RequestMapping(value = "/actuator/health", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@RequestMapping(value = "/actuator/health", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String health() {
         return "{\"status\":\"UP\"}";
     }

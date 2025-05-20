@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Schema(name = "AttachmentsAdd")
 public class AttachmentsAddDTO {
+
 	private String filename;
 
 	private String contentType;

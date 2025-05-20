@@ -3,6 +3,7 @@ package su.foxogram.constants;
 import lombok.Getter;
 
 public class ChannelsConstants {
+
 	@Getter
 	public enum Type {
 		DM(1),

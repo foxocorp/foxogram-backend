@@ -12,6 +12,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class AuthenticationService {
+
 	private final RestClient restClient;
 
 	public AuthenticationService(RestClient restClient) {

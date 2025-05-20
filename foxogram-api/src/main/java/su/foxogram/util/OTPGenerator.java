@@ -3,6 +3,7 @@ package su.foxogram.util;
 import java.util.Random;
 
 public class OTPGenerator {
+
 	public static String generateDigitCode() {
 		Random random = new Random();
 		int min = 1;

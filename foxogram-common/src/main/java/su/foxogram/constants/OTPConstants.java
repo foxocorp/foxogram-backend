@@ -1,6 +1,7 @@
 package su.foxogram.constants;
 
 public class OTPConstants {
+
 	public enum Lifetime {
 		BASE(3600000),
 		RESEND(60000);

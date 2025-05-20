@@ -25,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class UserService {
+
 	private final UserRepository userRepository;
 
 	private final EmailService emailService;

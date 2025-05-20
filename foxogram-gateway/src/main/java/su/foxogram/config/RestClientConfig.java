@@ -17,6 +17,7 @@ import java.util.List;
 @Slf4j
 @Configuration
 public class RestClientConfig {
+
 	private final APIConfig apiConfig;
 
 	private final ObjectMapper objectMapper;

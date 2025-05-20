@@ -25,6 +25,7 @@ import su.foxogram.services.AuthenticationService;
 @Tag(name = "Authentication")
 @RequestMapping(value = APIConstants.AUTH, produces = "application/json")
 public class AuthenticationController {
+
 	private final AuthenticationService authenticationService;
 
 	@Autowired

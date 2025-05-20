@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class RabbitConfig {
+
 	private String queue;
 
 	@Bean

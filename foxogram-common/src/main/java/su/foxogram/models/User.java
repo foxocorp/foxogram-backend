@@ -14,6 +14,7 @@ import su.foxogram.constants.UserConstants;
 		@Index(name = "idx_user_email", columnList = "email", unique = true)
 })
 public class User {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;

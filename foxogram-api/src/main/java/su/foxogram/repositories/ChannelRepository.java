@@ -8,6 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChannelRepository extends CrudRepository<Channel, Long> {
+
 	Optional<Channel> findById(long id);
 
 	Optional<Channel> findByName(String name);

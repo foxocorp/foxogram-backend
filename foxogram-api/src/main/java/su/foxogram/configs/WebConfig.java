@@ -11,6 +11,7 @@ import su.foxogram.interceptors.MemberInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
 	private final AuthenticationInterceptor authenticationInterceptor;
 
 	private final ChannelInterceptor channelInterceptor;

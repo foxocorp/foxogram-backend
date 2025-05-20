@@ -1,6 +1,7 @@
 package su.foxogram.constants;
 
 public class ValidationConstants {
+
 	public static class Lengths {
 		public static final int MIN = 4;
 

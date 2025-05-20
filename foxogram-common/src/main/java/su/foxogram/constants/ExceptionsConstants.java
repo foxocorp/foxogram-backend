@@ -1,6 +1,7 @@
 package su.foxogram.constants;
 
 public class ExceptionsConstants {
+
 	private static final int USER_ERROR = 100;
 
 	private static final int CHANNEL_ERROR = 200;

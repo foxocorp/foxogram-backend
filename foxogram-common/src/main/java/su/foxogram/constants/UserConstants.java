@@ -3,6 +3,7 @@ package su.foxogram.constants;
 import lombok.Getter;
 
 public class UserConstants {
+
 	@Getter
 	public enum Flags {
 		AWAITING_CONFIRMATION(1),

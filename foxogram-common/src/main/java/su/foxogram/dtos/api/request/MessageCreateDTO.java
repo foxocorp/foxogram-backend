@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Schema(name = "MessageCreate")
 public class MessageCreateDTO {
+
 	@Size(max = ValidationConstants.Lengths.MESSAGE_CONTENT, message = ValidationConstants.Messages.MESSAGE_WRONG_LENGTH)
 	private String content;
 

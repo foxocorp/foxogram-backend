@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExceptionDTO {
+
 	private boolean ok;
 
 	private int code;

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class APIConfig {
+
 	private String version;
 
 	private String env;

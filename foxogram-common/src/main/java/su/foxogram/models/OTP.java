@@ -12,6 +12,7 @@ import lombok.Setter;
 		@Index(name = "idx_otp_value", columnList = "value", unique = true)
 })
 public class OTP {
+
 	@Id()
 	public long userId;
 

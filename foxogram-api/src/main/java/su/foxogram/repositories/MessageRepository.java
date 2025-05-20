@@ -1,9 +1,9 @@
 package su.foxogram.repositories;
 
-import org.springframework.lang.NonNull;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import su.foxogram.models.Channel;
 import su.foxogram.models.Message;
@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Long> {
+
 	@Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.timestamp < :before ORDER BY m.id DESC LIMIT :limit")
 	List<Message> findAllByChannel(@Param("ch") Channel channel, @Param("before") long before, @Param("limit") int limit);
 

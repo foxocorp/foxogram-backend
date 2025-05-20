@@ -3,10 +3,10 @@ package su.foxogram.interceptors;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.configs.APIConfig;
@@ -22,6 +22,7 @@ import java.util.Set;
 @Slf4j
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
+
 	private static final Set<String> EMAIL_VERIFICATION_IGNORE_PATHS = Set.of(
 			"/auth/email/verify",
 			"/users/@me",

@@ -3,6 +3,7 @@ package su.foxogram.constants;
 import lombok.Getter;
 
 public class MemberConstants {
+
 	@Getter
 	public enum Permissions {
 		ADMIN(1),

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ChannelService {
+
 	private final ChannelRepository channelRepository;
 
 	private final MemberService memberService;
