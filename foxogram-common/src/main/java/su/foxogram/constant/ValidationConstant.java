@@ -53,6 +53,6 @@ public class ValidationConstant {
 	public static class Regex {
 		public static final String EMAIL_REGEX = "^[\\w+.-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$";
 
-		public static final String NAME_REGEX = "^[\\w.-]+$";
+		public static final String NAME_REGEX = "^[A-Za-z0-9_-]+$";
 	}
 }
