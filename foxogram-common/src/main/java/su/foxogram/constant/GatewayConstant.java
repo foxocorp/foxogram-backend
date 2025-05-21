@@ -15,6 +15,7 @@ public class GatewayConstant {
 		CHANNEL_DELETE("CHANNEL_DELETE"),
 		MEMBER_ADD("MEMBER_ADD"),
 		MEMBER_REMOVE("MEMBER_REMOVE"),
+		USER_STATUS_UPDATE("USER_STATUS_UPDATE"),
 		USER_UPDATE("USER_UPDATE");
 
 		private final String name;

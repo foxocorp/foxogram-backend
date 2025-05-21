@@ -1,5 +1,6 @@
 package su.foxogram.handler.structure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +14,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import su.foxogram.constant.CloseCodeConstant;
 import su.foxogram.constant.ExceptionConstant;
 import su.foxogram.constant.GatewayConstant;
+import su.foxogram.constant.UserConstant;
 import su.foxogram.dto.gateway.EventDTO;
 import su.foxogram.exception.user.UserUnauthorizedException;
 import su.foxogram.model.Session;
+import su.foxogram.service.RabbitService;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,8 +37,10 @@ public class EventHandler extends TextWebSocketHandler {
 	@Getter
 	private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 
+	private final RabbitService rabbitService;
+
 	@Autowired
-	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper) {
+	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper, RabbitService rabbitService) {
 		this.handlerRegistry = handlerRegistry;
 		this.objectMapper = objectMapper;
 
@@ -60,6 +65,7 @@ public class EventHandler extends TextWebSocketHandler {
 		};
 
 		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
+		this.rabbitService = rabbitService;
 	}
 
 	@Override
@@ -69,8 +75,15 @@ public class EventHandler extends TextWebSocketHandler {
 	}
 
 	@Override
-	public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) {
+	public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) throws JsonProcessingException {
 		log.info("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
+
+		Session userSession = sessions.get(session.getId());
+
+		if (userSession.isAuthenticated()) {
+			rabbitService.send(userSession.getUserId(), UserConstant.Status.OFFLINE.getStatus());
+			log.info("Send message to rabbit {}, {}", userSession.getUserId(), UserConstant.Status.OFFLINE.getStatus());
+		}
 		sessions.remove(session.getId());
 	}
 

@@ -27,6 +27,10 @@ public class UserDTO {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<Long> channels;
 
+	private int status;
+
+	private long statusUpdatedAt;
+
 	private long flags;
 
 	private int type;
@@ -49,6 +53,8 @@ public class UserDTO {
 		if (includeChannels) {
 			this.channels = channels;
 		}
+		this.status = user.getStatus();
+		this.statusUpdatedAt = user.getStatusUpdatedAt();
 		this.flags = user.getFlags();
 		this.type = user.getType();
 		this.createdAt = user.getCreatedAt();

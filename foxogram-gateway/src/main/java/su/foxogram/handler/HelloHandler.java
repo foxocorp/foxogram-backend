@@ -6,12 +6,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import su.foxogram.constant.GatewayConstant;
+import su.foxogram.constant.UserConstant;
 import su.foxogram.dto.gateway.EventDTO;
 import su.foxogram.dto.gateway.response.HelloDTO;
 import su.foxogram.exception.user.UserUnauthorizedException;
 import su.foxogram.handler.structure.BaseHandler;
 import su.foxogram.model.Session;
 import su.foxogram.service.AuthenticationService;
+import su.foxogram.service.RabbitService;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +26,12 @@ public class HelloHandler implements BaseHandler {
 
 	private final ObjectMapper objectMapper;
 
-	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper) {
+	private final RabbitService rabbitService;
+
+	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper, RabbitService rabbitService) {
 		this.authenticationService = authenticationService;
 		this.objectMapper = objectMapper;
+		this.rabbitService = rabbitService;
 	}
 
 	@Override
@@ -44,6 +49,7 @@ public class HelloHandler implements BaseHandler {
 		userSession.setLastPingTimestamp(System.currentTimeMillis());
 
 		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HelloDTO())));
+		rabbitService.send(userId, UserConstant.Status.ONLINE.getStatus());
 		log.info("Authenticated session ({}) with user id {}", session.getId(), userId);
 	}
 }

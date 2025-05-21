@@ -58,7 +58,7 @@ public class UserController {
 	@Operation(summary = "Get me")
 	@GetMapping("/@me")
 	public UserDTO getMe(@RequestAttribute(value = AttributeConstant.USER) User user) {
-		List<Long> channels = memberService.getChannelsByUser(user.getId())
+		List<Long> channels = memberService.getChannelsByUserId(user.getId())
 				.stream()
 				.map(Channel::getId)
 				.collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class UserController {
 	@Operation(summary = "Get user channels")
 	@GetMapping("/@me/channels")
 	public List<ChannelDTO> getChannels(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser) {
-		return memberService.getChannelsByUser(authenticatedUser.getId())
+		return memberService.getChannelsByUserId(authenticatedUser.getId())
 				.stream()
 				.map(channel -> {
 					Message lastMessage = messageService.getLastByChannel(channel);

@@ -29,6 +29,12 @@ public class User {
 	private String email;
 
 	@Column()
+	private int status;
+
+	@Column()
+	private long statusUpdatedAt;
+
+	@Column()
 	private String password;
 
 	@JoinColumn(name = "avatar_id")
@@ -53,12 +59,14 @@ public class User {
 	public User() {
 	}
 
-	public User(long id, String displayName, String username, String email, String password, long flags, int type, long deletion, String key) {
+	public User(long id, String displayName, String username, String email, String password, int status, long statusUpdatedAt, long flags, int type, long deletion, String key) {
 		this.id = id;
 		this.displayName = displayName;
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.password = password;
+		this.status = status;
+		this.statusUpdatedAt = statusUpdatedAt;
 		this.flags = flags;
 		this.type = type;
 		this.createdAt = System.currentTimeMillis();

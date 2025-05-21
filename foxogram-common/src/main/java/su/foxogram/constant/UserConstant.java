@@ -28,4 +28,16 @@ public class UserConstant {
 			this.type = type;
 		}
 	}
+
+	@Getter
+	public enum Status {
+		ONLINE(1),
+		OFFLINE(2);
+
+		private final int status;
+
+		Status(int status) {
+			this.status = status;
+		}
+	}
 }
