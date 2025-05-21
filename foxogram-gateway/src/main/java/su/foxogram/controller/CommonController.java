@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommonController {
 
+	@SuppressWarnings("SameReturnValue")
 	@RequestMapping(value = "/actuator/health", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String health() {
         return "{\"status\":\"UP\"}";

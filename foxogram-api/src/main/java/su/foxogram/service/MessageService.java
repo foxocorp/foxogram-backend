@@ -67,7 +67,7 @@ public class MessageService {
 	}
 
 	public Message add(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
+		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
@@ -87,7 +87,7 @@ public class MessageService {
 	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
 		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
 
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
+		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();

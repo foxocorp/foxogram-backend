@@ -58,7 +58,7 @@ public class ChannelController {
 
 	@Operation(summary = "Create channel")
 	@PostMapping("/")
-	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException, ChannelNotFoundException {
+	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
 		Channel channel = channelService.add(user, body);
 
 		return new ChannelDTO(channel, null);
@@ -121,7 +121,7 @@ public class ChannelController {
 			memberId = String.valueOf(user.getId());
 		}
 
-		Member member = memberService.getByChannelAndUser(channel.getId(), Long.parseLong(memberId))
+		Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId))
 				.orElseThrow(MemberInChannelNotFoundException::new);
 
 		return new MemberDTO(member, true);

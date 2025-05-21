@@ -34,6 +34,7 @@ public class CommonController {
 		return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
 	}
 
+	@SuppressWarnings("SameReturnValue")
 	@Hidden
 	@GetMapping("/actuator/health")
 	public String health() {

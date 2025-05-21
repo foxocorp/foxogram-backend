@@ -20,7 +20,7 @@ public class MemberService {
 		this.memberRepository = memberRepository;
 	}
 
-	public List<Channel> getChannelsByUser(long userId) {
+	public List<Channel> getChannelsByUserId(long userId) {
 		return memberRepository.findAllByUserId(userId)
 				.stream()
 				.map(Member::getChannel)
@@ -31,7 +31,7 @@ public class MemberService {
 		return memberRepository.findAllByChannelId(channelId);
 	}
 
-	public Optional<Member> getByChannelAndUser(long channelId, long userId) {
+	public Optional<Member> getByChannelIdAndUserId(long channelId, long userId) {
 		return memberRepository.findByChannelIdAndUserId(channelId, userId);
 	}
 

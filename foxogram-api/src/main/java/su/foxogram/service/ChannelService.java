@@ -104,7 +104,7 @@ public class ChannelService {
 	}
 
 	public void delete(Channel channel, User user) throws MissingPermissionsException, JsonProcessingException, MemberInChannelNotFoundException {
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId())
+		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
 				.orElseThrow(MemberInChannelNotFoundException::new);
 
 		if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN)) throw new MissingPermissionsException();
@@ -116,7 +116,8 @@ public class ChannelService {
 
 	public Member addMember(Channel channel, User user) throws MemberAlreadyInChannelException, JsonProcessingException {
 		// check if member not exist in channel
-		if (memberService.getByChannelAndUser(channel.getId(), user.getId()).isPresent()) throw new MemberAlreadyInChannelException();
+		if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).isPresent())
+			throw new MemberAlreadyInChannelException();
 
 		Member member = new Member(user, channel, 0);
 		member.setPermissions(MemberConstant.Permissions.ATTACH_FILES, MemberConstant.Permissions.SEND_MESSAGES);
@@ -126,7 +127,7 @@ public class ChannelService {
 	}
 
 	public void removeMember(Channel channel, User user) throws MemberInChannelNotFoundException, JsonProcessingException {
-		Member member = memberService.getByChannelAndUser(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
+		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
 		memberService.delete(member);
 		rabbitService.send(getRecipients(channel), new MemberDTO(member, true), GatewayConstant.Event.MEMBER_REMOVE.getValue());
