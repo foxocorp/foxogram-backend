@@ -38,7 +38,7 @@ public class User {
 	private String password;
 
 	@JoinColumn(name = "avatar_id")
-	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	public Attachment avatar;
 
 	@Column()
