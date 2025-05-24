@@ -78,7 +78,7 @@ public class ChannelController {
 
 	@Operation(summary = "Edit channel")
 	@PatchMapping("/{channelId}")
-	public ChannelDTO edit(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long id, @Valid @ModelAttribute ChannelEditDTO body, @PathVariable String channelId) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
+	public ChannelDTO edit(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long id, @PathVariable String channelId, @RequestBody ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
 		channel = channelService.update(member, channel, body);
 
 		return new ChannelDTO(channel, null);
@@ -86,7 +86,7 @@ public class ChannelController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{channelId}/icon")
-	public UploadAttachmentDTO uploadAvatar(@RequestBody AttachmentAddDTO attachment, @PathVariable String channelId) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		return attachmentService.upload(null, attachment);
 	}
 

@@ -2,7 +2,6 @@ package su.foxogram.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constant.APIConstant;
@@ -94,7 +93,7 @@ public class UserController {
 
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
-	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @Valid @ModelAttribute UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
+	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
 		authenticatedUser = userService.update(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, true, true);
