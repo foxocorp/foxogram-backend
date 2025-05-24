@@ -11,7 +11,7 @@ import su.foxogram.dto.api.request.AttachmentAddDTO;
 import su.foxogram.dto.api.request.OTPDTO;
 import su.foxogram.dto.api.request.UserDeleteDTO;
 import su.foxogram.dto.api.request.UserEditDTO;
-import su.foxogram.dto.api.response.AttachmentsDTO;
+import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.ChannelDTO;
 import su.foxogram.dto.api.response.OkDTO;
 import su.foxogram.dto.api.response.UserDTO;
@@ -102,7 +102,7 @@ public class UserController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
-	public AttachmentsDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		return attachmentService.upload(authenticatedUser, attachment);
 	}
 

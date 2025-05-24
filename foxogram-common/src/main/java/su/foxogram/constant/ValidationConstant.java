@@ -17,8 +17,6 @@ public class ValidationConstant {
 
 		public static final int MESSAGE_CONTENT = 5000;
 
-		public static final int ATTACHMENTS_MIN = 0;
-
 		public static final int ATTACHMENTS_MAX = 10;
 	}
 
@@ -48,6 +46,8 @@ public class ValidationConstant {
 		public static final String OTP_NAME_WRONG_LENGTH = "OTP must be {min} characters long";
 
 		public static final String MUST_NOT_BE_NULL = " must not be null";
+
+		public static final String USER_AVATAR_MUST_BE_POSITIVE = "User avatar id must be positive";
 	}
 
 	public static class Regex {

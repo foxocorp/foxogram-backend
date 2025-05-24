@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import su.foxogram.constant.StorageConstant;
 import su.foxogram.dto.api.request.AttachmentAddDTO;
-import su.foxogram.dto.api.response.AttachmentsDTO;
+import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.internal.AttachmentPresignedDTO;
 import su.foxogram.exception.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exception.message.UnknownAttachmentsException;
@@ -35,18 +35,18 @@ public class AttachmentService {
 		return new AttachmentPresignedDTO(dto.getUrl(), dto.getUuid(), attachmentObj);
 	}
 
-	public List<AttachmentsDTO> uploadAll(User user, List<AttachmentAddDTO> attachments) {
-		List<AttachmentsDTO> attachmentsData = new ArrayList<>();
+	public List<UploadAttachmentDTO> uploadAll(User user, List<AttachmentAddDTO> attachments) {
+		List<UploadAttachmentDTO> attachmentsData = new ArrayList<>();
 
 		attachments.forEach(attachment -> {
 			AttachmentPresignedDTO dto = getPresignedURLAndSave(attachment, user);
-			attachmentsData.add(new AttachmentsDTO(dto.getUrl(), dto.getAttachment().getId()));
+			attachmentsData.add(new UploadAttachmentDTO(dto.getUrl(), dto.getAttachment().getId()));
 		});
 
 		return attachmentsData;
 	}
 
-	public AttachmentsDTO upload(User user, AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO upload(User user, AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		if (attachment == null) throw new AttachmentsCannotBeEmpty();
 
 		AttachmentPresignedDTO dto = getPresignedURLAndSave(attachment, user);
@@ -55,7 +55,7 @@ public class AttachmentService {
 			throw new UnknownAttachmentsException();
 		}
 
-		return new AttachmentsDTO(dto.getUrl(), dto.getAttachment().getId());
+		return new UploadAttachmentDTO(dto.getUrl(), dto.getAttachment().getId());
 	}
 
 	public List<Attachment> get(User user, List<Long> attachmentsIds) throws UnknownAttachmentsException {

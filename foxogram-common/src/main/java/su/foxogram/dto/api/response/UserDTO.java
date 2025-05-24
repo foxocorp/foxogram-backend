@@ -42,8 +42,8 @@ public class UserDTO {
 
 	public UserDTO(User user, List<Long> channels, boolean includeEmail, boolean includeChannels) {
 		this.id = user.getId();
-		if (this.avatar != null) {
-			this.avatar = new AttachmentDTO(user.getAvatar().getId(), user.getAvatar().getUuid(), user.getAvatar().getFilename(), user.getAvatar().getContentType(), user.getAvatar().getFlags());
+		if (user.getAvatar() != null) {
+			this.avatar = new AttachmentDTO(user.getAvatar());
 		}
 		this.displayName = user.getDisplayName();
 		this.username = user.getUsername();

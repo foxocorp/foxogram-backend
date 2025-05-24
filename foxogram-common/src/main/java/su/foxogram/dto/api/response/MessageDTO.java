@@ -32,13 +32,7 @@ public class MessageDTO {
 		this.author = new MemberDTO(message.getAuthor(), false);
 		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
 		if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
-					.map(messageAttachment -> new AttachmentDTO(
-							messageAttachment.getAttachment().getId(),
-							messageAttachment.getAttachment().getUuid(),
-							messageAttachment.getAttachment().getFilename(),
-							messageAttachment.getAttachment().getContentType(),
-							messageAttachment.getAttachment().getFlags()
-					))
+					.map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
 					.collect(Collectors.toList());
 		else this.attachments = new ArrayList<>();
 		this.createdAt = message.getTimestamp();

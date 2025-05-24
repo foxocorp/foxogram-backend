@@ -8,7 +8,7 @@ import su.foxogram.constant.GatewayConstant;
 import su.foxogram.constant.MemberConstant;
 import su.foxogram.dto.api.request.AttachmentAddDTO;
 import su.foxogram.dto.api.request.MessageCreateDTO;
-import su.foxogram.dto.api.response.AttachmentsDTO;
+import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.MessageDTO;
 import su.foxogram.exception.channel.ChannelNotFoundException;
 import su.foxogram.exception.member.MemberInChannelNotFoundException;
@@ -84,7 +84,7 @@ public class MessageService {
 		return message;
 	}
 
-	public List<AttachmentsDTO> addAttachments(Channel channel, User user, List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
+	public List<UploadAttachmentDTO> addAttachments(Channel channel, User user, List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
 		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
 
 		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);

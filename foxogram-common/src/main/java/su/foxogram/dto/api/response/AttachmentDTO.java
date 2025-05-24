@@ -3,6 +3,7 @@ package su.foxogram.dto.api.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+import su.foxogram.model.Attachment;
 
 @Getter
 @Setter
@@ -19,11 +20,11 @@ public class AttachmentDTO {
 
 	public long flags;
 
-	public AttachmentDTO(long id, String uuid, String filename, String contentType, long flags) {
-		this.id = id;
-		this.uuid = uuid;
-		this.filename = filename;
-		this.contentType = contentType;
-		this.flags = flags;
+	public AttachmentDTO(Attachment attachment) {
+		this.id = attachment.getId();
+		this.uuid = attachment.getUuid();
+		this.filename = attachment.getFilename();
+		this.contentType = attachment.getContentType();
+		this.flags = attachment.getFlags();
 	}
 }

@@ -86,7 +86,7 @@ public class ChannelController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{channelId}/icon")
-	public AttachmentsDTO uploadAvatar(@RequestBody AttachmentAddDTO attachment, @PathVariable String channelId) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO uploadAvatar(@RequestBody AttachmentAddDTO attachment, @PathVariable String channelId) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		return attachmentService.upload(null, attachment);
 	}
 
@@ -169,7 +169,7 @@ public class ChannelController {
 
 	@Operation(summary = "Add attachments")
 	@PutMapping("/{channelId}/attachments")
-	public List<AttachmentsDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @RequestBody List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
+	public List<UploadAttachmentDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @RequestBody List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
 		if (attachments == null || attachments.isEmpty()) {
 			throw new AttachmentsCannotBeEmpty();
 		}

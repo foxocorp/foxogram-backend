@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Schema(name = "Attachments")
-public class AttachmentsDTO {
+public class UploadAttachmentDTO {
 
 	public String url;
 
 	public long id;
 
-	public AttachmentsDTO(String url, long id) {
+	public UploadAttachmentDTO(String url, long id) {
 		this.url = url;
 		this.id = id;
 	}

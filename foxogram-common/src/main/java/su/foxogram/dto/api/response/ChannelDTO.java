@@ -41,7 +41,7 @@ public class ChannelDTO {
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
 		if (channel.getIcon() != null) {
-			this.icon = new AttachmentDTO(channel.getIcon().getId(), channel.getIcon().getUuid(), channel.getIcon().getFilename(), channel.getIcon().getContentType(), channel.getIcon().getFlags());
+			this.icon = new AttachmentDTO(channel.getIcon());
 		}
 		this.type = channel.getType();
 		this.flags = channel.getFlags();
