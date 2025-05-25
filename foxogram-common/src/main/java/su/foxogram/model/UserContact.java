@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "user_contacts", indexes = {
-        @Index(name = "idx_user_contact", columnList = "user_id, contact_id")
+        @Index(name = "idx_user_contact", columnList = "user_id, contact_id", unique = true)
 })
 public class UserContact {
 

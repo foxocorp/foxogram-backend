@@ -18,9 +18,7 @@ import su.foxogram.exception.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
 import su.foxogram.exception.otp.OTPsInvalidException;
-import su.foxogram.exception.user.UserCredentialsDuplicateException;
-import su.foxogram.exception.user.UserCredentialsIsInvalidException;
-import su.foxogram.exception.user.UserNotFoundException;
+import su.foxogram.exception.user.*;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Message;
 import su.foxogram.model.User;
@@ -128,11 +126,30 @@ public class UserController {
 		return new OkDTO(true);
 	}
 
+	@Operation(summary = "Get contacts")
+	@GetMapping("/@me/contacts")
+	public List<UserDTO> getContacts(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser) throws UserNotFoundException {
+		User user = userService.getById(authenticatedUser.getId()).orElseThrow(UserNotFoundException::new);
+		return user.getContacts()
+				.stream()
+				.map(contact -> new UserDTO(contact.getContact(), null, null, false, false, false))
+				.collect(Collectors.toList());
+	}
+
 	@Operation(summary = "Add contact")
 	@PostMapping("/{id}")
-	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException {
+	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactAlreadyExistException {
 		log.debug("USER ({}) contact add ({}) request", user.getId(), id);
 
 		return new UserDTO(userService.addContact(user, id), null, null, false, false, false);
+	}
+
+	@Operation(summary = "Delete contact")
+	@DeleteMapping("/{id}")
+	public OkDTO deleteContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactNotFoundException {
+		log.debug("USER ({}) contact delete ({}) request", user.getId(), id);
+		userService.deleteContact(user, id);
+
+		return new OkDTO(true);
 	}
 }

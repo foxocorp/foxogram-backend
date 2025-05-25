@@ -15,9 +15,7 @@ import su.foxogram.dto.gateway.StatusDTO;
 import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
 import su.foxogram.exception.otp.OTPsInvalidException;
-import su.foxogram.exception.user.UserCredentialsDuplicateException;
-import su.foxogram.exception.user.UserCredentialsIsInvalidException;
-import su.foxogram.exception.user.UserNotFoundException;
+import su.foxogram.exception.user.*;
 import su.foxogram.model.Member;
 import su.foxogram.model.OTP;
 import su.foxogram.model.User;
@@ -173,11 +171,25 @@ public class UserService {
 		emailService.send(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
 	}
 
-	public User addContact(User user, long id) throws UserNotFoundException {
-		User contact = getById(id).orElseThrow(UserNotFoundException::new);
-		user.getContacts().add(new UserContact(user, contact));
-		userRepository.save(user);
+	public User addContact(User user, long id) throws UserNotFoundException, UserContactAlreadyExistException {
+		try {
+			User contact = getById(id).orElseThrow(UserNotFoundException::new);
+			user.getContacts().add(new UserContact(user, contact));
+			userRepository.save(user);
 
-		return contact;
+			return contact;
+		} catch (DataIntegrityViolationException e) {
+			throw new UserContactAlreadyExistException();
+		}
+	}
+
+	public void deleteContact(User user, long id) throws UserNotFoundException, UserContactNotFoundException {
+		try {
+			User contact = getById(id).orElseThrow(UserNotFoundException::new);
+			user.getContacts().remove(new UserContact(user, contact));
+			userRepository.save(user);
+		} catch (DataIntegrityViolationException e) {
+			throw new UserContactNotFoundException();
+		}
 	}
 }

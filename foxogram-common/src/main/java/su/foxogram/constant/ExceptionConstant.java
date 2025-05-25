@@ -42,7 +42,9 @@ public class ExceptionConstant {
 		USER_EMAIL_VERIFIED("You need to verify your email first"),
 		USER_NOT_FOUND("Unknown user"),
 		USER_UNAUTHORIZED("You need to authorize first"),
-		ROUTE_NOT_FOUND("Route not found");
+		ROUTE_NOT_FOUND("Route not found"),
+		USER_CONTACT_ALREADY_EXIST("Contact already exist"),
+		USER_CONTACT_NOT_FOUND("Contact not found");
 
 		private final String message;
 
@@ -60,7 +62,9 @@ public class ExceptionConstant {
 		EMAIL_NOT_VERIFIED,
 		CREDENTIALS_DUPLICATE,
 		CREDENTIALS_IS_INVALID,
-		UNAUTHORIZED;
+		UNAUTHORIZED,
+		CONTACT_ALREADY_EXIST,
+		CONTACT_NOT_FOUND;
 
 		public int getValue() {
 			return USER_ERROR + this.ordinal();
