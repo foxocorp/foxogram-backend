@@ -78,7 +78,6 @@ public class UserService {
 	}
 
 	public User add(String username, String email, String password) throws UserCredentialsDuplicateException {
-		long deletion = 0;
 		long flags = UserConstant.Flags.AWAITING_CONFIRMATION.getBit();
 		if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
 		int type = UserConstant.Type.USER.getType();
