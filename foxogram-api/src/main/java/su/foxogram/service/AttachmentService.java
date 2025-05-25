@@ -32,6 +32,7 @@ public class AttachmentService {
 		AttachmentPresignedDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
 		Attachment attachmentObj = attachmentRepository.save(new Attachment(user, dto.getUuid(), attachment.getFilename(), attachment.getContentType(), 0, true));
 
+		log.debug("Successfully got presigned url and saved attachment {}", dto.getUuid());
 		return new AttachmentPresignedDTO(dto.getUrl(), dto.getUuid(), attachmentObj);
 	}
 
@@ -43,6 +44,7 @@ public class AttachmentService {
 			attachmentsData.add(new UploadAttachmentDTO(dto.getUrl(), dto.getAttachment().getId()));
 		});
 
+		log.debug("Successfully uploaded all attachments by user {}", user.getUsername());
 		return attachmentsData;
 	}
 
@@ -55,6 +57,7 @@ public class AttachmentService {
 			throw new UnknownAttachmentsException();
 		}
 
+		log.debug("Successfully uploaded attachment by user {}", user.getUsername());
 		return dto;
 	}
 
@@ -71,6 +74,7 @@ public class AttachmentService {
 			}
 		}
 
+		log.debug("Successfully got all attachments by user {}", user.getUsername());
 		return attachments;
 	}
 

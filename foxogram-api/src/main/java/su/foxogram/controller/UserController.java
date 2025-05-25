@@ -112,7 +112,6 @@ public class UserController {
 	@DeleteMapping("/@me")
 	public OkDTO delete(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody UserDeleteDTO body) throws UserCredentialsIsInvalidException {
 		String password = body.getPassword();
-		log.debug("USER deletion requested ({}) request", user.getId());
 
 		userService.requestDelete(user, password);
 
@@ -122,8 +121,6 @@ public class UserController {
 	@Operation(summary = "Confirm delete")
 	@PostMapping("/@me/delete-confirm")
 	public OkDTO deleteConfirm(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
-		log.debug("USER deletion confirm ({}) request", user.getId());
-
 		userService.confirmDelete(user, body.getOTP());
 
 		return new OkDTO(true);
@@ -142,15 +139,12 @@ public class UserController {
 	@Operation(summary = "Add contact")
 	@PostMapping("/{id}")
 	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactAlreadyExistException {
-		log.debug("USER ({}) contact add ({}) request", user.getId(), id);
-
 		return new UserDTO(userService.addContact(user, id), null, null, false, false, false);
 	}
 
 	@Operation(summary = "Delete contact")
 	@DeleteMapping("/{id}")
 	public OkDTO deleteContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactNotFoundException {
-		log.debug("USER ({}) contact delete ({}) request", user.getId(), id);
 		userService.deleteContact(user, id);
 
 		return new OkDTO(true);

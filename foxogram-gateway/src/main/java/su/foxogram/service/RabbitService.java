@@ -28,5 +28,6 @@ public class RabbitService {
 
 	public void send(long userId, int status) throws JsonProcessingException {
 		rabbitTemplate.convertAndSend(rabbitConfig.getQueue(), objectMapper.writeValueAsString(new StatusDTO(userId, status)));
+		log.debug("Sent message to rabbit queue {} with user id {} and status {}", rabbitConfig.getQueue(), userId, status);
 	}
 }

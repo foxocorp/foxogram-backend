@@ -2,6 +2,7 @@ package su.foxogram.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
@@ -16,6 +17,7 @@ import su.foxogram.service.MemberService;
 
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
 
@@ -41,6 +43,8 @@ public class MemberInterceptor implements HandlerInterceptor {
 				.orElseThrow(ChannelNotFoundException::new);
 
 		request.setAttribute(AttributeConstant.MEMBER, member);
+
+		log.debug("Got member {} in channel {} successfully", member.getId(), channel.getId());
 		return true;
 	}
 }

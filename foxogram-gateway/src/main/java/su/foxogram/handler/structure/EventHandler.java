@@ -95,6 +95,7 @@ public class EventHandler extends TextWebSocketHandler {
 
 			if (handler != null) {
 				handler.handle(session, sessions, payload);
+				log.debug("Handling {} event with opcode {}", payload.getT(), payload.getOp());
 			}
 		} catch (UserUnauthorizedException e) {
 			log.error(ExceptionConstant.Messages.SERVER_EXCEPTION.getValue(), null, null, message);

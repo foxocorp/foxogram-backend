@@ -60,7 +60,7 @@ public class EmailService {
 			helper.setText(htmlContent, true);
 
 			javaMailSender.send(mimeMessage);
-			log.debug("Email ({}) sent to ({}) successfully", type, to);
+			log.debug("Email {} sent to {} successfully", type, to);
 
 			otpService.save(id, type, digitCode, issuedAt, expiresAt);
 		} catch (IllegalArgumentException | MessagingException | IOException e) {

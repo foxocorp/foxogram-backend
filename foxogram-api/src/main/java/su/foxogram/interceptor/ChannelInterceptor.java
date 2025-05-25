@@ -48,6 +48,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 		request.setAttribute(AttributeConstant.CHANNEL, channel);
 
+		log.debug("Got channel {} successfully", channel.getId());
 		return true;
 	}
 }

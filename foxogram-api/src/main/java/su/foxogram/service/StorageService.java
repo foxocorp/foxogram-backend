@@ -44,6 +44,7 @@ public class StorageService {
 			throw new RuntimeException(e);
 		}
 
+		log.debug("Successfully get presigned url to bucket {} with uuid {}", bucketName, uuid);
 		return new AttachmentPresignedDTO(url, uuid, null);
 	}
 }

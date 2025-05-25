@@ -1,6 +1,7 @@
 package su.foxogram.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 public class WebSocketService {
 
@@ -37,6 +39,7 @@ public class WebSocketService {
 			if (!wsSession.isOpen()) return;
 
 			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
+			log.debug("Sent message to all sessions (opcode: {}, type: {})", opcode, type);
 		}
 	}
 
@@ -53,6 +56,7 @@ public class WebSocketService {
 				if (!wsSession.isOpen()) return;
 
 				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
+				log.debug("Sent message to userIds ({}) with (opcode: {}, type: {})", userIds, opcode, type);
 			}
 		}
 	}

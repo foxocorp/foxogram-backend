@@ -58,7 +58,7 @@ public class MessageService {
 	public Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
-		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
+		log.debug("Message {} in channel {} found successfully", id, channel.getId());
 
 		return message;
 	}
@@ -76,7 +76,7 @@ public class MessageService {
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, true), GatewayConstant.Event.MESSAGE_CREATE.getValue());
-		log.debug("Message ({}) to channel ({}) created successfully", message.getId(), channel.getId());
+		log.debug("Message {} to channel {} created successfully", message.getId(), channel.getId());
 
 		return message;
 	}
@@ -89,6 +89,7 @@ public class MessageService {
 		if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
+		log.debug("Successfully added attachments to message {} by user {}", channel.getId(), user.getId());
 		return attachmentService.uploadAll(user, attachments);
 	}
 
@@ -100,7 +101,7 @@ public class MessageService {
 
 		messageRepository.delete(message);
 		rabbitService.send(getRecipients(channel), Map.of("id", id), GatewayConstant.Event.MESSAGE_DELETE.getValue());
-		log.debug("Message ({}) in channel ({}) deleted successfully", id, channel.getId());
+		log.debug("Message {} in channel {} deleted successfully", id, channel.getId());
 	}
 
 	public Message update(long id, Channel channel, Member member, MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
@@ -113,7 +114,7 @@ public class MessageService {
 		messageRepository.save(message);
 
 		rabbitService.send(getRecipients(channel), new MessageDTO(message, true), GatewayConstant.Event.MESSAGE_UPDATE.getValue());
-		log.debug("Message ({}) in channel ({}) edited successfully", id, channel.getId());
+		log.debug("Message {} in channel {} edited successfully", id, channel.getId());
 
 		return message;
 	}

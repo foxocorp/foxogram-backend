@@ -30,5 +30,6 @@ public class RabbitService {
 
 	public void send(List<Long> recipients, Object data, String event) throws JsonProcessingException {
 		rabbitTemplate.convertAndSend(rabbitConfig.getQueue(), objectMapper.writeValueAsString(new RabbitDTO(recipients, data, event)));
+		log.debug("Sent message to rabbit queue {}, to {} with data {} ({})", rabbitConfig.getQueue(), recipients, data, event);
 	}
 }

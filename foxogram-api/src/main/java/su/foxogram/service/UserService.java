@@ -90,6 +90,7 @@ public class UserService {
 			throw new UserCredentialsDuplicateException();
 		}
 
+		log.debug("Successfully created new user {}, {}", user.getId(), user.getUsername());
 		return user;
 	}
 
@@ -108,7 +109,7 @@ public class UserService {
 			throw new UserCredentialsDuplicateException();
 		}
 
-		log.debug("User ({}) edited successfully", user.getUsername());
+		log.debug("User {} edited successfully", user.getUsername());
 
 		return user;
 	}
@@ -118,7 +119,7 @@ public class UserService {
 			throw new UserCredentialsIsInvalidException();
 
 		sendEmail(user, EmailConstant.Type.ACCOUNT_DELETE);
-		log.debug("User ({}) delete requested successfully", user.getUsername());
+		log.debug("User {} delete requested successfully", user.getUsername());
 	}
 
 	public void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
@@ -126,9 +127,9 @@ public class UserService {
 
 		userRepository.delete(user);
 
-		log.debug("User ({}) deleted successfully", user.getUsername());
+		log.debug("User {} deleted successfully", user.getUsername());
 
-		if (OTP == null) return; // is dev
+		if (OTP == null) return; // if dev
 
 		otpService.delete(OTP);
 	}
@@ -147,6 +148,7 @@ public class UserService {
 				.collect(Collectors.toList());
 
 		rabbitService.send(recipients, new StatusDTO(userId, status), GatewayConstant.Event.USER_STATUS_UPDATE.getValue());
+		log.debug("Set user {} status {} successfully", user.getUsername(), status);
 	}
 
 	private void changeEmail(User user, UserEditDTO body) {
@@ -154,6 +156,7 @@ public class UserService {
 		user.addFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
 		sendEmail(user, EmailConstant.Type.EMAIL_VERIFY);
+		log.debug("Sent email request to change user {} email ({} -> {})", user.getUsername(), user.getEmail(), body.getEmail());
 	}
 
 	private void changePassword(User user, UserEditDTO body) {
@@ -161,6 +164,7 @@ public class UserService {
 		user.addFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
 		sendEmail(user, EmailConstant.Type.RESET_PASSWORD);
+		log.debug("Sent email request to change user {} password", user.getUsername());
 	}
 
 	private void sendEmail(User user, EmailConstant.Type type) {
@@ -179,6 +183,7 @@ public class UserService {
 			userRepository.save(user);
 
 			rabbitService.send(Collections.singletonList(contact.getId()), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.CONTACT_ADD.getValue());
+			log.debug("Successfully added contact {} to user {}", contact.getId(), user.getId());
 			return contact;
 		} catch (DataIntegrityViolationException e) {
 			throw new UserContactAlreadyExistException();
@@ -194,6 +199,7 @@ public class UserService {
 			userRepository.save(user);
 
 			rabbitService.send(Collections.singletonList(contact.getId()), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.CONTACT_DELETE.getValue());
+			log.debug("Successfully deleted contact {} from user {}", contact.getId(), user.getId());
 		} catch (DataIntegrityViolationException e) {
 			throw new UserContactNotFoundException();
 		} catch (JsonProcessingException e) {
