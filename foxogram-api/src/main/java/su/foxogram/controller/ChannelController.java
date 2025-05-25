@@ -13,6 +13,7 @@ import su.foxogram.dto.api.request.ChannelCreateDTO;
 import su.foxogram.dto.api.request.ChannelEditDTO;
 import su.foxogram.dto.api.request.MessageCreateDTO;
 import su.foxogram.dto.api.response.*;
+import su.foxogram.dto.internal.AttachmentPresignedDTO;
 import su.foxogram.exception.cdn.UploadFailedException;
 import su.foxogram.exception.channel.ChannelAlreadyExistException;
 import su.foxogram.exception.channel.ChannelNotFoundException;
@@ -34,6 +35,7 @@ import su.foxogram.service.MessageService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -87,7 +89,9 @@ public class ChannelController {
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{channelId}/icon")
 	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		return attachmentService.upload(null, attachment);
+		AttachmentPresignedDTO data = attachmentService.upload(null, attachment);
+
+		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
 	}
 
 	@Operation(summary = "Delete channel")
@@ -146,13 +150,17 @@ public class ChannelController {
 			limit = 25;
 		}
 
-		return messageService.getAllByChannel(before, limit, channel);
+		return messageService.getAllByChannel(before, limit, channel).stream()
+				.map(message -> {
+					return new MessageDTO(message, false);
+				})
+				.collect(Collectors.toList());
 	}
 
 	@Operation(summary = "Get message")
 	@GetMapping("/{channelId}/messages/{messageId}")
 	public MessageDTO getMessage(@RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId) throws MessageNotFoundException {
-		return messageService.getByIdAndChannel(messageId, channel);
+		return new MessageDTO(messageService.getByIdAndChannel(messageId, channel), true);
 	}
 
 	@Operation(summary = "Create message")

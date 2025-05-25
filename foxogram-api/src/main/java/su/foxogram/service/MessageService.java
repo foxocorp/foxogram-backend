@@ -47,24 +47,20 @@ public class MessageService {
 		this.attachmentService = attachmentService;
 	}
 
-	public List<MessageDTO> getAllByChannel(long before, int limit, Channel channel) {
+	public List<Message> getAllByChannel(long before, int limit, Channel channel) {
 		List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit);
 
 		log.debug("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
-		return messagesArray.reversed().stream()
-				.map(message -> {
-					return new MessageDTO(message, true);
-				})
-				.collect(Collectors.toList());
+		return messagesArray.reversed();
 	}
 
-	public MessageDTO getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException {
+	public Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException {
 		Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
 		log.debug("Message ({}) in channel ({}) found successfully", id, channel.getId());
 
-		return new MessageDTO(message, true);
+		return message;
 	}
 
 	public Message add(Channel channel, User user, MessageCreateDTO body) throws JsonProcessingException, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {

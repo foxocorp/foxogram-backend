@@ -46,7 +46,7 @@ public class AttachmentService {
 		return attachmentsData;
 	}
 
-	public UploadAttachmentDTO upload(User user, AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public AttachmentPresignedDTO upload(User user, AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		if (attachment == null) throw new AttachmentsCannotBeEmpty();
 
 		AttachmentPresignedDTO dto = getPresignedURLAndSave(attachment, user);
@@ -55,7 +55,7 @@ public class AttachmentService {
 			throw new UnknownAttachmentsException();
 		}
 
-		return new UploadAttachmentDTO(dto.getUrl(), dto.getAttachment().getId());
+		return dto;
 	}
 
 	public List<Attachment> get(User user, List<Long> attachmentsIds) throws UnknownAttachmentsException {

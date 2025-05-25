@@ -14,6 +14,7 @@ import su.foxogram.dto.api.response.ChannelDTO;
 import su.foxogram.dto.api.response.OkDTO;
 import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.UserDTO;
+import su.foxogram.dto.internal.AttachmentPresignedDTO;
 import su.foxogram.exception.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
@@ -102,7 +103,9 @@ public class UserController {
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
 	public UploadAttachmentDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		return attachmentService.upload(authenticatedUser, attachment);
+		AttachmentPresignedDTO data = attachmentService.upload(authenticatedUser, attachment);
+
+		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
 	}
 
 	@Operation(summary = "Delete")
