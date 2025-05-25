@@ -8,8 +8,8 @@ import su.foxogram.constant.GatewayConstant;
 import su.foxogram.constant.MemberConstant;
 import su.foxogram.dto.api.request.AttachmentAddDTO;
 import su.foxogram.dto.api.request.MessageCreateDTO;
-import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.MessageDTO;
+import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.exception.channel.ChannelNotFoundException;
 import su.foxogram.exception.member.MemberInChannelNotFoundException;
 import su.foxogram.exception.member.MissingPermissionsException;
@@ -19,6 +19,7 @@ import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.model.*;
 import su.foxogram.repository.MessageRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ public class MessageService {
 		if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
 			throw new MissingPermissionsException();
 
-		List<Attachment> attachments = null;
+		List<Attachment> attachments = new ArrayList<>();
 		if (body.getAttachments() != null) attachments = attachmentService.get(user, body.getAttachments());
 
 		Message message = new Message(channel, body.getContent(), member, attachments);
