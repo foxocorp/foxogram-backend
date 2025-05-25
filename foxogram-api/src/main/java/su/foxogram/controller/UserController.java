@@ -10,9 +10,9 @@ import su.foxogram.dto.api.request.AttachmentAddDTO;
 import su.foxogram.dto.api.request.OTPDTO;
 import su.foxogram.dto.api.request.UserDeleteDTO;
 import su.foxogram.dto.api.request.UserEditDTO;
-import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.ChannelDTO;
 import su.foxogram.dto.api.response.OkDTO;
+import su.foxogram.dto.api.response.UploadAttachmentDTO;
 import su.foxogram.dto.api.response.UserDTO;
 import su.foxogram.exception.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exception.message.UnknownAttachmentsException;
@@ -61,7 +61,9 @@ public class UserController {
 				.map(Channel::getId)
 				.collect(Collectors.toList());
 
-		return new UserDTO(user, channels, true, true);
+		List<Long> contacts = user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList();
+
+		return new UserDTO(user, channels, contacts, true, true, true);
 	}
 
 	@Operation(summary = "Get user by id")
@@ -69,14 +71,14 @@ public class UserController {
 	public UserDTO getById(@PathVariable long id) throws UserNotFoundException {
 		return new UserDTO(userService.getById(id).orElseThrow(UserNotFoundException::new),
 				null,
-				false,
-				false);
+				null, false,
+				false, false);
 	}
 
 	@Operation(summary = "Get user by username")
 	@GetMapping("/@{username}")
 	public UserDTO getByUsername(@PathVariable String username) throws UserNotFoundException {
-		return new UserDTO(userService.getByUsername(username).orElseThrow(UserNotFoundException::new), null, false, false);
+		return new UserDTO(userService.getByUsername(username).orElseThrow(UserNotFoundException::new), null, null, false, false, false);
 	}
 
 	@Operation(summary = "Get user channels")
@@ -96,7 +98,7 @@ public class UserController {
 	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
 		authenticatedUser = userService.update(authenticatedUser, body);
 
-		return new UserDTO(authenticatedUser, null, true, true);
+		return new UserDTO(authenticatedUser, null, null, true, true, false);
 	}
 
 	@Operation(summary = "Upload avatar")
@@ -124,5 +126,13 @@ public class UserController {
 		userService.confirmDelete(user, body.getOTP());
 
 		return new OkDTO(true);
+	}
+
+	@Operation(summary = "Add contact")
+	@PostMapping("/{id}")
+	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException {
+		log.debug("USER ({}) contact add ({}) request", user.getId(), id);
+
+		return new UserDTO(userService.addContact(user, id), null, null, false, false, false);
 	}
 }

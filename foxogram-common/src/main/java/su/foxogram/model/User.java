@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import su.foxogram.constant.UserConstant;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Setter
 @Getter
 @Entity
@@ -19,6 +22,10 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
+	@ManyToOne
+	@JoinColumn(name = "contact_id")
+	public User contact;
+
 	@Column()
 	public String displayName;
 
@@ -27,6 +34,9 @@ public class User {
 
 	@Column()
 	private String email;
+
+	@OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<UserContact> contacts;
 
 	@Column()
 	private int status;
@@ -59,12 +69,16 @@ public class User {
 	public User() {
 	}
 
-	public User(long id, String displayName, String username, String email, String password, int status, long statusUpdatedAt, long flags, int type, long deletion, String key) {
+	public User(long id, String displayName, String username, String email, String password, List<User> contacts, int status, long statusUpdatedAt, long flags, int type, long deletion, String key) {
 		this.id = id;
+		this.contact = this;
 		this.displayName = displayName;
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.password = password;
+		this.contacts = contacts.stream()
+				.map(contact -> new UserContact(this, contact))
+				.collect(Collectors.toList());
 		this.status = status;
 		this.statusUpdatedAt = statusUpdatedAt;
 		this.flags = flags;

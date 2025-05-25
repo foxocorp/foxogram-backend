@@ -52,7 +52,7 @@ public class ChannelDTO {
 		if (lastMessage != null) {
 			this.lastMessage = new MessageDTO(lastMessage, false);
 		}
-		this.owner = new UserDTO(channel.getOwner(), null, false, false);
+		this.owner = new UserDTO(channel.getOwner(), null, null, false, false, false);
 		this.createdAt = channel.getCreatedAt();
 	}
 }

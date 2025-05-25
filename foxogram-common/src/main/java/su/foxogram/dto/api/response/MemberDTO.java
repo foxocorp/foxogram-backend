@@ -24,7 +24,7 @@ public class MemberDTO {
 
 	public MemberDTO(Member member, boolean includeChannel) {
 		this.id = member.getId();
-		this.user = new UserDTO(member.getUser(), null, false, false);
+		this.user = new UserDTO(member.getUser(), null, null, false, false, false);
 		if (includeChannel) this.channel = new ChannelDTO(member.getChannel(), null);
 		this.permissions = member.getPermissions();
 		this.joinedAt = member.getJoinedAt();

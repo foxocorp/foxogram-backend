@@ -21,10 +21,12 @@ import su.foxogram.exception.user.UserNotFoundException;
 import su.foxogram.model.Member;
 import su.foxogram.model.OTP;
 import su.foxogram.model.User;
+import su.foxogram.model.UserContact;
 import su.foxogram.repository.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -82,7 +84,7 @@ public class UserService {
 		if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
 		int type = UserConstant.Type.USER.getType();
 
-		User user = new User(0, null, username, email, PasswordHasher.hashPassword(password), 0, System.currentTimeMillis(), flags, type, deletion, null);
+		User user = new User(0, null, username, email, PasswordHasher.hashPassword(password), new ArrayList<>(), 0, System.currentTimeMillis(), flags, type, deletion, null);
 
 		try {
 			userRepository.save(user);
@@ -170,5 +172,13 @@ public class UserService {
 		long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
 
 		emailService.send(user.getEmail(), user.getId(), emailType, user.getUsername(), code, issuedAt, expiresAt, null);
+	}
+
+	public User addContact(User user, long id) throws UserNotFoundException {
+		User contact = getById(id).orElseThrow(UserNotFoundException::new);
+		user.getContacts().add(new UserContact(user, contact));
+		userRepository.save(user);
+
+		return contact;
 	}
 }

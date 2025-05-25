@@ -31,6 +31,9 @@ public class UserDTO {
 
 	private long statusUpdatedAt;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<Long> contacts;
+
 	private long flags;
 
 	private int type;
@@ -40,7 +43,7 @@ public class UserDTO {
 	@SuppressWarnings("unused")
 	public UserDTO() {}
 
-	public UserDTO(User user, List<Long> channels, boolean includeEmail, boolean includeChannels) {
+	public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
 		this.id = user.getId();
 		if (user.getAvatar() != null) {
 			this.avatar = new AttachmentDTO(user.getAvatar());
@@ -52,6 +55,9 @@ public class UserDTO {
 		}
 		if (includeChannels) {
 			this.channels = channels;
+		}
+		if (includeContacts) {
+			this.contacts = contacts;
 		}
 		this.status = user.getStatus();
 		this.statusUpdatedAt = user.getStatusUpdatedAt();
