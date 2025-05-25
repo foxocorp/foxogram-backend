@@ -26,7 +26,6 @@ import su.foxogram.repository.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,7 +83,7 @@ public class UserService {
 		if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
 		int type = UserConstant.Type.USER.getType();
 
-		User user = new User(0, null, username, email, PasswordHasher.hashPassword(password), new ArrayList<>(), 0, System.currentTimeMillis(), flags, type, deletion, null);
+		User user = new User(username, email, PasswordHasher.hashPassword(password), flags, type);
 
 		try {
 			userRepository.save(user);

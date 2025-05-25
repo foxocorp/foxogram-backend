@@ -69,23 +69,23 @@ public class User {
 	public User() {
 	}
 
-	public User(long id, String displayName, String username, String email, String password, List<User> contacts, int status, long statusUpdatedAt, long flags, int type, long deletion, String key) {
-		this.id = id;
+	public User(String username, String email, String password, long flags, int type) {
+		this.id = 0;
 		this.contact = this;
-		this.displayName = displayName;
+		this.displayName = null;
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.password = password;
-		this.contacts = contacts.stream()
-				.map(contact -> new UserContact(this, contact))
+		if (this.contacts != null) this.contacts = contacts.stream()
+				.map(userContact -> new UserContact(this, userContact.getContact()))
 				.collect(Collectors.toList());
-		this.status = status;
-		this.statusUpdatedAt = statusUpdatedAt;
+		this.status = UserConstant.Status.OFFLINE.getStatus();
+		this.statusUpdatedAt = System.currentTimeMillis();
 		this.flags = flags;
 		this.type = type;
 		this.createdAt = System.currentTimeMillis();
-		this.deletion = deletion;
-		this.key = key;
+		this.deletion = 0;
+		this.key = null;
 	}
 
 	public void addFlag(UserConstant.Flags flag) {
