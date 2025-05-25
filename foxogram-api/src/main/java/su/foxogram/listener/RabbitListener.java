@@ -28,6 +28,8 @@ public class RabbitListener {
 		long userId = dto.getUserId();
 		int status = dto.getStatus();
 
+		if (userId == 0 || status == 0) return;
+
 		log.info("Got status message for {} with status {}", userId, status);
 		userService.setStatus(userId, status);
 	}
