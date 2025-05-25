@@ -14,7 +14,7 @@ public class MessageAttachment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "message_id", nullable = false)

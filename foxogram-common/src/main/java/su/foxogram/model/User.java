@@ -22,51 +22,46 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
-	@Column()
+	@Column
 	public String displayName;
 
-	@Column()
+	@Column
 	public String username;
 
-	@Column()
+	@Column
 	private String email;
 
 	@OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<UserContact> contacts;
 
-	@Column()
+	@Column
 	private int status;
 
-	@Column()
+	@Column
 	private long statusUpdatedAt;
 
-	@Column()
+	@Column
 	private String password;
 
 	@JoinColumn(name = "avatar_id")
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	public Attachment avatar;
 
-	@Column()
+	@Column
 	public long flags;
 
-	@Column()
+	@Column
 	public int type;
 
-	@Column()
+	@Column
 	private long createdAt;
 
-	@Column()
-	private long deletion;
+	@Column
+	private long deletedAt;
 
-	@Column()
-	private String key;
-
-	public User() {
-	}
+	public User() {}
 
 	public User(String username, String email, String password, long flags, int type) {
-		this.id = 0;
 		this.displayName = null;
 		this.username = username.toLowerCase();
 		this.email = email;
@@ -79,8 +74,6 @@ public class User {
 		this.flags = flags;
 		this.type = type;
 		this.createdAt = System.currentTimeMillis();
-		this.deletion = 0;
-		this.key = null;
 	}
 
 	public void addFlag(UserConstant.Flags flag) {

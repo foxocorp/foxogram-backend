@@ -17,27 +17,25 @@ public class Attachment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column()
+	@Column
 	private String uuid;
 
-	@Column()
+	@Column
 	private String filename;
 
-	@Column()
+	@Column
 	private String contentType;
 
-	@Column()
+	@Column
 	private long flags;
 
-	public Attachment() {
-	}
+	public Attachment() {}
 
-	public Attachment(long id, User user, String uuid, String filename, String contentType, long flags, boolean includeUser) {
-		this.id = id;
+	public Attachment(User user, String uuid, String filename, String contentType, long flags, boolean includeUser) {
 		if (includeUser) this.user = user;
 		this.uuid = uuid;
 		this.filename = filename;

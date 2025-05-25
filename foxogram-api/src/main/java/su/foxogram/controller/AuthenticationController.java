@@ -34,7 +34,7 @@ public class AuthenticationController {
 	}
 
 	@Operation(summary = "Register")
-	@SecurityRequirements()
+	@SecurityRequirements
 	@PostMapping("/register")
 	public TokenDTO register(@Valid @RequestBody UserRegisterDTO body) throws UserCredentialsDuplicateException {
 		String username = body.getUsername();
@@ -46,7 +46,7 @@ public class AuthenticationController {
 	}
 
 	@Operation(summary = "Login")
-	@SecurityRequirements()
+	@SecurityRequirements
 	@PostMapping("/login")
 	public TokenDTO login(@Valid @RequestBody UserLoginDTO body) throws UserCredentialsIsInvalidException {
 		String email = body.getEmail();
@@ -74,7 +74,7 @@ public class AuthenticationController {
 	}
 
 	@Operation(summary = "Reset password")
-	@SecurityRequirements()
+	@SecurityRequirements
 	@PostMapping("/reset-password")
 	public OkDTO resetPassword(@RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
 		authenticationService.resetPassword(body);
@@ -83,7 +83,7 @@ public class AuthenticationController {
 	}
 
 	@Operation(summary = "Confirm reset password")
-	@SecurityRequirements()
+	@SecurityRequirements
 	@PostMapping("/reset-password/confirm")
 	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		authenticationService.confirmResetPassword(body);

@@ -30,7 +30,7 @@ public class AttachmentService {
 
 	public AttachmentPresignedDTO getPresignedURLAndSave(AttachmentAddDTO attachment, User user) {
 		AttachmentPresignedDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
-		Attachment attachmentObj = attachmentRepository.save(new Attachment(0, user, dto.getUuid(), attachment.getFilename(), attachment.getContentType(), 0, true));
+		Attachment attachmentObj = attachmentRepository.save(new Attachment(user, dto.getUuid(), attachment.getFilename(), attachment.getContentType(), 0, true));
 
 		return new AttachmentPresignedDTO(dto.getUrl(), dto.getUuid(), attachmentObj);
 	}

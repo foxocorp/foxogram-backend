@@ -20,23 +20,23 @@ public class Channel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
-	@Column()
+	@Column
 	public String displayName;
 
-	@Column()
+	@Column
 	public String name;
 
 	@JoinColumn(name = "icon_id")
 	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	public Attachment icon;
 
-	@Column()
+	@Column
 	public int type;
 
-	@Column()
+	@Column
 	public long flags;
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	public User owner;
 
@@ -46,14 +46,12 @@ public class Channel {
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Message> messages;
 
-	@Column()
+	@Column
 	public long createdAt;
 
-	public Channel() {
-	}
+	public Channel() {}
 
-	public Channel(long id, String displayName, String name, long flags, int type, User owner) {
-		this.id = id;
+	public Channel(String displayName, String name, long flags, int type, User owner) {
 		this.displayName = displayName;
 		this.name = name.toLowerCase();
 		this.type = type;

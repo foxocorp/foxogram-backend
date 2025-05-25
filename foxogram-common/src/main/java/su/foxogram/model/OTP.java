@@ -13,23 +13,22 @@ import lombok.Setter;
 })
 public class OTP {
 
-	@Id()
+	@Id
 	public long userId;
 
-	@Column()
+	@Column
 	public String type;
 
-	@Column()
+	@Column
 	public String value;
 
-	@Column()
+	@Column
 	public long issuedAt;
 
-	@Column()
+	@Column
 	public long expiresAt;
 
-	public OTP() {
-	}
+	public OTP() {}
 
 	public OTP(long userId, String type, String value, long issuedAt, long expiresAt) {
 		this.userId = userId;

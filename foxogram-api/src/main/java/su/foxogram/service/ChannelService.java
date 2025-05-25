@@ -58,7 +58,7 @@ public class ChannelService {
 			isPublic = ChannelConstant.Flags.PUBLIC.getBit();
 
 		try {
-			channel = new Channel(0, body.getDisplayName(), body.getName(), isPublic, body.getType(), user);
+			channel = new Channel(body.getDisplayName(), body.getName(), isPublic, body.getType(), user);
 			channelRepository.save(channel);
 		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();

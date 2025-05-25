@@ -18,27 +18,21 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
-	@Column()
+	@Column
 	public long permissions;
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "channel_id", nullable = false)
 	private Channel channel;
 
-	@Column()
+	@Column
 	public long joinedAt;
 
-	public Member() {
-
-	}
-
-	public Member(long id) {
-		this.id = id;
-	}
+	public Member() {}
 
 	public Member(User user, Channel channel, long permissions) {
 		this.user = user;

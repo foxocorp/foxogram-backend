@@ -26,7 +26,7 @@ public class Message {
 	@JoinColumn(name = "author", nullable = false)
 	public Member author;
 
-	@Column()
+	@Column
 	public long timestamp;
 
 	@OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
