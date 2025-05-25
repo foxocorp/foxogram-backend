@@ -1,17 +1,17 @@
-<img src=".github/assets/backend.png" alt="Foxogram Backend">
-<img src=".github/assets/backend_desc.png" alt="Server side of the Foxogram messenger developed in Java">
-<img src=".github/assets/backend_resources.png" alt="## Resources">
+<img src=".github/assets/title.png" alt="Foxogram Backend">
+<img src=".github/assets/desc.png" alt="Server side of the Foxogram messenger developed in Java">
+<img src=".github/assets/resources.png" alt="## Resources">
 
-- **Website** 
+- **Website**
   - https://foxogram.su
-- **Discord** 
+- **Discord**
   - https://discord.foxogram.su
-- **GitHub** 
+- **GitHub**
   - https://github.com/foxocorp
-- **Support** 
+- **Support**
   - https://boosty.to/foxogram
 
-<img src=".github/assets/backend_acknowledgements.png" alt="## Acknowledgements">
+<img src=".github/assets/acknowledgements.png" alt="## Acknowledgements">
 
 We would like to thank the following people and organizations for their valuable input and support in the development of the backend:
 
@@ -20,7 +20,7 @@ We would like to thank the following people and organizations for their valuable
 
 Without your help, the **Foxogram Backend** project would not have been possible. We are grateful for your participation and support!
 
-<img src=".github/assets/backend_license.png" alt="## License">
+<img src=".github/assets/license.png" alt="## License">
 
 This project is licensed under the MIT license - see [LICENSE](LICENSE) for details.
 
