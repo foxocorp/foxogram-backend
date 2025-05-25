@@ -9,7 +9,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import su.foxogram.constant.AttributeConstant;
+import su.foxogram.constant.ChannelConstant;
 import su.foxogram.exception.channel.ChannelNotFoundException;
+import su.foxogram.model.Channel;
 import su.foxogram.service.ChannelService;
 
 import java.util.regex.Matcher;
@@ -40,7 +42,11 @@ public class ChannelInterceptor implements HandlerInterceptor {
 		}
 
 		long id = Long.parseLong(matcher.group(1));
-		request.setAttribute(AttributeConstant.CHANNEL, channelService.getById(id));
+		Channel channel = channelService.getById(id);
+
+		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC)) throw new ChannelNotFoundException();
+
+		request.setAttribute(AttributeConstant.CHANNEL, channel);
 
 		return true;
 	}

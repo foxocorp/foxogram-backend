@@ -54,7 +54,8 @@ public class ChannelService {
 
 		long isPublic = 0;
 
-		if (body.isPublic()) isPublic = ChannelConstant.Flags.PUBLIC.getBit();
+		if (body.isPublic() && body.getType() != ChannelConstant.Type.DM.getType())
+			isPublic = ChannelConstant.Flags.PUBLIC.getBit();
 
 		try {
 			channel = new Channel(0, body.getDisplayName(), body.getName(), isPublic, body.getType(), user);
