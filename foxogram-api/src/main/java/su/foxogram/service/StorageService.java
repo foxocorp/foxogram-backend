@@ -4,7 +4,6 @@ import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioAsyncClient;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import su.foxogram.dto.internal.AttachmentPresignedDTO;
 
@@ -19,7 +18,6 @@ public class StorageService {
 
 	private final MinioAsyncClient minioClient;
 
-	@Autowired
 	public StorageService(MinioAsyncClient minioClient) {
 		this.minioClient = minioClient;
 	}

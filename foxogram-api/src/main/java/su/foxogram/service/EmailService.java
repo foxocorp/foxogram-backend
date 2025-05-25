@@ -3,7 +3,6 @@ package su.foxogram.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,7 +32,6 @@ public class EmailService {
 
 	private final APIConfig apiConfig;
 
-	@Autowired
 	public EmailService(OTPService otpService, JavaMailSender javaMailSender, ResourceLoader resourceLoader, EmailConfig emailConfig, APIConfig apiConfig) {
 		this.otpService = otpService;
 		this.javaMailSender = javaMailSender;

@@ -2,7 +2,6 @@ package su.foxogram.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -22,7 +21,6 @@ public class WebSocketService {
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired
 	public WebSocketService(EventHandler webSocketHandler, ObjectMapper objectMapper) {
 		this.webSocketHandler = webSocketHandler;
 		this.objectMapper = objectMapper;

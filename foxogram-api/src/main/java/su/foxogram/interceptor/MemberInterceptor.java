@@ -3,7 +3,6 @@ package su.foxogram.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,6 @@ public class MemberInterceptor implements HandlerInterceptor {
 
 	private final MemberService memberService;
 
-	@Autowired
 	public MemberInterceptor(MemberService memberService) {
 		this.memberService = memberService;
 	}

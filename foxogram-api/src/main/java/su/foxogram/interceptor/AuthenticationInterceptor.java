@@ -3,7 +3,6 @@ package su.foxogram.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
@@ -33,7 +32,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 	final APIConfig apiConfig;
 
-	@Autowired
 	public AuthenticationInterceptor(AuthenticationService authenticationService, APIConfig apiConfig) {
 		this.authenticationService = authenticationService;
 		this.apiConfig = apiConfig;

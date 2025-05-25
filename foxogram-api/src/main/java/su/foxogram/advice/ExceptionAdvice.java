@@ -1,4 +1,4 @@
-package su.foxogram.controller;
+package su.foxogram.advice;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class ExceptionAdvice {
 
 	private final APIConfig apiConfig;
 
-	public ExceptionController(APIConfig apiConfig) {
+	public ExceptionAdvice(APIConfig apiConfig) {
 		this.apiConfig = apiConfig;
 	}
 

@@ -2,7 +2,6 @@ package su.foxogram.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import su.foxogram.constant.GatewayConstant;
 import su.foxogram.constant.MemberConstant;
@@ -38,7 +37,6 @@ public class MessageService {
 
 	private final AttachmentService attachmentService;
 
-	@Autowired
 	public MessageService(MessageRepository messageRepository, RabbitService rabbitService, ChannelService channelService, MemberService memberService, AttachmentService attachmentService) {
 		this.messageRepository = messageRepository;
 		this.rabbitService = rabbitService;

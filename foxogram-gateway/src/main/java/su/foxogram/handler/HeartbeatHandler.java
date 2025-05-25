@@ -2,7 +2,6 @@ package su.foxogram.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -21,7 +20,6 @@ public class HeartbeatHandler implements BaseHandler {
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired
 	public HeartbeatHandler(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}

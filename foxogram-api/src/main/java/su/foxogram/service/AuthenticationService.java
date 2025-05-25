@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import su.foxogram.config.APIConfig;
 import su.foxogram.constant.EmailConstant;
@@ -38,7 +37,6 @@ public class AuthenticationService {
 
 	private final APIConfig apiConfig;
 
-	@Autowired
 	public AuthenticationService(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig) {
 		this.userService = userService;
 		this.emailService = emailService;

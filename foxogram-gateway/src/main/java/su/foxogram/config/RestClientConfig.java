@@ -2,7 +2,6 @@ package su.foxogram.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
@@ -21,7 +20,6 @@ public class RestClientConfig {
 
 	private final ObjectMapper objectMapper;
 
-	@Autowired
 	public RestClientConfig(APIConfig apiConfig, ObjectMapper objectMapper) {
 		this.apiConfig = apiConfig;
 		this.objectMapper = objectMapper;

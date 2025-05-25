@@ -3,7 +3,6 @@ package su.foxogram.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,6 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 	private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
 
-	@Autowired
 	public ChannelInterceptor(ChannelService channelService) {
 		this.channelService = channelService;
 	}

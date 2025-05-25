@@ -3,7 +3,6 @@ package su.foxogram.service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import su.foxogram.config.JwtConfig;
 import su.foxogram.constant.TokenConstant;
@@ -16,7 +15,6 @@ public class JwtService {
 
 	private final JwtConfig jwtConfig;
 
-	@Autowired
 	public JwtService(JwtConfig jwtConfig) {
 		this.jwtConfig = jwtConfig;
 	}

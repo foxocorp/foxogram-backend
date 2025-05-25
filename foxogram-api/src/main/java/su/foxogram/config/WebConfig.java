@@ -1,6 +1,5 @@
 package su.foxogram.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,7 +17,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private final MemberInterceptor memberInterceptor;
 
-	@Autowired
 	public WebConfig(AuthenticationInterceptor authenticationInterceptor, ChannelInterceptor channelInterceptor, MemberInterceptor memberInterceptor) {
 		this.authenticationInterceptor = authenticationInterceptor;
 		this.channelInterceptor = channelInterceptor;

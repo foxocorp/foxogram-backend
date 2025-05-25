@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -39,7 +38,6 @@ public class EventHandler extends TextWebSocketHandler {
 
 	private final RabbitService rabbitService;
 
-	@Autowired
 	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper, RabbitService rabbitService) {
 		this.handlerRegistry = handlerRegistry;
 		this.objectMapper = objectMapper;

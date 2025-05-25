@@ -2,7 +2,6 @@ package su.foxogram.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import su.foxogram.config.APIConfig;
@@ -48,7 +47,6 @@ public class UserService {
 
 	private final MemberService memberService;
 
-	@Autowired
 	public UserService(UserRepository userRepository, EmailService emailService, OTPService otpService, AttachmentService attachmentService, APIConfig apiConfig, RabbitService rabbitService, MemberService memberService) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
