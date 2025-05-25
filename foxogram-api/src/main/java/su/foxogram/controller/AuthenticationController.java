@@ -3,7 +3,6 @@ package su.foxogram.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class AuthenticationController {
 	@Operation(summary = "Register")
 	@SecurityRequirements
 	@PostMapping("/register")
-	public TokenDTO register(@Valid @RequestBody UserRegisterDTO body) throws UserCredentialsDuplicateException {
+	public TokenDTO register(@RequestBody UserRegisterDTO body) throws UserCredentialsDuplicateException {
 		String username = body.getUsername();
 		String email = body.getEmail();
 		String password = body.getPassword();
@@ -48,7 +47,7 @@ public class AuthenticationController {
 	@Operation(summary = "Login")
 	@SecurityRequirements
 	@PostMapping("/login")
-	public TokenDTO login(@Valid @RequestBody UserLoginDTO body) throws UserCredentialsIsInvalidException {
+	public TokenDTO login(@RequestBody UserLoginDTO body) throws UserCredentialsIsInvalidException {
 		String email = body.getEmail();
 		String password = body.getPassword();
 
@@ -59,7 +58,7 @@ public class AuthenticationController {
 
 	@Operation(summary = "Verify email")
 	@PostMapping("/email/verify")
-	public OkDTO emailVerify(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody OTPDTO body) throws OTPsInvalidException, OTPExpiredException {
+	public OkDTO emailVerify(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody OTPDTO body) throws OTPsInvalidException, OTPExpiredException {
 		authenticationService.verifyEmail(user, body.getOTP());
 
 		return new OkDTO(true);
@@ -76,7 +75,7 @@ public class AuthenticationController {
 	@Operation(summary = "Reset password")
 	@SecurityRequirements
 	@PostMapping("/reset-password")
-	public OkDTO resetPassword(@Valid @RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
+	public OkDTO resetPassword(@RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
 		authenticationService.resetPassword(body);
 
 		return new OkDTO(true);
@@ -85,7 +84,7 @@ public class AuthenticationController {
 	@Operation(summary = "Confirm reset password")
 	@SecurityRequirements
 	@PostMapping("/reset-password/confirm")
-	public OkDTO confirmResetPassword(@Valid @RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
+	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		authenticationService.confirmResetPassword(body);
 
 		return new OkDTO(true);

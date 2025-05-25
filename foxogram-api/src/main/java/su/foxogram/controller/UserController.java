@@ -2,7 +2,6 @@ package su.foxogram.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constant.APIConstant;
@@ -95,7 +94,7 @@ public class UserController {
 
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
-	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @Valid @RequestBody UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
+	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
 		authenticatedUser = userService.update(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, null, true, true, false);
@@ -103,7 +102,7 @@ public class UserController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
-	public UploadAttachmentDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @Valid @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		AttachmentPresignedDTO data = attachmentService.upload(authenticatedUser, attachment);
 
 		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
@@ -111,7 +110,7 @@ public class UserController {
 
 	@Operation(summary = "Delete")
 	@DeleteMapping("/@me")
-	public OkDTO delete(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody UserDeleteDTO body) throws UserCredentialsIsInvalidException {
+	public OkDTO delete(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody UserDeleteDTO body) throws UserCredentialsIsInvalidException {
 		String password = body.getPassword();
 
 		userService.requestDelete(user, password);
@@ -121,7 +120,7 @@ public class UserController {
 
 	@Operation(summary = "Confirm delete")
 	@PostMapping("/@me/delete-confirm")
-	public OkDTO deleteConfirm(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
+	public OkDTO deleteConfirm(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody OTPDTO body) throws OTPExpiredException, OTPsInvalidException {
 		userService.confirmDelete(user, body.getOTP());
 
 		return new OkDTO(true);

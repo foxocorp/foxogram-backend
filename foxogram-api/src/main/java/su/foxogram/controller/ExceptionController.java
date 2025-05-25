@@ -1,5 +1,7 @@
 package su.foxogram.controller;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -43,8 +45,19 @@ public class ExceptionController {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ExceptionDTO> handleValidationException(MethodArgumentNotValidException exception) {
-		String message = exception.getBindingResult().getAllErrors().stream()
+		String message = exception.getBindingResult().getAllErrors()
+				.stream()
 				.map(DefaultMessageSourceResolvable::getDefaultMessage)
+				.collect(Collectors.joining(", "));
+
+		return buildErrorResponse(ExceptionConstant.API.VALIDATION_ERROR.getValue(), message, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ExceptionDTO> handleConstraintViolationException(ConstraintViolationException exception) {
+		String message = exception.getConstraintViolations()
+				.stream()
+				.map(ConstraintViolation::getMessage)
 				.collect(Collectors.joining(", "));
 
 		return buildErrorResponse(ExceptionConstant.API.VALIDATION_ERROR.getValue(), message, HttpStatus.BAD_REQUEST);

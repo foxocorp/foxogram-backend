@@ -3,7 +3,6 @@ package su.foxogram.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import su.foxogram.constant.APIConstant;
@@ -60,7 +59,7 @@ public class ChannelController {
 
 	@Operation(summary = "Create channel")
 	@PostMapping("/")
-	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
+	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
 		Channel channel = channelService.add(user, body);
 
 		return new ChannelDTO(channel, null);
@@ -80,7 +79,7 @@ public class ChannelController {
 
 	@Operation(summary = "Edit channel")
 	@PatchMapping("/{channelId}")
-	public ChannelDTO edit(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @Valid @RequestBody ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
+	public ChannelDTO edit(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @RequestBody ChannelEditDTO body) throws ChannelAlreadyExistException, JsonProcessingException, MissingPermissionsException, UploadFailedException {
 		channel = channelService.update(member, channel, body);
 
 		return new ChannelDTO(channel, null);
@@ -88,7 +87,7 @@ public class ChannelController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/{channelId}/icon")
-	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @Valid @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		AttachmentPresignedDTO data = attachmentService.upload(null, attachment);
 
 		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
@@ -165,7 +164,7 @@ public class ChannelController {
 
 	@Operation(summary = "Create message")
 	@PostMapping("/{channelId}/messages")
-	public MessageDTO createMessage(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @Valid @RequestBody MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
+	public MessageDTO createMessage(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @RequestBody MessageCreateDTO body) throws JsonProcessingException, MessageCannotBeEmpty, MissingPermissionsException, UnknownAttachmentsException, ChannelNotFoundException, MemberInChannelNotFoundException {
 		if (body.getContent() == null && body.getAttachments() == null) {
 			throw new MessageCannotBeEmpty();
 		}
@@ -177,7 +176,7 @@ public class ChannelController {
 
 	@Operation(summary = "Add attachments")
 	@PutMapping("/{channelId}/attachments")
-	public List<UploadAttachmentDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable String channelId, @Valid @RequestBody List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
+	public List<UploadAttachmentDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable String channelId, @RequestBody List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
 		if (attachments == null || attachments.isEmpty()) {
 			throw new AttachmentsCannotBeEmpty();
 		}
@@ -195,7 +194,7 @@ public class ChannelController {
 
 	@Operation(summary = "Edit message")
 	@PatchMapping("/{channelId}/messages/{messageId}")
-	public MessagesDTO editMessage(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId, @Valid @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
+	public MessagesDTO editMessage(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @PathVariable long messageId, @RequestBody MessageCreateDTO body) throws MessageNotFoundException, MissingPermissionsException, JsonProcessingException, ChannelNotFoundException {
 		List<Message> message = List.of(messageService.update(messageId, channel, member, body));
 
 		return new MessagesDTO(message);
