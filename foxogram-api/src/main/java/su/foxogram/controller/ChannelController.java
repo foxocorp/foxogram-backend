@@ -66,7 +66,7 @@ public class ChannelController {
 
 	@Operation(summary = "Get channel by id")
 	@GetMapping("/{channelId}")
-	public ChannelDTO getById(@RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId) throws ChannelNotFoundException {
+	public ChannelDTO getById(@RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId) {
 		return new ChannelDTO(channel, null);
 	}
 

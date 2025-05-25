@@ -22,8 +22,6 @@ public class ChannelDTO {
 
 	private int type;
 
-	private boolean isPublic;
-
 	private long flags;
 
 	private int memberCount;
