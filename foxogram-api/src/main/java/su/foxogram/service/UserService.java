@@ -11,6 +11,7 @@ import su.foxogram.constant.GatewayConstant;
 import su.foxogram.constant.OTPConstant;
 import su.foxogram.constant.UserConstant;
 import su.foxogram.dto.api.request.UserEditDTO;
+import su.foxogram.dto.api.response.UserDTO;
 import su.foxogram.dto.gateway.StatusDTO;
 import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
@@ -24,6 +25,7 @@ import su.foxogram.repository.UserRepository;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -177,9 +179,12 @@ public class UserService {
 			user.getContacts().add(new UserContact(user, contact));
 			userRepository.save(user);
 
+			rabbitService.send(Collections.singletonList(contact.getId()), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.CONTACT_ADD.getValue());
 			return contact;
 		} catch (DataIntegrityViolationException e) {
 			throw new UserContactAlreadyExistException();
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -188,8 +193,12 @@ public class UserService {
 			User contact = getById(id).orElseThrow(UserNotFoundException::new);
 			user.getContacts().remove(new UserContact(user, contact));
 			userRepository.save(user);
+
+			rabbitService.send(Collections.singletonList(contact.getId()), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.CONTACT_DELETE.getValue());
 		} catch (DataIntegrityViolationException e) {
 			throw new UserContactNotFoundException();
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
