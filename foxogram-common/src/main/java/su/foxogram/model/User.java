@@ -22,10 +22,6 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long id;
 
-	@ManyToOne
-	@JoinColumn(name = "contact_id")
-	public User contact;
-
 	@Column()
 	public String displayName;
 
@@ -71,7 +67,6 @@ public class User {
 
 	public User(String username, String email, String password, long flags, int type) {
 		this.id = 0;
-		this.contact = this;
 		this.displayName = null;
 		this.username = username.toLowerCase();
 		this.email = email;
