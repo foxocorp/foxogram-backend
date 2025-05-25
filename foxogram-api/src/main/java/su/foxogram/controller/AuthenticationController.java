@@ -59,7 +59,7 @@ public class AuthenticationController {
 
 	@Operation(summary = "Verify email")
 	@PostMapping("/email/verify")
-	public OkDTO emailVerify(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody OTPDTO body) throws OTPsInvalidException, OTPExpiredException {
+	public OkDTO emailVerify(@RequestAttribute(value = AttributeConstant.USER) User user, @Valid @RequestBody OTPDTO body) throws OTPsInvalidException, OTPExpiredException {
 		authenticationService.verifyEmail(user, body.getOTP());
 
 		return new OkDTO(true);
@@ -76,7 +76,7 @@ public class AuthenticationController {
 	@Operation(summary = "Reset password")
 	@SecurityRequirements
 	@PostMapping("/reset-password")
-	public OkDTO resetPassword(@RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
+	public OkDTO resetPassword(@Valid @RequestBody UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
 		authenticationService.resetPassword(body);
 
 		return new OkDTO(true);
@@ -85,7 +85,7 @@ public class AuthenticationController {
 	@Operation(summary = "Confirm reset password")
 	@SecurityRequirements
 	@PostMapping("/reset-password/confirm")
-	public OkDTO confirmResetPassword(@RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
+	public OkDTO confirmResetPassword(@Valid @RequestBody UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
 		authenticationService.confirmResetPassword(body);
 
 		return new OkDTO(true);

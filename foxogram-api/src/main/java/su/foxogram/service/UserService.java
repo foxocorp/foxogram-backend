@@ -99,7 +99,7 @@ public class UserService {
 		if (body.getUsername() != null) user.setUsername(body.getUsername());
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
-		if (body.getAvatar() != null) {
+		if (body.getAvatar() > 0) {
 			user.setAvatar(attachmentService.getById(body.getAvatar()));
 		}
 

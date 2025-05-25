@@ -28,5 +28,5 @@ public class UserEditDTO {
 	private String password;
 
 	@Positive(message = ValidationConstant.Messages.USER_AVATAR_MUST_BE_POSITIVE)
-	private Long avatar;
+	private long avatar;
 }
