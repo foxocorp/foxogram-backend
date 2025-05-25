@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import su.foxogram.constant.ChannelConstant;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Message;
 
@@ -45,7 +44,6 @@ public class ChannelDTO {
 		}
 		this.type = channel.getType();
 		this.flags = channel.getFlags();
-		this.isPublic = channel.hasFlag(ChannelConstant.Flags.PUBLIC);
 		if (channel.getMembers() != null) {
 			this.memberCount = channel.getMembers().size();
 		}
