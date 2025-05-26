@@ -35,7 +35,7 @@ public class TypingStartHandler implements BaseHandler {
 
 	@Override
 	public int getOpcode() {
-		return GatewayConstant.Opcode.IDENTIFY.ordinal();
+		return GatewayConstant.Opcode.DISPATCH.ordinal();
 	}
 
 	@Override
