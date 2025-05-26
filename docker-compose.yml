@@ -1,9 +1,9 @@
 x-common-settings: &common-settings
   restart: always
-  networks:
-      - foxogram
   build:
-    context: ./foxogram-api
+    context: .
+  networks:
+    - foxogram
 
 services:
   foxogram-api:
