@@ -26,21 +26,6 @@ public class GatewayServiceImpl implements GatewayService {
 		this.objectMapper = objectMapper;
 	}
 
-//	public void sendMessageToAll(int opcode, Map<String, Object> data, String type) throws Exception {
-//		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
-//		for (Session session : sessions.values()) {
-//			WebSocketSession wsSession = session.getWebSocketSession();
-//
-//			int seqNumber = session.getSequence();
-//			session.increaseSequence();
-//
-//			if (!wsSession.isOpen()) return;
-//
-//			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
-//			log.debug("Sent message to all sessions (opcode: {}, type: {})", opcode, type);
-//		}
-//	}
-
 	@Override
 	public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
