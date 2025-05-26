@@ -6,23 +6,25 @@ x-common-settings: &common-settings
     - foxogram
 
 services:
-  foxogram-api:
+  foxogram-backend:
     <<: *common-settings
-    container_name: foxogram-api
-    image: foxogram/api:prod
+    container_name: foxogram-backend
+    image: foxogram/backend:prod
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
+      traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-api.middlewares: ratelimit@file
 
-  foxogram-api-dev:
+  foxogram-backend-dev:
     <<: *common-settings
-    container_name: foxogram-api-dev
-    image: foxogram/api:dev
+    container_name: foxogram-backend-dev
+    image: foxogram/backend:dev
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
+      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-api-dev.middlewares: ratelimit@file
 
