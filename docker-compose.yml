@@ -13,6 +13,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
+      traefik.http.routers.foxogram-api.tls.certresolver: cloudflare
       traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-api.middlewares: ratelimit@file
 
@@ -23,6 +24,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
+      traefik.http.routers.foxogram-api.tls.certresolver: cloudflare
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-api-dev.middlewares: ratelimit@file
 
