@@ -1,55 +1,58 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.5' apply false
-    id 'io.spring.dependency-management' version '1.1.7' apply false
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
-allprojects {
-    group = 'su.foxogram'
-    version = '1.0.0'
+group = 'su.foxogram'
+version = '1.0.0'
 
-    repositories {
-        mavenCentral()
+repositories {
+    mavenCentral()
+}
+
+configurations.configureEach {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation 'io.minio:minio:8.5.14'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'su.foxogram.Main'
+        )
     }
-
-    configurations.configureEach {
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'org.springframework.boot'
-
-    java {
-        sourceCompatibility = JavaVersion.VERSION_21
-    }
-
-    dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-    }
-
-    if (project.name != 'foxogram-common') {
-        jar {
-            manifest {
-                attributes(
-                    'Main-Class': 'su.foxogram.Main'
-                )
-            }
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            from {
-                configurations.runtimeClasspath.collect {
-                    it.isDirectory() ? it : zipTree(it)
-                }
-            }
-        }
-    }
-
-    tasks.named('bootRun') {
-        doFirst {
-            jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS", "-XX:+UseShenandoahGC"]
-        }
+tasks.named('bootRun') {
+    doFirst {
+        jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS", "-XX:+UseShenandoahGC"]
     }
 }
