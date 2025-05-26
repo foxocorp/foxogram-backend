@@ -12,10 +12,10 @@ services:
     image: foxogram/backend:prod
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-api.rule: Host(`api.foxogram.su`)
-      traefik.http.routers.foxogram-api.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-api.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-api.middlewares: ratelimit@file
+      traefik.http.routers.foxogram-backend.rule: Host(`api.foxogram.su`)
+      traefik.http.routers.foxogram-backend.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-backend.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-backend.middlewares: ratelimit@file
 
   foxogram-backend-dev:
     <<: *common-settings
@@ -23,10 +23,10 @@ services:
     image: foxogram/backend:dev
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-api-dev.rule: Host(`api.dev.foxogram.su`)
-      traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-api-dev.middlewares: ratelimit@file
+      traefik.http.routers.foxogram-backend-dev.rule: Host(`api.dev.foxogram.su`)
+      traefik.http.routers.foxogram-backend-dev.tls.certresolver: letsencrypt
+      traefik.http.services.foxogram-backend-dev.loadbalancer.server.port: 8080
+      traefik.http.routers.foxogram-backend-dev.middlewares: ratelimit@file
 
 networks:
   foxogram:
