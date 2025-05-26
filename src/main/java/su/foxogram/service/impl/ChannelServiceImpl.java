@@ -1,6 +1,7 @@
 package su.foxogram.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import su.foxogram.constant.ChannelConstant;
@@ -42,7 +43,7 @@ public class ChannelServiceImpl implements su.foxogram.service.ChannelService {
 
 	private final AttachmentService attachmentService;
 
-	public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService, GatewayService gatewayService, AttachmentService attachmentService) {
+	public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService, @Lazy GatewayService gatewayService, AttachmentService attachmentService) {
 		this.channelRepository = channelRepository;
 		this.memberService = memberService;
 		this.gatewayService = gatewayService;

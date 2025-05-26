@@ -33,11 +33,11 @@ public class HeartbeatHandler implements BaseHandler {
 	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws IOException {
 		Session userSession = sessions.get(session.getId());
 
-		if (userSession.isAuthenticated()) {
-			userSession.setLastPingTimestamp(System.currentTimeMillis());
+		if (userSession.isAuthenticated()) return;
 
-			session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HeartbeatACKDTO())));
-			log.info("Got heartbeat from session ({})", session.getId());
-		}
+		userSession.setLastPingTimestamp(System.currentTimeMillis());
+
+		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HeartbeatACKDTO())));
+		log.info("Got heartbeat from session ({})", session.getId());
 	}
 }
