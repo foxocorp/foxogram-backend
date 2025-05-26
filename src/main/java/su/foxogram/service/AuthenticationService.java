@@ -13,7 +13,7 @@ import su.foxogram.model.User;
 
 public interface AuthenticationService {
 
-	User getUser(String token, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException;
+	User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException;
 
 	String register(String username, String email, String password) throws UserCredentialsDuplicateException;
 

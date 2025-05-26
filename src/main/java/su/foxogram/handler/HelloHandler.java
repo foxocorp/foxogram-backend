@@ -43,7 +43,7 @@ public class HelloHandler implements BaseHandler {
 	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws Exception {
 		String accessToken = ((Map<String, String>) payload.getD()).get("token");
 
-		long userId = authenticationService.getUser(accessToken, false).getId();
+		long userId = authenticationService.getUser(accessToken, true, false).getId();
 		Session userSession = sessions.get(session.getId());
 		userSession.setUserId(userId);
 		userSession.setLastPingTimestamp(System.currentTimeMillis());

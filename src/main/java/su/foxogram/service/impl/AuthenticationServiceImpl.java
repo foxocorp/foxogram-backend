@@ -46,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		this.apiConfig = apiConfig;
 	}
 
-	public User getUser(String token, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+	public User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException {
 		token = token.substring(7);
 
 		long userId;
@@ -165,6 +165,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (!accessToken.startsWith("Bearer "))
 			throw new UserUnauthorizedException();
 
-		return getUser(accessToken, ignoreEmailVerification);
+		return getUser(accessToken, ignoreEmailVerification, true);
 	}
 }
