@@ -47,7 +47,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException {
-		token = token.substring(7);
+		if (token.startsWith("Bearer ")) {
+			token = token.substring(7);
+		}
 
 		long userId;
 		String passwordHash;
