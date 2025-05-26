@@ -1,4 +1,4 @@
-package su.foxogram.service;
+package su.foxogram.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -8,40 +8,41 @@ import org.springframework.web.socket.WebSocketSession;
 import su.foxogram.dto.gateway.EventDTO;
 import su.foxogram.handler.structure.EventHandler;
 import su.foxogram.model.Session;
+import su.foxogram.service.GatewayService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
-public class WebSocketService {
+public class GatewayServiceImpl implements GatewayService {
 
 	private final EventHandler webSocketHandler;
 
 	private final ObjectMapper objectMapper;
 
-	public WebSocketService(EventHandler webSocketHandler, ObjectMapper objectMapper) {
+	public GatewayServiceImpl(EventHandler webSocketHandler, ObjectMapper objectMapper) {
 		this.webSocketHandler = webSocketHandler;
 		this.objectMapper = objectMapper;
 	}
 
-	public void sendMessageToAll(int opcode, Map<String, Object> data, String type) throws Exception {
-		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
-		for (Session session : sessions.values()) {
-			WebSocketSession wsSession = session.getWebSocketSession();
+//	public void sendMessageToAll(int opcode, Map<String, Object> data, String type) throws Exception {
+//		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
+//		for (Session session : sessions.values()) {
+//			WebSocketSession wsSession = session.getWebSocketSession();
+//
+//			int seqNumber = session.getSequence();
+//			session.increaseSequence();
+//
+//			if (!wsSession.isOpen()) return;
+//
+//			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
+//			log.debug("Sent message to all sessions (opcode: {}, type: {})", opcode, type);
+//		}
+//	}
 
-			int seqNumber = session.getSequence();
-			session.increaseSequence();
-
-			if (!wsSession.isOpen()) return;
-
-			wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
-			log.debug("Sent message to all sessions (opcode: {}, type: {})", opcode, type);
-		}
-	}
-
-	public void sendMessageToSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
+	@Override
+	public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
 		for (Session session : sessions.values()) {
 			if (session != null) {

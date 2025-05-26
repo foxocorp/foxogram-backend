@@ -13,6 +13,8 @@ import su.foxogram.handler.structure.BaseHandler;
 import su.foxogram.model.Session;
 import su.foxogram.service.AuthenticationService;
 import su.foxogram.service.UserService;
+import su.foxogram.service.impl.AuthenticationServiceImpl;
+import su.foxogram.service.impl.UserServiceImpl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +29,7 @@ public class HelloHandler implements BaseHandler {
 
 	private final UserService userService;
 
-	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper, UserService userService) {
+	public HelloHandler(AuthenticationServiceImpl authenticationService, ObjectMapper objectMapper, UserServiceImpl userService) {
 		this.authenticationService = authenticationService;
 		this.objectMapper = objectMapper;
 		this.userService = userService;

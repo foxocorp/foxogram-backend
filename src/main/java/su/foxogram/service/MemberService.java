@@ -1,43 +1,19 @@
 package su.foxogram.service;
 
-import org.springframework.stereotype.Service;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Member;
-import su.foxogram.repository.MemberRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Service
-public class MemberService {
+public interface MemberService {
+	List<Channel> getChannelsByUserId(long userId);
 
-	private final MemberRepository memberRepository;
+	List<Member> getAllByChannelId(long channelId);
 
-	public MemberService(MemberRepository memberRepository) {
-		this.memberRepository = memberRepository;
-	}
+	Optional<Member> getByChannelIdAndUserId(long channelId, long userId);
 
-	public List<Channel> getChannelsByUserId(long userId) {
-		return memberRepository.findAllByUserId(userId)
-				.stream()
-				.map(Member::getChannel)
-				.collect(Collectors.toList());
-	}
+	Member add(Member member);
 
-	public List<Member> getAllByChannelId(long channelId) {
-		return memberRepository.findAllByChannelId(channelId);
-	}
-
-	public Optional<Member> getByChannelIdAndUserId(long channelId, long userId) {
-		return memberRepository.findByChannelIdAndUserId(channelId, userId);
-	}
-
-	public Member add(Member member) {
-		return memberRepository.save(member);
-	}
-
-	public void delete(Member member) {
-		memberRepository.delete(member);
-	}
+	void delete(Member member);
 }

@@ -23,10 +23,10 @@ import su.foxogram.exception.user.*;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Message;
 import su.foxogram.model.User;
-import su.foxogram.service.AttachmentService;
-import su.foxogram.service.MemberService;
-import su.foxogram.service.MessageService;
-import su.foxogram.service.UserService;
+import su.foxogram.service.impl.AttachmentServiceImpl;
+import su.foxogram.service.impl.MemberServiceImpl;
+import su.foxogram.service.impl.MessageServiceImpl;
+import su.foxogram.service.impl.UserServiceImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,15 +37,15 @@ import java.util.stream.Collectors;
 @RequestMapping(value = APIConstant.USERS, produces = "application/json")
 public class UserController {
 
-	private final UserService userService;
+	private final UserServiceImpl userService;
 
-	private final MemberService memberService;
+	private final MemberServiceImpl memberService;
 
-	private final MessageService messageService;
+	private final MessageServiceImpl messageService;
 
-	private final AttachmentService attachmentService;
+	private final AttachmentServiceImpl attachmentService;
 
-	public UserController(UserService userService, MemberService memberService, MessageService messageService, AttachmentService attachmentService) {
+	public UserController(UserServiceImpl userService, MemberServiceImpl memberService, MessageServiceImpl messageService, AttachmentServiceImpl attachmentService) {
 		this.userService = userService;
 		this.memberService = memberService;
 		this.messageService = messageService;
@@ -138,13 +138,13 @@ public class UserController {
 
 	@Operation(summary = "Add contact")
 	@PostMapping("/{id}")
-	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactAlreadyExistException {
+	public UserDTO addContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserContactAlreadyExistException {
 		return new UserDTO(userService.addContact(user, id), null, null, false, false, false);
 	}
 
 	@Operation(summary = "Delete contact")
 	@DeleteMapping("/{id}")
-	public OkDTO deleteContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserNotFoundException, UserContactNotFoundException {
+	public OkDTO deleteContact(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable long id) throws UserContactNotFoundException {
 		userService.deleteContact(user, id);
 
 		return new OkDTO(true);
