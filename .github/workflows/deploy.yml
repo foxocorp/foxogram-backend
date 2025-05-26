@@ -18,7 +18,7 @@ jobs:
 
       - name: Create config
         run: |
-          cat <<EOF > foxogram-common/src/main/resources/application.properties
+          cat <<EOF > src/main/resources/application.properties
           spring.threads.virtual.enabled=true
           spring.jmx.enabled=false
           spring.datasource.driver-class-name=org.postgresql.Driver
