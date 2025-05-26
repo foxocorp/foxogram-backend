@@ -1,21 +1,13 @@
 x-common-settings: &common-settings
   restart: always
   networks:
-    - foxogram
-
-x-api-settings: &api-settings
-  <<: *common-settings
+      - foxogram
   build:
     context: ./foxogram-api
 
-x-gateway-settings: &gateway-settings
-  <<: *common-settings
-  build:
-    context: ./foxogram-gateway
-
 services:
   foxogram-api:
-    <<: *api-settings
+    <<: *common-settings
     container_name: foxogram-api
     image: foxogram/api:prod
     labels:
@@ -26,7 +18,7 @@ services:
       traefik.http.routers.foxogram-api.middlewares: ratelimit@file
 
   foxogram-api-dev:
-    <<: *api-settings
+    <<: *common-settings
     container_name: foxogram-api-dev
     image: foxogram/api:dev
     labels:
@@ -35,28 +27,6 @@ services:
       traefik.http.routers.foxogram-api-dev.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-api-dev.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-api-dev.middlewares: ratelimit@file
-
-  foxogram-gateway:
-    <<: *gateway-settings
-    container_name: foxogram-gateway
-    image: foxogram/gateway:prod
-    labels:
-      traefik.enable: true
-      traefik.http.routers.foxogram-gateway.rule: Host(`gateway.foxogram.su`)
-      traefik.http.routers.foxogram-gateway.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-gateway.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-gateway.middlewares: ratelimit@file
-
-  foxogram-gateway-dev:
-    <<: *gateway-settings
-    container_name: foxogram-gateway-dev
-    image: foxogram/gateway:dev
-    labels:
-      traefik.enable: true
-      traefik.http.routers.foxogram-gateway-dev.rule: Host(`gateway.dev.foxogram.su`)
-      traefik.http.routers.foxogram-gateway-dev.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-gateway-dev.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-gateway-dev.middlewares: ratelimit@file
 
 networks:
   foxogram:

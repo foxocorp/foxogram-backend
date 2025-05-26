@@ -16,6 +16,7 @@ ij_visual_guides =
 ij_wrap_on_typing = false
 
 [*.yml]
+indent_style = tab
 tab_width = 2
 
 [*.java]
