@@ -3,7 +3,9 @@ x-common-settings: &common-settings
   build:
     context: .
   networks:
-    - foxogram
+    - db_network
+    - minio_network
+    - traefik
 
 services:
   foxogram-backend:
@@ -29,5 +31,9 @@ services:
       traefik.http.routers.foxogram-backend-dev.middlewares: ratelimit@file
 
 networks:
-  foxogram:
+  db_network:
+    external: true
+  minio_network:
+    external: true
+  traefik:
     external: true
