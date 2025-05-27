@@ -11,7 +11,7 @@ import su.foxogram.constant.AttributeConstant;
 import su.foxogram.constant.ChannelConstant;
 import su.foxogram.exception.channel.ChannelNotFoundException;
 import su.foxogram.model.Channel;
-import su.foxogram.service.impl.ChannelServiceImpl;
+import su.foxogram.service.ChannelService;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 @Component
 public class ChannelInterceptor implements HandlerInterceptor {
 
-	private final ChannelServiceImpl channelService;
+	private final ChannelService channelService;
 
 	private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
 
-	public ChannelInterceptor(ChannelServiceImpl channelService) {
+	public ChannelInterceptor(ChannelService channelService) {
 		this.channelService = channelService;
 	}
 

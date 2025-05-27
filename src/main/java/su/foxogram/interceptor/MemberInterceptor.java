@@ -12,7 +12,7 @@ import su.foxogram.exception.channel.ChannelNotFoundException;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Member;
 import su.foxogram.model.User;
-import su.foxogram.service.impl.MemberServiceImpl;
+import su.foxogram.service.MemberService;
 
 import java.util.Objects;
 
@@ -20,9 +20,9 @@ import java.util.Objects;
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
 
-	private final MemberServiceImpl memberService;
+	private final MemberService memberService;
 
-	public MemberInterceptor(MemberServiceImpl memberService) {
+	public MemberInterceptor(MemberService memberService) {
 		this.memberService = memberService;
 	}
 

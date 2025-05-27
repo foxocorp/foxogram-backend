@@ -23,10 +23,10 @@ import su.foxogram.exception.user.*;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Message;
 import su.foxogram.model.User;
-import su.foxogram.service.impl.AttachmentServiceImpl;
-import su.foxogram.service.impl.MemberServiceImpl;
-import su.foxogram.service.impl.MessageServiceImpl;
-import su.foxogram.service.impl.UserServiceImpl;
+import su.foxogram.service.AttachmentService;
+import su.foxogram.service.MemberService;
+import su.foxogram.service.MessageService;
+import su.foxogram.service.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,15 +37,15 @@ import java.util.stream.Collectors;
 @RequestMapping(value = APIConstant.USERS, produces = "application/json")
 public class UserController {
 
-	private final UserServiceImpl userService;
+	private final UserService userService;
 
-	private final MemberServiceImpl memberService;
+	private final MemberService memberService;
 
-	private final MessageServiceImpl messageService;
+	private final MessageService messageService;
 
-	private final AttachmentServiceImpl attachmentService;
+	private final AttachmentService attachmentService;
 
-	public UserController(UserServiceImpl userService, MemberServiceImpl memberService, MessageServiceImpl messageService, AttachmentServiceImpl attachmentService) {
+	public UserController(UserService userService, MemberService memberService, MessageService messageService, AttachmentService attachmentService) {
 		this.userService = userService;
 		this.memberService = memberService;
 		this.messageService = messageService;

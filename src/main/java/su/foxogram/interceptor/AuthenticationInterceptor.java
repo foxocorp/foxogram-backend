@@ -13,7 +13,7 @@ import su.foxogram.constant.AttributeConstant;
 import su.foxogram.exception.user.UserEmailNotVerifiedException;
 import su.foxogram.exception.user.UserUnauthorizedException;
 import su.foxogram.model.User;
-import su.foxogram.service.impl.AuthenticationServiceImpl;
+import su.foxogram.service.AuthenticationService;
 
 import java.util.Objects;
 import java.util.Set;
@@ -28,11 +28,11 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 			"/auth/email/resend"
 	);
 
-	final AuthenticationServiceImpl authenticationService;
+	final AuthenticationService authenticationService;
 
 	final APIConfig apiConfig;
 
-	public AuthenticationInterceptor(AuthenticationServiceImpl authenticationService, APIConfig apiConfig) {
+	public AuthenticationInterceptor(AuthenticationService authenticationService, APIConfig apiConfig) {
 		this.authenticationService = authenticationService;
 		this.apiConfig = apiConfig;
 	}

@@ -24,10 +24,10 @@ import su.foxogram.model.Channel;
 import su.foxogram.model.Member;
 import su.foxogram.model.Message;
 import su.foxogram.model.User;
-import su.foxogram.service.impl.AttachmentServiceImpl;
-import su.foxogram.service.impl.ChannelServiceImpl;
-import su.foxogram.service.impl.MemberServiceImpl;
-import su.foxogram.service.impl.MessageServiceImpl;
+import su.foxogram.service.AttachmentService;
+import su.foxogram.service.ChannelService;
+import su.foxogram.service.MemberService;
+import su.foxogram.service.MessageService;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,15 +39,15 @@ import java.util.stream.Collectors;
 @RequestMapping(value = APIConstant.CHANNELS, produces = "application/json")
 public class ChannelController {
 
-	private final ChannelServiceImpl channelService;
+	private final ChannelService channelService;
 
-	private final MessageServiceImpl messageService;
+	private final MessageService messageService;
 
-	private final MemberServiceImpl memberService;
+	private final MemberService memberService;
 
-	private final AttachmentServiceImpl attachmentService;
+	private final AttachmentService attachmentService;
 
-	public ChannelController(ChannelServiceImpl channelService, MessageServiceImpl messageService, MemberServiceImpl memberService, AttachmentServiceImpl attachmentService) {
+	public ChannelController(ChannelService channelService, MessageService messageService, MemberService memberService, AttachmentService attachmentService) {
 		this.channelService = channelService;
 		this.messageService = messageService;
 		this.memberService = memberService;

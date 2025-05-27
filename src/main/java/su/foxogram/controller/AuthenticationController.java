@@ -16,7 +16,7 @@ import su.foxogram.exception.otp.OTPsInvalidException;
 import su.foxogram.exception.user.UserCredentialsDuplicateException;
 import su.foxogram.exception.user.UserCredentialsIsInvalidException;
 import su.foxogram.model.User;
-import su.foxogram.service.impl.AuthenticationServiceImpl;
+import su.foxogram.service.AuthenticationService;
 
 @Slf4j
 @RestController
@@ -24,9 +24,9 @@ import su.foxogram.service.impl.AuthenticationServiceImpl;
 @RequestMapping(value = APIConstant.AUTH, produces = "application/json")
 public class AuthenticationController {
 
-	private final AuthenticationServiceImpl authenticationService;
+	private final AuthenticationService authenticationService;
 
-	public AuthenticationController(AuthenticationServiceImpl authenticationService) {
+	public AuthenticationController(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
 

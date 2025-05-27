@@ -13,7 +13,6 @@ import su.foxogram.handler.structure.BaseHandler;
 import su.foxogram.model.Session;
 import su.foxogram.service.AuthenticationService;
 import su.foxogram.service.UserService;
-import su.foxogram.service.impl.UserServiceImpl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +27,7 @@ public class HelloHandler implements BaseHandler {
 
 	private final UserService userService;
 
-	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper, UserServiceImpl userService) {
+	public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper, UserService userService) {
 		this.authenticationService = authenticationService;
 		this.objectMapper = objectMapper;
 		this.userService = userService;
@@ -41,6 +40,7 @@ public class HelloHandler implements BaseHandler {
 
 	@Override
 	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws Exception {
+		@SuppressWarnings("unchecked")
 		String accessToken = ((Map<String, String>) payload.getD()).get("token");
 
 		long userId = authenticationService.getUser(accessToken, true, false).getId();
