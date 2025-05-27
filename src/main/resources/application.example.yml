@@ -19,16 +19,11 @@ spring:
         bootstrap-mode: deferred
   jackson:
     property-naming-strategy: SNAKE_CASE
-  rabbitmq:
-    host: localhost
 
 logging:
   level:
     root: INFO
     org.springframework: INFO
-
-rabbit:
-  queue: events
 
 springdoc:
   swagger-ui:
