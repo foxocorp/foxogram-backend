@@ -2,7 +2,6 @@ package su.foxogram.service;
 
 import su.foxogram.constant.UserConstant;
 import su.foxogram.dto.api.request.UserEditDTO;
-import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
 import su.foxogram.exception.otp.OTPsInvalidException;
 import su.foxogram.exception.user.UserContactAlreadyExistException;
@@ -25,7 +24,7 @@ public interface UserService {
 
 	User add(String username, String email, String password) throws UserCredentialsDuplicateException;
 
-	User update(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException;
+	User update(User user, UserEditDTO body) throws Exception;
 
 	void requestDelete(User user, String password) throws UserCredentialsIsInvalidException;
 

@@ -12,7 +12,6 @@ import su.foxogram.constant.UserConstant;
 import su.foxogram.dto.api.request.UserEditDTO;
 import su.foxogram.dto.api.response.UserDTO;
 import su.foxogram.dto.gateway.StatusDTO;
-import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
 import su.foxogram.exception.otp.OTPsInvalidException;
 import su.foxogram.exception.user.*;
@@ -99,14 +98,16 @@ public class UserServiceImpl implements su.foxogram.service.UserService {
 	}
 
 	@Override
-	public User update(User user, UserEditDTO body) throws UserCredentialsDuplicateException, UnknownAttachmentsException {
-		if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
-		if (body.getUsername() != null) user.setUsername(body.getUsername());
+	public User update(User user, UserEditDTO body) throws Exception {
+		if (body.getDisplayName() != null || body.getUsername() != null || body.getAvatar() != null) {
+			if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
+			if (body.getUsername() != null) user.setUsername(body.getUsername());
+			if (body.getAvatar() != null) user.setAvatar(attachmentService.getById(body.getAvatar()));
+
+			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.USER_UPDATE.getValue());
+		}
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
-		if (body.getAvatar() != null) {
-			user.setAvatar(attachmentService.getById(body.getAvatar()));
-		}
 
 		try {
 			userRepository.save(user);

@@ -19,7 +19,10 @@ import su.foxogram.exception.message.AttachmentsCannotBeEmpty;
 import su.foxogram.exception.message.UnknownAttachmentsException;
 import su.foxogram.exception.otp.OTPExpiredException;
 import su.foxogram.exception.otp.OTPsInvalidException;
-import su.foxogram.exception.user.*;
+import su.foxogram.exception.user.UserContactAlreadyExistException;
+import su.foxogram.exception.user.UserContactNotFoundException;
+import su.foxogram.exception.user.UserCredentialsIsInvalidException;
+import su.foxogram.exception.user.UserNotFoundException;
 import su.foxogram.model.Channel;
 import su.foxogram.model.Message;
 import su.foxogram.model.User;
@@ -94,7 +97,7 @@ public class UserController {
 
 	@Operation(summary = "Edit user")
 	@PatchMapping("/@me")
-	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody UserEditDTO body) throws UnknownAttachmentsException, UserCredentialsDuplicateException {
+	public UserDTO edit(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody UserEditDTO body) throws Exception {
 		authenticatedUser = userService.update(authenticatedUser, body);
 
 		return new UserDTO(authenticatedUser, null, null, true, true, false);
