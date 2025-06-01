@@ -15,7 +15,6 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.foxogram-backend.rule: Host(`api.foxogram.su`)
-      traefik.http.routers.foxogram-backend.tls.certresolver: letsencrypt
       traefik.http.services.foxogram-backend.loadbalancer.server.port: 8080
       traefik.http.routers.foxogram-backend.middlewares: ratelimit@file
 
