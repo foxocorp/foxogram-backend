@@ -11,6 +11,7 @@ import su.foxogram.constant.AttributeConstant;
 import su.foxogram.constant.ChannelConstant;
 import su.foxogram.exception.channel.ChannelNotFoundException;
 import su.foxogram.model.Channel;
+import su.foxogram.model.User;
 import su.foxogram.service.ChannelService;
 
 import java.util.regex.Matcher;
@@ -42,7 +43,11 @@ public class ChannelInterceptor implements HandlerInterceptor {
 		long id = Long.parseLong(matcher.group(1));
 		Channel channel = channelService.getById(id);
 
-		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC)) throw new ChannelNotFoundException();
+		User user = (User) request.getAttribute(AttributeConstant.USER);
+
+		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream().noneMatch(u -> u.getId() == user.getId())) {
+			throw new ChannelNotFoundException();
+		}
 
 		request.setAttribute(AttributeConstant.CHANNEL, channel);
 
