@@ -16,10 +16,8 @@ public class Session {
 
 	private WebSocketSession webSocketSession;
 
-	public Session(long userId, WebSocketSession webSocketSession) {
-		this.userId = userId;
+	public Session(WebSocketSession webSocketSession) {
 		this.lastPingTimestamp = System.currentTimeMillis();
-		this.sequence = 0;
 		this.webSocketSession = webSocketSession;
 	}
 

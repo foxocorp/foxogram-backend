@@ -50,6 +50,6 @@ public class HelloHandler implements BaseHandler {
 
 		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HelloDTO())));
 		userService.setStatus(userId, UserConstant.Status.ONLINE.getStatus());
-		log.info("Authenticated session ({}) with user id {}", session.getId(), userId);
+		log.debug("Authenticated session ({}) with user id {}", session.getId(), userId);
 	}
 }

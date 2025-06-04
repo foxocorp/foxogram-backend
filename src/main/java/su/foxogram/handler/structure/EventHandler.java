@@ -40,38 +40,40 @@ public class EventHandler extends TextWebSocketHandler {
 	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper, UserService userService) {
 		this.handlerRegistry = handlerRegistry;
 		this.objectMapper = objectMapper;
-
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
-
-		Runnable task = () -> sessions.values().forEach(session -> {
-			long lastPingTimestamp = session.getLastPingTimestamp();
-
-			long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
-
-			if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
-				try {
-					session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
-					log.info("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
-				} catch (IOException e) {
-					log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
-					throw new RuntimeException(e);
-				}
-			}
-		});
-
-		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
 		this.userService = userService;
+
+		try (ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory())) {
+			Runnable task = () -> sessions.values().forEach(session -> {
+				long lastPingTimestamp = session.getLastPingTimestamp();
+
+				long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
+
+				if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
+					try {
+						session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
+						log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
+					} catch (IOException e) {
+						log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
+						throw new RuntimeException(e);
+					}
+				}
+			});
+
+			executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			log.error("Error initializing thread: {}", e.getMessage());
+		}
 	}
 
 	@Override
 	public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-		log.info("Connection for session ({}) established", session.getId());
-		sessions.put(session.getId(), new Session(0, session));
+		log.debug("Connection for session ({}) established", session.getId());
+		sessions.put(session.getId(), new Session(session));
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) throws Exception {
-		log.info("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
+		log.debug("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
 
 		Session userSession = sessions.get(session.getId());
 
