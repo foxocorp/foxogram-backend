@@ -1,9 +1,11 @@
 package su.foxogram.service;
 
+import su.foxogram.model.User;
+
 import javax.crypto.SecretKey;
 
 public interface JwtService {
-	String generate(long id, String passwordHash);
+	String generate(User user);
 
-	SecretKey getSigningKey();
+	SecretKey getSigningKey(int tokenVersion);
 }

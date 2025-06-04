@@ -202,6 +202,7 @@ public class UserServiceImpl implements su.foxogram.service.UserService {
 
 	private void changePassword(User user, UserEditDTO body) {
 		user.setPassword(PasswordHasher.hashPassword(body.getPassword()));
+		user.setTokenVersion(user.getTokenVersion() + 1);
 		user.addFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
 		sendEmail(user, EmailConstant.Type.RESET_PASSWORD);

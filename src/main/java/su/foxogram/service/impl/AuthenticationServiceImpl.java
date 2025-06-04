@@ -1,7 +1,7 @@
 package su.foxogram.service.impl;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,10 @@ import su.foxogram.service.*;
 import su.foxogram.util.OTPGenerator;
 import su.foxogram.util.PasswordHasher;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
+
 @Slf4j
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -38,12 +42,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private final APIConfig apiConfig;
 
-	public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig) {
+	private final ObjectMapper objectMapper;
+
+	public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig, ObjectMapper objectMapper) {
 		this.userService = userService;
 		this.emailService = emailService;
 		this.jwtService = jwtService;
 		this.otpService = otpService;
 		this.apiConfig = apiConfig;
+		this.objectMapper = objectMapper;
 	}
 
 	public User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException {
@@ -51,31 +58,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			token = token.substring(7);
 		}
 
-		long userId;
-		String passwordHash;
+		User user;
 
 		try {
-			Jws<Claims> claimsJws = Jwts.parser()
-					.verifyWith(jwtService.getSigningKey())
-					.build()
-					.parseSignedClaims(token);
+			String[] parts = token.split("\\.");
+			String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+			Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<>() {
+			});
+			long userId = Long.parseLong((String) claims.get("jti"));
 
-			userId = Long.parseLong(claimsJws.getPayload().getId());
-			passwordHash = claimsJws.getPayload().getSubject();
+			user = userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
+
+			Jwts.parser().verifyWith(jwtService.getSigningKey(user.getTokenVersion())).build().parseSignedClaims(token);
 		} catch (Exception e) {
-			throw new UserUnauthorizedException();
-		}
-
-		User user = userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
-
-		if (!user.getPassword().equals(passwordHash)) {
 			throw new UserUnauthorizedException();
 		}
 
 		if (!ignoreEmailVerification && user.hasFlag(UserConstant.Flags.EMAIL_VERIFIED))
 			throw new UserEmailNotVerifiedException();
 
-		return userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
+		return user;
 	}
 
 	public String register(String username, String email, String password) throws UserCredentialsDuplicateException {
@@ -89,7 +91,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			log.debug("User ({}) email verification message sent successfully", user.getUsername());
 		}
 
-		return jwtService.generate(user.getId(), user.getPassword());
+		return jwtService.generate(user);
 	}
 
 	private void sendConfirmationEmail(User user) {
@@ -97,18 +99,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String digitCode = OTPGenerator.generateDigitCode();
 		long issuedAt = System.currentTimeMillis();
 		long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
-		String accessToken = jwtService.generate(user.getId(), user.getPassword());
+		String accessToken = jwtService.generate(user);
 
 		emailService.send(user.getEmail(), user.getId(), emailType, user.getUsername(), digitCode, issuedAt, expiresAt, accessToken);
 	}
 
 	public String login(String email, String password) throws UserCredentialsIsInvalidException {
 		User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
-		if (!PasswordHasher.verifyPassword(password, user.getPassword()))
-			throw new UserCredentialsIsInvalidException();
+		if (!PasswordHasher.verifyPassword(password, user.getPassword())) throw new UserCredentialsIsInvalidException();
 
 		log.debug("User ({}) login successfully", user.getUsername());
-		return jwtService.generate(user.getId(), user.getPassword());
+		return jwtService.generate(user);
 	}
 
 	public void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
@@ -154,6 +155,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		OTP OTP = otpService.validate(body.getOTP());
 
 		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
+		user.setTokenVersion(user.getTokenVersion() + 1);
 		user.removeFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
 		otpService.delete(OTP);
@@ -161,11 +163,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public User authUser(String accessToken, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException {
-		if (accessToken == null)
-			throw new UserUnauthorizedException();
+		if (accessToken == null) throw new UserUnauthorizedException();
 
-		if (!accessToken.startsWith("Bearer "))
-			throw new UserUnauthorizedException();
+		if (!accessToken.startsWith("Bearer ")) throw new UserUnauthorizedException();
 
 		return getUser(accessToken, ignoreEmailVerification, true);
 	}

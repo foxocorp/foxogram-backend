@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import su.foxogram.config.JwtConfig;
 import su.foxogram.constant.TokenConstant;
+import su.foxogram.model.User;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -20,20 +21,19 @@ public class JwtServiceImpl implements su.foxogram.service.JwtService {
 	}
 
 	@Override
-	public String generate(long id, String passwordHash) {
+	public String generate(User user) {
 		long now = System.currentTimeMillis();
 		Date expirationDate = new Date(now + TokenConstant.LIFETIME);
 
 		return Jwts.builder()
-				.id(String.valueOf(id))
-				.subject(passwordHash)
+				.id(String.valueOf(user.getId()))
 				.expiration(expirationDate)
-				.signWith(getSigningKey())
+				.signWith(getSigningKey(user.getTokenVersion()))
 				.compact();
 	}
 
 	@Override
-	public SecretKey getSigningKey() {
-		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
+	public SecretKey getSigningKey(int tokenVersion) {
+		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret() + tokenVersion));
 	}
 }

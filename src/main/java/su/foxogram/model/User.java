@@ -43,6 +43,9 @@ public class User {
 	@Column
 	private String password;
 
+	@Column(nullable = false)
+	private int tokenVersion;
+
 	@JoinColumn(name = "avatar_id")
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	public Attachment avatar;
