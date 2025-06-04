@@ -82,7 +82,7 @@ public class ChannelController {
 		return new ChannelDTO(channel, null);
 	}
 
-	@Operation(summary = "Upload avatar")
+	@Operation(summary = "Upload icon")
 	@PutMapping("/{channelId}/icon")
 	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
 		AttachmentPresignedDTO data = attachmentService.upload(null, attachment);
