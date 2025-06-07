@@ -1,33 +1,29 @@
-package su.foxogram.dto.api.response;
+package su.foxogram.dto.api.response
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.model.Member;
+import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.model.Member
 
 @Getter
 @Setter
 @Schema(name = "Member")
-public class MemberDTO {
+data class MemberDTO(val member: Member, val includeChannel: Boolean) {
+    val id: Long = member.id
 
-	private long id;
+    val user: UserDTO = UserDTO(
+        member.user, null, null,
+        includeEmail = false,
+        includeChannels = false,
+        includeContacts = false
+    )
 
-	private UserDTO user;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var channel: ChannelDTO? = if (includeChannel) ChannelDTO(member.channel, null) else null
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private ChannelDTO channel;
+    val permissions: Long = member.permissions
 
-	private long permissions;
-
-	private long joinedAt;
-
-	public MemberDTO(Member member, boolean includeChannel) {
-		this.id = member.getId();
-		this.user = new UserDTO(member.getUser(), null, null, false, false, false);
-		if (includeChannel) this.channel = new ChannelDTO(member.getChannel(), null);
-		this.permissions = member.getPermissions();
-		this.joinedAt = member.getJoinedAt();
-	}
+    val joinedAt: Long = member.joinedAt
 }
 

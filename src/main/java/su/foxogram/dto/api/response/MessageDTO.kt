@@ -1,40 +1,29 @@
-package su.foxogram.dto.api.response;
+package su.foxogram.dto.api.response
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.model.Message;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.model.Message
+import su.foxogram.model.MessageAttachment
+import java.util.stream.Collectors
 
 @Getter
 @Setter
 @Schema(name = "Message")
-public class MessageDTO {
+data class MessageDTO(val message: Message, val includeChannel: Boolean) {
+    val id = message.id
 
-	private long id;
+    val content = message.content
 
-	private String content;
+    val author = MemberDTO(message.author, false)
 
-	private MemberDTO author;
+    var channel = if (includeChannel) ChannelDTO(message.channel, null) else null
 
-	private ChannelDTO channel;
+    var attachments: MutableList<AttachmentDTO?>? = if (message.attachments != null) {
+        message.attachments.stream()
+            .map { messageAttachment: MessageAttachment? -> AttachmentDTO(messageAttachment!!.attachment) }
+            .collect(Collectors.toList())
+    } else null
 
-	private List<AttachmentDTO> attachments;
-
-	private long createdAt;
-
-	public MessageDTO(Message message, boolean includeChannel) {
-		this.id = message.getId();
-		this.content = message.getContent();
-		this.author = new MemberDTO(message.getAuthor(), false);
-		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
-		if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
-					.map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
-					.collect(Collectors.toList());
-		else this.attachments = new ArrayList<>();
-		this.createdAt = message.getTimestamp();
-	}
+    val createdAt: Long = message.timestamp
 }

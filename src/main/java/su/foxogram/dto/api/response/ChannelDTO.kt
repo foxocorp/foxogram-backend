@@ -1,54 +1,39 @@
-package su.foxogram.dto.api.response;
+package su.foxogram.dto.api.response
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.model.Channel;
-import su.foxogram.model.Message;
+import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.model.Channel
+import su.foxogram.model.Message
 
 @Getter
 @Setter
 @Schema(name = "Channel")
-public class ChannelDTO {
+data class ChannelDTO(val channel: Channel, val message: Message?) {
+    val id: Long = channel.getId()
 
-	private long id;
+    val displayName: String? = channel.displayName
 
-	private String displayName;
+    val name: String? = channel.name
 
-	private String name;
+    var icon: AttachmentDTO? = if (channel.icon != null) AttachmentDTO(channel.icon) else null
 
-	private AttachmentDTO icon;
+    val type: Int = channel.type
 
-	private int type;
+    val flags: Long = channel.flags
 
-	private long flags;
+    var memberCount = 0
 
-	private int memberCount;
+    val owner: UserDTO? = UserDTO(
+        channel.owner, null, null,
+        includeEmail = false,
+        includeChannels = false,
+        includeContacts = false
+    )
 
-	private UserDTO owner;
+    val createdAt: Long = channel.createdAt
 
-	private long createdAt;
-
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private MessageDTO lastMessage;
-
-	public ChannelDTO(Channel channel, Message lastMessage) {
-		this.id = channel.getId();
-		this.displayName = channel.getDisplayName();
-		this.name = channel.getName();
-		if (channel.getIcon() != null) {
-			this.icon = new AttachmentDTO(channel.getIcon());
-		}
-		this.type = channel.getType();
-		this.flags = channel.getFlags();
-		if (channel.getMembers() != null) {
-			this.memberCount = channel.getMembers().size();
-		}
-		if (lastMessage != null) {
-			this.lastMessage = new MessageDTO(lastMessage, false);
-		}
-		this.owner = new UserDTO(channel.getOwner(), null, null, false, false, false);
-		this.createdAt = channel.getCreatedAt();
-	}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var lastMessage: MessageDTO? = if (message != null) MessageDTO(message, false) else null
 }

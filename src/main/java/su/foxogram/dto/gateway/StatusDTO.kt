@@ -1,22 +1,12 @@
-package su.foxogram.dto.gateway;
+package su.foxogram.dto.gateway
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Getter
+import lombok.Setter
 
 @Getter
 @Setter
-public class StatusDTO {
+class StatusDTO(
+    var userId: Long = 0,
 
-	private long userId;
-
-	private int status;
-
-	public StatusDTO() {
-
-	}
-
-	public StatusDTO(long userId, int status) {
-		this.userId = userId;
-		this.status = status;
-	}
-}
+    var status: Int = 0
+)

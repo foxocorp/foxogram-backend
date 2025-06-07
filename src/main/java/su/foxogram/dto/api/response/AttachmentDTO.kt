@@ -1,30 +1,21 @@
-package su.foxogram.dto.api.response;
+package su.foxogram.dto.api.response
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.model.Attachment;
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.model.Attachment
 
 @Getter
 @Setter
 @Schema(name = "Attachment")
-public class AttachmentDTO {
+data class AttachmentDTO(val attachment: Attachment) {
+    var id: Long = attachment.id
 
-	public long id;
+    var uuid: String? = attachment.uuid
 
-	public String uuid;
+    var filename: String? = attachment.filename
 
-	public String filename;
+    var contentType: String? = attachment.contentType
 
-	public String contentType;
-
-	public long flags;
-
-	public AttachmentDTO(Attachment attachment) {
-		this.id = attachment.getId();
-		this.uuid = attachment.getUuid();
-		this.filename = attachment.getFilename();
-		this.contentType = attachment.getContentType();
-		this.flags = attachment.getFlags();
-	}
+    var flags: Long = attachment.flags
 }

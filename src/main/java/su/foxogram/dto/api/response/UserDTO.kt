@@ -1,68 +1,46 @@
-package su.foxogram.dto.api.response;
+package su.foxogram.dto.api.response
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.model.User;
-
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude
+import io.swagger.v3.oas.annotations.media.Schema
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.model.User
 
 @Getter
 @Setter
 @Schema(name = "User")
-public class UserDTO {
+data class UserDTO(
+    var user: User,
+    val channelsList: MutableList<Long>?,
+    val contactsList: MutableList<Long>?,
+    val includeEmail: Boolean,
+    val includeChannels: Boolean,
+    val includeContacts: Boolean
+) {
+    private var id = user.id
 
-	private long id;
+    private var avatar: AttachmentDTO? = AttachmentDTO(user.avatar)
 
-	private AttachmentDTO avatar;
+    private var displayName = user.displayName
 
-	private String displayName;
+    private var username = user.username
 
-	private String username;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private var email = user.email
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String email;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private var channels = channelsList
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<Long> channels;
+    private var status = user.status
 
-	private int status;
+    private var statusUpdatedAt = user.statusUpdatedAt
 
-	private long statusUpdatedAt;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private var contacts = contactsList
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<Long> contacts;
+    private var flags = user.flags
 
-	private long flags;
+    private var type = user.type
 
-	private int type;
-
-	private long createdAt;
-
-	@SuppressWarnings("unused")
-	public UserDTO() {}
-
-	public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
-		this.id = user.getId();
-		if (user.getAvatar() != null) {
-			this.avatar = new AttachmentDTO(user.getAvatar());
-		}
-		this.displayName = user.getDisplayName();
-		this.username = user.getUsername();
-		if (includeEmail) {
-			this.email = user.getEmail();
-		}
-		if (includeChannels) {
-			this.channels = channels;
-		}
-		if (includeContacts) {
-			this.contacts = contacts;
-		}
-		this.status = user.getStatus();
-		this.statusUpdatedAt = user.getStatusUpdatedAt();
-		this.flags = user.getFlags();
-		this.type = user.getType();
-		this.createdAt = user.getCreatedAt();
-	}
+    private var createdAt = user.createdAt
 }

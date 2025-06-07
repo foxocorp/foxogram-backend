@@ -1,22 +1,16 @@
+package su.foxogram.dto.gateway.response
 
-package su.foxogram.dto.gateway.response;
-
-import lombok.Getter;
-import lombok.Setter;
-import su.foxogram.constant.GatewayConstant;
-
-import java.util.Map;
+import lombok.Getter
+import lombok.Setter
+import su.foxogram.constant.GatewayConstant
+import java.util.Map
 
 @Getter
 @Setter
-public class TypingStartDTO {
+class TypingStartDTO(channelId: Long, userId: Long, timestamp: Long) {
+    private val op: Int = GatewayConstant.Opcode.HELLO.ordinal
 
-	private int op;
+    private val d: MutableMap<String, Long>? =
+        Map.of<String, Long>("channel_id", channelId, "user_id", userId, "timestamp", timestamp)
 
-	private Map<String, Long> d;
-
-	public TypingStartDTO(long channelId, long userId, long timestamp) {
-		this.op = GatewayConstant.Opcode.HELLO.ordinal();
-		this.d = Map.of("channel_id", channelId, "user_id", userId, "timestamp", timestamp);
-	}
 }

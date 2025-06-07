@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'su.foxogram'
@@ -33,6 +34,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 jar {
@@ -53,4 +55,8 @@ tasks.named('bootRun') {
     doFirst {
         jvmArgs = ["-Dspring.output.ansi.enabled=ALWAYS", "-XX:+UseShenandoahGC"]
     }
+}
+
+kotlin {
+    jvmToolchain(21)
 }

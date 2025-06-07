@@ -1,27 +1,16 @@
-package su.foxogram.dto.gateway;
+package su.foxogram.dto.gateway
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Getter
+import lombok.Setter
 
 @Getter
 @Setter
-public class EventDTO {
+class EventDTO(
+    var op: Int = 0,
 
-	private int op;
+    var d: Any? = null,
 
-	private Object d;
+    var s: Int = 0,
 
-	private int s;
-
-	private String t;
-
-	public EventDTO() {
-	}
-
-	public EventDTO(int opcode, Object data, int sequence, String type) {
-		this.op = opcode;
-		this.d = data;
-		this.s = sequence;
-		this.t = type;
-	}
-}
+    var t: String? = null
+)
