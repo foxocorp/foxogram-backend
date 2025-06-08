@@ -53,7 +53,7 @@ public class MessageServiceImpl implements su.foxochat.service.MessageService {
 
 		log.debug("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
-		return messagesArray.reversed();
+		return messagesArray;
 	}
 
 	@Override
