@@ -6,9 +6,9 @@ spring:
     enabled: false
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: foxogram
+    username: foxochat
     password: passwd
-    url: jdbc:postgresql://localhost:5432/foxogram
+    url: jdbc:postgresql://localhost:5432/foxochat
   jpa:
     hibernate:
       ddl-auto: none
@@ -34,7 +34,7 @@ smtp:
   port: 587
   username: user
   password: pass
-  email: noreply@foxogram.su
+  email: noreply@foxochat.su
 
 minio:
   url: https://min.io # minio api url
@@ -49,10 +49,10 @@ api:
   env: dev # dev or prod
   url: http://localhost:8080
   cdn:
-    url: https://cdn.foxogram.su
+    url: https://cdn.foxochat.su
   gateway:
-    production_url: wss://gateway.foxogram.su
-    development_url: wss://gateway.dev.foxogram.su
+    production_url: wss://foxochat.su/api
+    development_url: wss://dev.foxochat.su/api
   app:
-    production_url: https://app.foxogram.su
-    development_url: https://app.dev.foxogram.su
+    production_url: https://foxochat.su/api
+    development_url: https://dev.foxochat.su/api
