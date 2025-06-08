@@ -51,8 +51,8 @@ api:
   cdn:
     url: https://cdn.foxochat.su
   gateway:
-    production_url: wss://foxochat.su/api
-    development_url: wss://dev.foxochat.su/api
+    production_url: wss://api.foxochat.su
+    development_url: wss://api-dev.foxochat.su
   app:
-    production_url: https://foxochat.su/api
-    development_url: https://dev.foxochat.su/api
+    production_url: https://api.foxochat.su
+    development_url: https://api-dev.foxochat.su

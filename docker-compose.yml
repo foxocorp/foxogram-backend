@@ -8,26 +8,25 @@ x-common-settings: &common-settings
     - traefik
 
 services:
-  foxogram-backend:
+  foxochat-backend:
     <<: *common-settings
-    container_name: foxogram-backend
-    image: foxogram/backend:prod
+    container_name: foxochat-backend
+    image: foxochat/backend:prod
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-backend.rule: Host(`api.foxogram.su`)
-      traefik.http.services.foxogram-backend.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-backend.middlewares: ratelimit@file
+      traefik.http.routers.foxochat-backend.rule: Host(`api.foxochat.app`)
+      traefik.http.services.foxochat-backend.loadbalancer.server.port: 8080
+      traefik.http.routers.foxochat-backend.middlewares: ratelimit@file
 
-  foxogram-backend-dev:
+  foxochat-backend-dev:
     <<: *common-settings
-    container_name: foxogram-backend-dev
-    image: foxogram/backend:dev
+    container_name: foxochat-backend-dev
+    image: foxochat/backend:dev
     labels:
       traefik.enable: true
-      traefik.http.routers.foxogram-backend-dev.rule: Host(`api.dev.foxogram.su`)
-      traefik.http.routers.foxogram-backend-dev.tls.certresolver: letsencrypt
-      traefik.http.services.foxogram-backend-dev.loadbalancer.server.port: 8080
-      traefik.http.routers.foxogram-backend-dev.middlewares: ratelimit@file
+      traefik.http.routers.foxochat-backend-dev.rule: Host(`api-dev.foxochat.app`)
+      traefik.http.services.foxochat-backend-dev.loadbalancer.server.port: 8080
+      traefik.http.routers.foxochat-backend-dev.middlewares: ratelimit@file
 
 networks:
   db_network:

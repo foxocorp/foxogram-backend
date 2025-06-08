@@ -43,12 +43,12 @@ jobs:
           minio.secret=${{ secrets.MINIO_SECRET }}
           api.version=1
           api.env=${{ vars.ENV }}
-          api.url=${{ vars.ENV == 'dev' && 'https://api.dev.foxogram.su' || 'https://api.foxogram.su' }}
-          api.cdn.url=https://cdn.foxogram.su
-          api.gateway.production_url=wss://api.foxogram.su
-          api.gateway.development_url=wss://api.dev.foxogram.su
-          api.app.production_url=https://app.foxogram.su
-          api.app.development_url=https://app.dev.foxogram.su
+          api.url=${{ vars.ENV == 'dev' && 'https://api-dev.foxochat.app' || 'https://api.foxochat.app' }}
+          api.cdn.url=https://cdn.foxochat.app
+          api.gateway.production_url=wss://api.foxochat.app
+          api.gateway.development_url=wss://api-dev.foxochat.app
+          api.app.production_url=https://app.foxochat.app
+          api.app.development_url=https://app-dev.foxochat.app
           EOF
 
       - name: Build
@@ -61,4 +61,4 @@ jobs:
       - name: Run
         env:
           SUFFIX: ${{ vars.ENV == 'dev' && '-dev' || '' }}
-        run: docker compose up foxogram-backend$SUFFIX -d --build
+        run: docker compose up foxochat-backend$SUFFIX -d --build
