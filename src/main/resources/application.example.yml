@@ -34,7 +34,7 @@ smtp:
   port: 587
   username: user
   password: pass
-  email: noreply@foxochat.su
+  email: noreply@foxochat.app
 
 minio:
   url: https://min.io # minio api url
@@ -49,10 +49,10 @@ api:
   env: dev # dev or prod
   url: http://localhost:8080
   cdn:
-    url: https://cdn.foxochat.su
+    url: https://cdn.foxochat.app
   gateway:
-    production_url: wss://api.foxochat.su
-    development_url: wss://api-dev.foxochat.su
+    production_url: wss://api.foxochat.app
+    development_url: wss://api-dev.foxochat.app
   app:
-    production_url: https://api.foxochat.su
-    development_url: https://api-dev.foxochat.su
+    production_url: https://api.foxochat.app
+    development_url: https://api-dev.foxochat.app

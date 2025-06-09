@@ -24,4 +24,4 @@ and support!
 This project is licensed under the MIT license - see [LICENSE](LICENSE) for details.
 
 If you have any questions or problems with **FoxoChat Backend**, please contact us
-at [Discord](https://discord.foxochat.su).
+at [Discord](https://discord.foxochat.app).

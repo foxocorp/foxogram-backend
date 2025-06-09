@@ -34,8 +34,8 @@ public class OpenAPIConfig {
 				.version(apiConfig.getVersion());
 
 		List<Server> servers = Arrays.asList(
-				new Server().url("https://foxochat.su").description("Production"),
-				new Server().url("https://dev.foxochat.su").description("Development")
+				new Server().url("https://api.foxochat.app").description("Production"),
+				new Server().url("https://api-dev.foxochat.app").description("Development")
 		);
 
 		if (apiConfig.isDevelopment()) {
