@@ -49,7 +49,7 @@ api:
   env: dev # dev or prod
   url: http://localhost:8080
   cdn:
-    url: https://cdn.foxochat.app
+    url: https://media.foxochat.app
   gateway:
     production_url: wss://api.foxochat.app
     development_url: wss://api-dev.foxochat.app

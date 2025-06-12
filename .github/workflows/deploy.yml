@@ -44,7 +44,7 @@ jobs:
           api.version=1
           api.env=${{ vars.ENV }}
           api.url=${{ vars.ENV == 'dev' && 'https://api-dev.foxochat.app' || 'https://api.foxochat.app' }}
-          api.cdn.url=https://cdn.foxochat.app
+          api.cdn.url=https://media.foxochat.app
           api.gateway.production_url=wss://api.foxochat.app
           api.gateway.development_url=wss://api-dev.foxochat.app
           api.app.production_url=https://app.foxochat.app

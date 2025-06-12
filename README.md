@@ -1,6 +1,6 @@
-<img src="https://cdn.foxochat.app/static/git/foxochat-backend/title.png" alt="FoxoChat Backend">
-<img src="https://cdn.foxochat.app/static/git/foxochat-backend/desc.png" alt="Backend service of FoxoChat">
-<img src="https://cdn.foxochat.app/static/git/foxochat-backend/resources.png" alt="## Resources">
+<img src="https://media.foxochat.app/static/git/foxochat-backend/title.png" alt="FoxoChat Backend">
+<img src="https://media.foxochat.app/static/git/foxochat-backend/desc.png" alt="Backend service of FoxoChat">
+<img src="https://media.foxochat.app/static/git/foxochat-backend/resources.png" alt="## Resources">
 
 - **Website**
     - https://foxochat.app
@@ -9,7 +9,7 @@
 - **GitHub**
   - https://github.com/foxocorp
 
-<img src="https://cdn.foxochat.app/static/git/foxochat-backend/acknowledgements.png" alt="## Acknowledgements">
+<img src="https://media.foxochat.app/static/git/foxochat-backend/acknowledgements.png" alt="## Acknowledgements">
 
 We would like to thank the following people and organizations for their valuable input and support in the development of the backend:
 
@@ -19,7 +19,7 @@ We would like to thank the following people and organizations for their valuable
 Without your help, the **FoxoChat Backend** project would not have been possible. We are grateful for your participation
 and support!
 
-<img src="https://cdn.foxochat.app/static/git/foxochat-backend/license.png" alt="## License">
+<img src="https://media.foxochat.app/static/git/foxochat-backend/license.png" alt="## License">
 
 This project is licensed under the MIT license - see [LICENSE](LICENSE) for details.
 
