@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DiffGenerationConfig">
-    <option name="sourceModelValue" value="foxogram-backend.foxogram-api.main:foxogram-backend.foxogram-api.main" />
-    <option name="targetDbValue" value="1424495d-6d85-4b29-a38f-a949f9618980__foxogram_public" />
-  </component>
+  <component name="DiffGenerationConfig" />
 </project>
