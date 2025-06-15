@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import su.foxochat.constant.CloseCodeConstant;
 import su.foxochat.constant.GatewayConstant;
 import su.foxochat.dto.gateway.EventDTO;
 import su.foxochat.dto.gateway.response.HeartbeatACKDTO;
@@ -33,7 +34,7 @@ public class HeartbeatHandler implements BaseHandler {
 	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws IOException {
 		Session userSession = sessions.get(session.getId());
 
-		if (userSession.isAuthenticated()) return;
+		if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
 
 		userSession.setLastPingTimestamp(System.currentTimeMillis());
 

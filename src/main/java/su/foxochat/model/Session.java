@@ -22,7 +22,7 @@ public class Session {
 	}
 
 	public boolean isAuthenticated() {
-		return userId != 0;
+		return this.userId > 0;
 	}
 
 	public void increaseSequence() {

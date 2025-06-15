@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
+import su.foxochat.constant.CloseCodeConstant;
 import su.foxochat.constant.GatewayConstant;
 import su.foxochat.dto.gateway.EventDTO;
 import su.foxochat.dto.gateway.response.TypingStartDTO;
@@ -44,7 +45,7 @@ public class TypingStartHandler implements BaseHandler {
 		long channelId = data.getD().get("channelId");
 		Session userSession = sessions.get(session.getId());
 
-		if (!userSession.isAuthenticated()) return;
+		if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
 
 		List<Long> recipients = channelService.getById(channelId).getMembers().stream().map(Member::getId).toList();
 
