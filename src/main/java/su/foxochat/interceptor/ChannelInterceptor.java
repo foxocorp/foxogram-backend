@@ -45,7 +45,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
 
 		User user = (User) request.getAttribute(AttributeConstant.USER);
 
-		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream().noneMatch(u -> u.getId() == user.getId())) {
+		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream().noneMatch(u -> u.getUser().getId() == user.getId())) {
 			throw new ChannelNotFoundException();
 		}
 
