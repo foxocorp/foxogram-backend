@@ -28,7 +28,7 @@ jobs:
           spring.jpa.hibernate.ddl-auto=none
           spring.jpa.open-in-view=true
           spring.data.jpa.repositories.bootstrap-mode: deferred
-          logging.level.root=${{ vars.ENV == 'dev' && 'INFO' || 'WARN' }}
+          logging.level.root=${{ vars.ENV == 'dev' && 'DEBUG' || 'WARN' }}
           logging.level.org.springframework=${{ vars.ENV == 'dev' && 'INFO' || 'WARN' }}
           spring.jackson.property-naming-strategy=SNAKE_CASE
           springdoc.swagger-ui.enabled=false
