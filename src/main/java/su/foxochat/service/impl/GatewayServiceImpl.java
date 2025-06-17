@@ -31,7 +31,7 @@ public class GatewayServiceImpl implements GatewayService {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
 		for (Session session : sessions.values()) {
 			if (session != null) {
-				if (!userIds.contains(session.getUserId())) return;
+				if (!userIds.contains(session.getUserId())) continue;
 
 				int seqNumber = session.getSequence();
 				session.increaseSequence();
