@@ -42,27 +42,25 @@ public class EventHandler extends TextWebSocketHandler {
 		this.objectMapper = objectMapper;
 		this.userService = userService;
 
-		try (ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory())) {
-			Runnable task = () -> sessions.values().forEach(session -> {
-				long lastPingTimestamp = session.getLastPingTimestamp();
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
-				long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
+		Runnable task = () -> sessions.values().forEach(session -> {
+			long lastPingTimestamp = session.getLastPingTimestamp();
 
-				if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
-					try {
-						session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
-						log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
-					} catch (IOException e) {
-						log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
-						throw new RuntimeException(e);
-					}
+			long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
+
+			if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
+				try {
+					session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
+					log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
+				} catch (IOException e) {
+					log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
+					throw new RuntimeException(e);
 				}
-			});
+			}
+		});
 
-			executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
-		} catch (Exception e) {
-			log.error("Error initializing thread: {}", e.getMessage());
-		}
+		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
 	}
 
 	@Override
