@@ -73,6 +73,11 @@ public class UserServiceImpl implements su.foxochat.service.UserService {
 	}
 
 	@Override
+	public void save(User user) {
+		userRepository.save(user);
+	}
+
+	@Override
 	public void updateFlags(User user, UserConstant.Flags removeFlag, UserConstant.Flags addFlag) {
 		user.removeFlag(removeFlag);
 		user.addFlag(addFlag);

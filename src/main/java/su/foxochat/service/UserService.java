@@ -35,4 +35,6 @@ public interface UserService {
 	User addContact(User user, long id) throws UserContactAlreadyExistException;
 
 	void deleteContact(User user, long id) throws UserContactNotFoundException;
+
+	void save(User user);
 }
