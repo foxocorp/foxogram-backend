@@ -31,8 +31,8 @@ public class UserConstant {
 
 	@Getter
 	public enum Status {
-		ONLINE(1),
-		OFFLINE(2);
+		OFFLINE(0),
+		ONLINE(1);
 
 		private final int status;
 
