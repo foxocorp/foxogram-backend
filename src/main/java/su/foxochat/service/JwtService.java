@@ -7,5 +7,5 @@ import javax.crypto.SecretKey;
 public interface JwtService {
 	String generate(User user);
 
-	SecretKey getSigningKey(int tokenVersion);
+	SecretKey getSigningKey();
 }

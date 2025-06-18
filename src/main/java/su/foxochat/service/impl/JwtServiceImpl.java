@@ -7,12 +7,13 @@ import org.springframework.stereotype.Service;
 import su.foxochat.config.JwtConfig;
 import su.foxochat.constant.TokenConstant;
 import su.foxochat.model.User;
+import su.foxochat.service.JwtService;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
-public class JwtServiceImpl implements su.foxochat.service.JwtService {
+public class JwtServiceImpl implements JwtService {
 
 	private final JwtConfig jwtConfig;
 
@@ -28,12 +29,13 @@ public class JwtServiceImpl implements su.foxochat.service.JwtService {
 		return Jwts.builder()
 				.id(String.valueOf(user.getId()))
 				.expiration(expirationDate)
-				.signWith(getSigningKey(user.getTokenVersion()))
+				.signWith(getSigningKey())
+				.subject(String.valueOf(user.getTokenVersion()))
 				.compact();
 	}
 
 	@Override
-	public SecretKey getSigningKey(int tokenVersion) {
-		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret() + tokenVersion));
+	public SecretKey getSigningKey() {
+		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
 	}
 }

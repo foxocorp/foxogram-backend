@@ -1,7 +1,6 @@
 package su.foxochat.service.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,10 +23,6 @@ import su.foxochat.service.*;
 import su.foxochat.util.OTPGenerator;
 import su.foxochat.util.PasswordHasher;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Map;
-
 @Slf4j
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -42,15 +37,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private final APIConfig apiConfig;
 
-	private final ObjectMapper objectMapper;
-
-	public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig, ObjectMapper objectMapper) {
+	public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig) {
 		this.userService = userService;
 		this.emailService = emailService;
 		this.jwtService = jwtService;
 		this.otpService = otpService;
 		this.apiConfig = apiConfig;
-		this.objectMapper = objectMapper;
 	}
 
 	public User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException {
@@ -61,15 +53,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		User user;
 
 		try {
-			String[] parts = token.split("\\.");
-			String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-			Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<>() {
-			});
-			long userId = Long.parseLong((String) claims.get("jti"));
+			Claims claimsJws = Jwts.parser()
+					.verifyWith(jwtService.getSigningKey())
+					.build()
+					.parseSignedClaims(token).getPayload();
+			long userId = Long.parseLong(claimsJws.getId());
+			long tokenVersion = Long.parseLong(claimsJws.getSubject());
 
 			user = userService.getById(userId).orElseThrow(UserUnauthorizedException::new);
 
-			Jwts.parser().verifyWith(jwtService.getSigningKey(user.getTokenVersion())).build().parseSignedClaims(token);
+			if (tokenVersion != user.getTokenVersion()) throw new UserUnauthorizedException();
 		} catch (Exception e) {
 			throw new UserUnauthorizedException();
 		}
@@ -145,6 +138,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
 
 		user.addFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
+		userService.save(user);
 
 		emailService.send(user.getEmail(), user.getId(), type, user.getUsername(), value, System.currentTimeMillis(), expiresAt, null);
 		log.debug("User ({}) reset password requested successfully", user.getUsername());
@@ -156,6 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
 		user.setTokenVersion(user.getTokenVersion() + 1);
+		userService.save(user);
 		user.removeFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
 		otpService.delete(OTP);
