@@ -78,8 +78,9 @@ public class EventHandler extends TextWebSocketHandler {
 		Session userSession = sessions.get(session.getId());
 
 		if (userSession.isAuthenticated()) {
-			userService.setStatus(userSession.getUserId(), UserConstant.Status.ONLINE.getStatus());
+			userService.setStatus(userSession.getUserId(), UserConstant.Status.OFFLINE.getStatus());
 		}
+
 		sessions.remove(session.getId());
 	}
 
