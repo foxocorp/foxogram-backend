@@ -2,6 +2,7 @@ package su.foxochat.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import su.foxochat.config.APIConfig;
 import su.foxochat.exception.otp.OTPExpiredException;
 import su.foxochat.exception.otp.OTPsInvalidException;
 import su.foxochat.model.OTP;
@@ -13,12 +14,17 @@ public class OTPServiceImpl implements su.foxochat.service.OTPService {
 
 	private final OTPRepository otpRepository;
 
-	public OTPServiceImpl(OTPRepository otpRepository) {
+	private final APIConfig apiConfig;
+
+	public OTPServiceImpl(OTPRepository otpRepository, APIConfig apiConfig) {
+		this.apiConfig = apiConfig;
 		this.otpRepository = otpRepository;
 	}
 
 	@Override
 	public OTP validate(String pathCode) throws OTPsInvalidException, OTPExpiredException {
+
+		if (apiConfig.isDevelopment()) return null;
 
 		OTP OTP = otpRepository.findByValue(pathCode).orElseThrow(OTPsInvalidException::new);
 
@@ -32,8 +38,10 @@ public class OTPServiceImpl implements su.foxochat.service.OTPService {
 
 	@Override
 	public void delete(OTP OTP) {
-		otpRepository.delete(OTP);
-		log.debug("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
+		if (!apiConfig.isDevelopment()) {
+			otpRepository.delete(OTP);
+			log.debug("OTP ({}, {}) deleted successfully", OTP.getValue(), OTP.getUserId());
+		}
 	}
 
 	@Override
