@@ -29,6 +29,7 @@ public class GatewayServiceImpl implements GatewayService {
 	@Override
 	public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
+		log.debug("Trying to send message to users ({})", userIds);
 		for (Session session : sessions.values()) {
 			if (session != null) {
 				if (!userIds.contains(session.getUserId())) continue;
@@ -37,10 +38,10 @@ public class GatewayServiceImpl implements GatewayService {
 				session.increaseSequence();
 				WebSocketSession wsSession = session.getWebSocketSession();
 
-				if (!wsSession.isOpen()) return;
+				if (!wsSession.isOpen()) continue;
 
 				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
-				log.debug("Sent message to userIds ({}) with (opcode: {}, type: {})", userIds, opcode, type);
+				log.debug("Sent message to userId ({}) with (opcode: {}, type: {})", session.getUserId(), opcode, type);
 			}
 		}
 	}
