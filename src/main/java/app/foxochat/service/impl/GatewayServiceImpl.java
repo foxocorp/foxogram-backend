@@ -29,7 +29,7 @@ public class GatewayServiceImpl implements GatewayService {
 	@Override
 	public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
 		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
-		log.debug("Trying to send message to users ({})", userIds);
+		log.debug("Trying to send message to users ({}) with (opcode: {}, type: {})", userIds, opcode, type);
 		for (Session session : sessions.values()) {
 			if (session != null) {
 				if (!userIds.contains(session.getUserId())) continue;
