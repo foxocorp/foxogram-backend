@@ -5,6 +5,7 @@ import app.foxochat.constant.APIConstant;
 import app.foxochat.dto.api.response.InfoDTO;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ public class CommonController {
 		this.apiConfig = apiConfig;
 	}
 
+	@SecurityRequirements
 	@Operation(summary = "Get info")
 	@GetMapping("/info")
 	public InfoDTO get() {
@@ -34,6 +36,7 @@ public class CommonController {
 
 	@SuppressWarnings("SameReturnValue")
 	@Hidden
+	@SecurityRequirements
 	@GetMapping("/actuator/health")
 	public String health() {
 		return "{\"status\":\"UP\"}";
