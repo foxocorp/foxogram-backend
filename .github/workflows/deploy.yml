@@ -63,3 +63,6 @@ jobs:
         env:
           SUFFIX: ${{ vars.ENV == 'dev' && '-dev' || '' }}
         run: docker compose up foxochat-backend$SUFFIX -d --build
+
+      - name: Trigger docs build
+        run: curl -d "" "${{ secrets.DOCS_DEPLOY_HOOK_URL }}"
