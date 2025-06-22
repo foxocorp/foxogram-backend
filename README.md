@@ -1,6 +1,7 @@
 <img src="https://media.foxochat.app/static/git/foxochat-backend/title.png" alt="FoxoChat Backend">
 <img src="https://media.foxochat.app/static/git/foxochat-backend/desc.png" alt="Backend service of FoxoChat">
-<img src="https://media.foxochat.app/static/git/foxochat-backend/resources.png" alt="## Resources">
+
+## Resources
 
 - **Website**
     - https://foxochat.app
@@ -9,7 +10,7 @@
 - **GitHub**
   - https://github.com/foxocorp
 
-<img src="https://media.foxochat.app/static/git/foxochat-backend/acknowledgements.png" alt="## Acknowledgements">
+## Acknowledgements
 
 We would like to thank the following people and organizations for their valuable input and support in the development of the backend:
 
@@ -19,7 +20,24 @@ We would like to thank the following people and organizations for their valuable
 Without your help, the **FoxoChat Backend** project would not have been possible. We are grateful for your participation
 and support!
 
-<img src="https://media.foxochat.app/static/git/foxochat-backend/license.png" alt="## License">
+## Gateway lifecycle
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant Gateway
+    Client->>Gateway: Establish connection with Gateway
+    Client->>Gateway: Send Identify (op 1)
+    Gateway->>Client: Receive Hello (op 2)
+    loop Every heartbeat_interval
+        Client-->>Gateway: Send Heartbeat (op 3)
+        Gateway-->>Client: Receive Heartbeat ACK (op 4)
+    end
+    Gateway->>Client: Receive Dispatch (op 0)
+```
+
+## License
 
 This project is licensed under the MIT license - see [LICENSE](LICENSE) for details.
 
