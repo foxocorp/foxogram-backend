@@ -67,10 +67,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new UserUnauthorizedException();
 		}
 
-		if (user.hasFlag(UserConstant.Flags.AWAITING_CONFIRMATION) && !user.hasFlag(UserConstant.Flags.EMAIL_VERIFIED))
-			throw new UserEmailNotVerifiedException();
-
-		if (!ignoreEmailVerification && user.hasFlag(UserConstant.Flags.EMAIL_VERIFIED))
+		if (!ignoreEmailVerification && user.hasFlag(UserConstant.Flags.AWAITING_CONFIRMATION) && !user.hasFlag(UserConstant.Flags.EMAIL_VERIFIED))
 			throw new UserEmailNotVerifiedException();
 
 		return user;
