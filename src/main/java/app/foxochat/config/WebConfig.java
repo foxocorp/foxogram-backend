@@ -33,8 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authenticationInterceptor).excludePathPatterns("/info", "/auth/register", "/auth/login", "/auth/reset-password", "/auth/reset-password/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
-		registry.addInterceptor(channelInterceptor).excludePathPatterns("/info", "/auth/**", "/users/**", "/channels/", "/channels/@**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
-		registry.addInterceptor(memberInterceptor).excludePathPatterns("/info", "/auth/**", "/users/**", "/channels/", "/channels/@**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health");
+		registry.addInterceptor(authenticationInterceptor).excludePathPatterns("/info", "/auth/register", "/auth/login", "/auth/reset-password", "/auth/reset-password/**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/robots.txt");
+		registry.addInterceptor(channelInterceptor).excludePathPatterns("/info", "/auth/**", "/users/**", "/channels/", "/channels/@**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/robots.txt");
+		registry.addInterceptor(memberInterceptor).excludePathPatterns("/info", "/auth/**", "/users/**", "/channels/", "/channels/@**", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/robots.txt");
 	}
 }
