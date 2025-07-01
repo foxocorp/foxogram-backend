@@ -29,6 +29,9 @@ public class User {
 	public String username;
 
 	@Column
+	public String bio;
+
+	@Column
 	private String email;
 
 	@OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -67,6 +70,7 @@ public class User {
 	public User(String username, String email, String password, long flags, int type) {
 		this.displayName = null;
 		this.username = username.toLowerCase();
+		this.bio = null;
 		this.email = email;
 		this.password = password;
 		if (this.contacts != null) this.contacts = contacts.stream()

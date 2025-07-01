@@ -107,6 +107,7 @@ public class UserServiceImpl implements UserService {
 		if (body.getDisplayName() != null || body.getUsername() != null || body.getAvatar() != null) {
 			if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
 			if (body.getUsername() != null) user.setUsername(body.getUsername());
+			if (body.getBio() != null) user.setBio(body.getBio());
 			if (body.getAvatar() != null) user.setAvatar(attachmentService.getById(body.getAvatar()));
 
 			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.USER_UPDATE.getValue());

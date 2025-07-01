@@ -20,6 +20,9 @@ public class UserEditDTO {
 	@Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = ValidationConstant.Messages.USERNAME_INCORRECT)
 	private String username;
 
+	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.BIO, message = ValidationConstant.Messages.BIO_WRONG_LENGTH)
+	private String bio;
+
 	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL, message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
 	@Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
 	private String email;

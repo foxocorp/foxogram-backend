@@ -21,6 +21,8 @@ public class UserDTO {
 
 	private String username;
 
+	private String bio;
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String email;
 
@@ -50,6 +52,7 @@ public class UserDTO {
 		}
 		this.displayName = user.getDisplayName();
 		this.username = user.getUsername();
+		this.bio = user.getBio();
 		if (includeEmail) {
 			this.email = user.getEmail();
 		}

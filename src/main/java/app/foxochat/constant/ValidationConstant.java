@@ -9,6 +9,8 @@ public class ValidationConstant {
 
 		public static final int DISPLAY_NAME = 32;
 
+		public static final int BIO = 64;
+
 		public static final int USERNAME = 32;
 
 		public static final int EMAIL = 64;
@@ -24,6 +26,8 @@ public class ValidationConstant {
 		public static final String PASSWORD_WRONG_LENGTH = "Password must be between {min} and {max} characters long";
 
 		public static final String DISPLAY_NAME_WRONG_LENGTH = "Display name must be between {min} and {max} characters long";
+
+		public static final String BIO_WRONG_LENGTH = "Bio name must be between {min} and {max} characters long";
 
 		public static final String USERNAME_WRONG_LENGTH = "Username must be between {min} and {max} characters long";
 
