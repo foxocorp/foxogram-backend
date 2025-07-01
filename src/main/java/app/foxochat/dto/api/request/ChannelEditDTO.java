@@ -3,6 +3,7 @@ package app.foxochat.dto.api.request;
 import app.foxochat.constant.ValidationConstant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +20,6 @@ public class ChannelEditDTO {
 	@Size(min = 1, max = ValidationConstant.Lengths.CHANNEL_NAME, message = ValidationConstant.Messages.CHANNEL_NAME_WRONG_LENGTH)
 	private String name;
 
-	private long icon;
+	@Positive(message = ValidationConstant.Messages.CHANNEL_ICON_MUST_BE_POSITIVE)
+	private Long icon;
 }

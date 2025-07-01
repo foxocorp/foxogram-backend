@@ -92,10 +92,15 @@ public class ChannelServiceImpl implements ChannelService {
 			throw new MissingPermissionsException();
 
 		try {
-			if (body.getDisplayName() != null) channel.setDisplayName(body.getDisplayName());
-			if (body.getName() != null) channel.setName(body.getName());
-			if (body.getIcon() <= 0) {
-				channel.setIcon(attachmentService.getById(body.getIcon()));
+			String name = body.getName();
+			String displayName = body.getDisplayName();
+			Long icon = body.getIcon();
+
+			if (name != null) channel.setName(name);
+			if (displayName != null) channel.setDisplayName(body.getDisplayName());
+			if (icon != null) {
+				if (icon == 0) channel.setIcon(null);
+				else channel.setIcon(attachmentService.getById(icon));
 			}
 
 			channelRepository.save(channel);
