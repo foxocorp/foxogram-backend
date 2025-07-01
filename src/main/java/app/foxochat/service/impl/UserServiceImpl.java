@@ -104,13 +104,21 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(User user, UserEditDTO body) throws Exception {
-		if (body.getDisplayName() != null || body.getUsername() != null || body.getAvatar() != null) {
-			if (body.getDisplayName() != null) user.setDisplayName(body.getDisplayName());
-			if (body.getUsername() != null) user.setUsername(body.getUsername());
-			if (body.getBio() != null) user.setBio(body.getBio());
-			if (body.getAvatar() != null) user.setAvatar(attachmentService.getById(body.getAvatar()));
+		String username = body.getUsername();
+		String displayName = body.getDisplayName();
+		String bio = body.getBio();
+		Long avatar = body.getAvatar();
 
-			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), body.getUsername(), body.getDisplayName(), body.getBio(), -1, body.getAvatar()), GatewayConstant.Event.USER_UPDATE.getValue());
+		if (username != null || displayName != null || avatar != null || bio != null) {
+			if (username != null) user.setUsername(username);
+			if (displayName != null) user.setDisplayName(displayName);
+			if (bio != null) user.setBio(bio);
+			if (avatar != null) {
+				if (avatar == 0) user.setAvatar(null);
+				else user.setAvatar(attachmentService.getById(avatar));
+			}
+
+			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar), GatewayConstant.Event.USER_UPDATE.getValue());
 		}
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
