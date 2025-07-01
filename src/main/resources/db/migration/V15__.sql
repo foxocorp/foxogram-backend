@@ -1,2 +1,3 @@
 ALTER TABLE users
-    ADD CONSTRAINT FK_USERS_ON_BANNER FOREIGN KEY (banner) REFERENCES attachments (id);
+    ADD banner_id BIGINT,
+    ADD CONSTRAINT FK_USERS_ON_BANNER FOREIGN KEY (banner_id) REFERENCES attachments (id);
