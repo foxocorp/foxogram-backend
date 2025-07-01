@@ -54,6 +54,8 @@ public class ValidationConstant {
 		public static final String USER_AVATAR_MUST_BE_POSITIVE = "User avatar id must be positive";
 
 		public static final String USER_BANNER_MUST_BE_POSITIVE = "User banner id must be positive";
+
+		public static final String CHANNEL_ICON_MUST_BE_POSITIVE = "Channel icon id must be positive";
 	}
 
 	public static class Regex {
