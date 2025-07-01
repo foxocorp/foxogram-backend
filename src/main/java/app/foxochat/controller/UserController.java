@@ -111,6 +111,14 @@ public class UserController {
 		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
 	}
 
+	@Operation(summary = "Upload banner")
+	@PutMapping("/@me/banner")
+	public UploadAttachmentDTO uploadBanner(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
+		AttachmentPresignedDTO data = attachmentService.upload(authenticatedUser, attachment);
+
+		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
+	}
+
 	@Operation(summary = "Delete")
 	@DeleteMapping("/@me")
 	public OkDTO delete(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody UserDeleteDTO body) throws UserCredentialsIsInvalidException {

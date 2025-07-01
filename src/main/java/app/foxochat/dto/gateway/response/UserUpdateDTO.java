@@ -19,12 +19,15 @@ public class UserUpdateDTO {
 
 	private long avatar;
 
-	public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar) {
+	private long banner;
+
+	public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar, long banner) {
 		this.id = id;
 		this.username = username;
 		this.displayName = displayName;
 		this.bio = bio;
 		this.status = status;
 		this.avatar = avatar;
+		this.banner = banner;
 	}
 }

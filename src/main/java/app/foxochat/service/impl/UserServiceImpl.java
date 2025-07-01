@@ -108,6 +108,7 @@ public class UserServiceImpl implements UserService {
 		String displayName = body.getDisplayName();
 		String bio = body.getBio();
 		Long avatar = body.getAvatar();
+		Long banner = body.getBanner();
 
 		if (username != null || displayName != null || avatar != null || bio != null) {
 			if (username != null) user.setUsername(username);
@@ -117,8 +118,12 @@ public class UserServiceImpl implements UserService {
 				if (avatar == 0) user.setAvatar(null);
 				else user.setAvatar(attachmentService.getById(avatar));
 			}
+			if (banner != null) {
+				if (banner == 0) user.setBanner(null);
+				else user.setBanner(attachmentService.getById(banner));
+			}
 
-			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar), GatewayConstant.Event.USER_UPDATE.getValue());
+			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar, banner), GatewayConstant.Event.USER_UPDATE.getValue());
 		}
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
@@ -170,7 +175,7 @@ public class UserServiceImpl implements UserService {
 				.distinct()
 				.collect(Collectors.toList());
 
-		gatewayService.sendMessageToSpecificSessions(recipients, GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(userId, null, null, null, status, -1), GatewayConstant.Event.USER_UPDATE.getValue());
+		gatewayService.sendMessageToSpecificSessions(recipients, GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(userId, null, null, null, status, -1, -1), GatewayConstant.Event.USER_UPDATE.getValue());
 		log.debug("Set user {} status {} successfully", user.getUsername(), status);
 	}
 

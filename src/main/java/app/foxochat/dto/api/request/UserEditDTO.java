@@ -32,4 +32,7 @@ public class UserEditDTO {
 
 	@Positive(message = ValidationConstant.Messages.USER_AVATAR_MUST_BE_POSITIVE)
 	private Long avatar;
+
+	@Positive(message = ValidationConstant.Messages.USER_BANNER_MUST_BE_POSITIVE)
+	private Long banner;
 }

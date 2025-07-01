@@ -53,6 +53,10 @@ public class User {
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	public Attachment avatar;
 
+	@JoinColumn(name = "banner_id")
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	public Attachment banner;
+
 	@Column
 	public long flags;
 
