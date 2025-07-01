@@ -102,7 +102,7 @@ public class MessageServiceImpl implements MessageService {
 			throw new MissingPermissionsException();
 
 		messageRepository.delete(message);
-		gatewayService.sendMessageToSpecificSessions(getRecipients(channel), GatewayConstant.Opcode.DISPATCH.ordinal(), Map.of("id", id), GatewayConstant.Event.MESSAGE_DELETE.getValue());
+		gatewayService.sendMessageToSpecificSessions(getRecipients(channel), GatewayConstant.Opcode.DISPATCH.ordinal(), Map.of("id", id, "channel_id", channel.getId()), GatewayConstant.Event.MESSAGE_DELETE.getValue());
 		log.debug("Message {} in channel {} deleted successfully", id, channel.getId());
 	}
 
