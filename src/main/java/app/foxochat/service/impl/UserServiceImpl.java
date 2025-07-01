@@ -7,7 +7,7 @@ import app.foxochat.constant.OTPConstant;
 import app.foxochat.constant.UserConstant;
 import app.foxochat.dto.api.request.UserEditDTO;
 import app.foxochat.dto.api.response.UserDTO;
-import app.foxochat.dto.gateway.StatusDTO;
+import app.foxochat.dto.gateway.response.UserUpdateDTO;
 import app.foxochat.exception.otp.OTPExpiredException;
 import app.foxochat.exception.otp.OTPsInvalidException;
 import app.foxochat.exception.user.*;
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 			if (body.getBio() != null) user.setBio(body.getBio());
 			if (body.getAvatar() != null) user.setAvatar(attachmentService.getById(body.getAvatar()));
 
-			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserDTO(user, null, null, false, false, false), GatewayConstant.Event.USER_UPDATE.getValue());
+			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), body.getUsername(), body.getDisplayName(), body.getBio(), -1, body.getAvatar()), GatewayConstant.Event.USER_UPDATE.getValue());
 		}
 		if (body.getEmail() != null) changeEmail(user, body);
 		if (body.getPassword() != null) changePassword(user, body);
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 				.distinct()
 				.collect(Collectors.toList());
 
-		gatewayService.sendMessageToSpecificSessions(recipients, GatewayConstant.Opcode.DISPATCH.ordinal(), new StatusDTO(userId, status), GatewayConstant.Event.USER_STATUS_UPDATE.getValue());
+		gatewayService.sendMessageToSpecificSessions(recipients, GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(userId, null, null, null, status, -1), GatewayConstant.Event.USER_UPDATE.getValue());
 		log.debug("Set user {} status {} successfully", user.getUsername(), status);
 	}
 
