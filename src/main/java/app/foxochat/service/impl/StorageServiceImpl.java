@@ -1,6 +1,6 @@
 package app.foxochat.service.impl;
 
-import app.foxochat.dto.internal.AttachmentPresignedDTO;
+import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.service.StorageService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioAsyncClient;
@@ -24,7 +24,7 @@ public class StorageServiceImpl implements StorageService {
 	}
 
 	@Override
-	public AttachmentPresignedDTO getPresignedUrl(String bucketName) {
+	public MediaPresignedURLDTO getPresignedUrl(String bucketName) {
 		Map<String, String> reqParams = new HashMap<>();
 		reqParams.put("response-content-type", "application/json");
 
@@ -45,6 +45,6 @@ public class StorageServiceImpl implements StorageService {
 		}
 
 		log.debug("Successfully get presigned url to bucket {} with uuid {}", bucketName, uuid);
-		return new AttachmentPresignedDTO(url, uuid, null);
+		return new MediaPresignedURLDTO(url, uuid, null);
 	}
 }

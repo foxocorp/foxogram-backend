@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
 	private final OTPService otpService;
 
-	private final AttachmentService attachmentService;
+	private final MediaService mediaService;
 
 	private final APIConfig apiConfig;
 
@@ -47,11 +47,11 @@ public class UserServiceImpl implements UserService {
 
 	private final MemberService memberService;
 
-	public UserServiceImpl(UserRepository userRepository, EmailService emailService, OTPService otpService, AttachmentService attachmentService, APIConfig apiConfig, @Lazy GatewayService gatewayService, MemberService memberService) {
+	public UserServiceImpl(UserRepository userRepository, EmailService emailService, OTPService otpService, MediaService mediaService, APIConfig apiConfig, @Lazy GatewayService gatewayService, MemberService memberService) {
 		this.userRepository = userRepository;
 		this.emailService = emailService;
 		this.otpService = otpService;
-		this.attachmentService = attachmentService;
+		this.mediaService = mediaService;
 		this.apiConfig = apiConfig;
 		this.gatewayService = gatewayService;
 		this.memberService = memberService;
@@ -116,11 +116,11 @@ public class UserServiceImpl implements UserService {
 			if (bio != null) user.setBio(bio);
 			if (avatar != null) {
 				if (avatar == 0) user.setAvatar(null);
-				else user.setAvatar(attachmentService.getById(avatar));
+				else user.setAvatar(mediaService.getAvatarById(avatar));
 			}
 			if (banner != null) {
 				if (banner == 0) user.setBanner(null);
-				else user.setBanner(attachmentService.getById(banner));
+				else user.setBanner(mediaService.getAttachmentById(banner));
 			}
 
 			gatewayService.sendMessageToSpecificSessions(user.getContacts().stream().map(userContact -> userContact.getContact().getId()).toList(), GatewayConstant.Opcode.DISPATCH.ordinal(), new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar, banner), GatewayConstant.Event.USER_UPDATE.getValue());

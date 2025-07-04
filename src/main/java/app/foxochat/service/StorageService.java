@@ -1,8 +1,8 @@
 package app.foxochat.service;
 
-import app.foxochat.dto.internal.AttachmentPresignedDTO;
+import app.foxochat.dto.internal.MediaPresignedURLDTO;
 
 public interface StorageService {
 
-	AttachmentPresignedDTO getPresignedUrl(String bucketName);
+	MediaPresignedURLDTO getPresignedUrl(String bucketName);
 }

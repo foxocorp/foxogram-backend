@@ -18,7 +18,7 @@ public class ChannelDTO {
 
 	private String name;
 
-	private AttachmentDTO icon;
+	private AvatarDTO icon;
 
 	private int type;
 
@@ -37,8 +37,8 @@ public class ChannelDTO {
 		this.id = channel.getId();
 		this.displayName = channel.getDisplayName();
 		this.name = channel.getName();
-		if (channel.getIcon() != null) {
-			this.icon = new AttachmentDTO(channel.getIcon());
+		if (channel.getAvatar() != null) {
+			this.icon = new AvatarDTO(channel.getAvatar());
 		}
 		this.type = channel.getType();
 		this.flags = channel.getFlags();

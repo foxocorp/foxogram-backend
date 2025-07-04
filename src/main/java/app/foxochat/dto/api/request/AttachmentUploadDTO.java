@@ -9,9 +9,11 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @Schema(name = "AttachmentsAdd")
-public class AttachmentAddDTO {
+public class AttachmentUploadDTO {
 
 	private String filename;
 
 	private String contentType;
+
+	private long flags;
 }

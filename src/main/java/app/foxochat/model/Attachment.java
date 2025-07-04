@@ -35,8 +35,8 @@ public class Attachment {
 
 	public Attachment() {}
 
-	public Attachment(User user, String uuid, String filename, String contentType, long flags, boolean includeUser) {
-		if (includeUser) this.user = user;
+	public Attachment(User user, String uuid, String filename, String contentType, long flags) {
+		this.user = user;
 		this.uuid = uuid;
 		this.filename = filename;
 		this.contentType = contentType;

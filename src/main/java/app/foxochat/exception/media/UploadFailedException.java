@@ -1,4 +1,4 @@
-package app.foxochat.exception.cdn;
+package app.foxochat.exception.media;
 
 import app.foxochat.constant.ExceptionConstant;
 import app.foxochat.exception.BaseException;
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UploadFailedException extends BaseException {
 
 	public UploadFailedException() {
-		super(ExceptionConstant.Messages.UPLOAD_FAILED.getValue(), UploadFailedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.CDN.UPLOAD_FAILED.getValue());
+		super(ExceptionConstant.Messages.UPLOAD_FAILED.getValue(), UploadFailedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.Media.UPLOAD_FAILED.getValue());
 	}
 }

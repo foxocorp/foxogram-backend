@@ -50,11 +50,11 @@ public class User {
 	private int tokenVersion;
 
 	@JoinColumn(name = "avatar_id")
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	public Attachment avatar;
+	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	public Avatar avatar;
 
 	@JoinColumn(name = "banner_id")
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
 	public Attachment banner;
 
 	@Column

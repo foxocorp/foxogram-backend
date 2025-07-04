@@ -2,26 +2,21 @@ package app.foxochat.controller;
 
 import app.foxochat.constant.APIConstant;
 import app.foxochat.constant.AttributeConstant;
-import app.foxochat.dto.api.request.AttachmentAddDTO;
-import app.foxochat.dto.api.request.ChannelCreateDTO;
-import app.foxochat.dto.api.request.ChannelEditDTO;
-import app.foxochat.dto.api.request.MessageCreateDTO;
+import app.foxochat.dto.api.request.*;
 import app.foxochat.dto.api.response.*;
-import app.foxochat.dto.internal.AttachmentPresignedDTO;
+import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
+import app.foxochat.exception.media.MediaCannotBeEmptyException;
+import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.exception.member.MemberInChannelNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
-import app.foxochat.exception.message.AttachmentsCannotBeEmpty;
 import app.foxochat.exception.message.MessageCannotBeEmpty;
 import app.foxochat.exception.message.MessageNotFoundException;
-import app.foxochat.exception.message.UnknownAttachmentsException;
-import app.foxochat.model.Channel;
-import app.foxochat.model.Member;
-import app.foxochat.model.Message;
-import app.foxochat.model.User;
-import app.foxochat.service.AttachmentService;
+import app.foxochat.model.*;
 import app.foxochat.service.ChannelService;
+import app.foxochat.service.MediaService;
 import app.foxochat.service.MemberService;
 import app.foxochat.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,13 +40,13 @@ public class ChannelController {
 
 	private final MemberService memberService;
 
-	private final AttachmentService attachmentService;
+	private final MediaService mediaService;
 
-	public ChannelController(ChannelService channelService, MessageService messageService, MemberService memberService, AttachmentService attachmentService) {
+	public ChannelController(ChannelService channelService, MessageService messageService, MemberService memberService, MediaService mediaService) {
 		this.channelService = channelService;
 		this.messageService = messageService;
 		this.memberService = memberService;
-		this.attachmentService = attachmentService;
+		this.mediaService = mediaService;
 	}
 
 	@Operation(summary = "Create channel")
@@ -84,10 +79,17 @@ public class ChannelController {
 
 	@Operation(summary = "Upload icon")
 	@PutMapping("/{channelId}/icon")
-	public UploadAttachmentDTO uploadAvatar(@PathVariable String channelId, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		AttachmentPresignedDTO data = attachmentService.upload(null, attachment);
+	public MediaUploadDTO uploadAvatar(@PathVariable String channelId, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @RequestBody AvatarUploadDTO avatar) throws UnknownMediaException, MediaCannotBeEmptyException, UploadFailedException {
+		MediaPresignedURLDTO data = mediaService.uploadAvatar(null, channel, avatar);
 
-		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
+		Avatar media;
+		try {
+			media = (Avatar) data.getMedia().getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new UploadFailedException();
+		}
+
+		return new MediaUploadDTO(data.getUrl(), media.getId());
 	}
 
 	@Operation(summary = "Delete channel")
@@ -171,9 +173,9 @@ public class ChannelController {
 
 	@Operation(summary = "Add attachments")
 	@PutMapping("/{channelId}/attachments")
-	public List<UploadAttachmentDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable String channelId, @RequestBody List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
+	public List<MediaUploadDTO> addAttachments(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable String channelId, @RequestBody List<AttachmentUploadDTO> attachments) throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException {
 		if (attachments == null || attachments.isEmpty()) {
-			throw new AttachmentsCannotBeEmpty();
+			throw new MediaCannotBeEmptyException();
 		}
 
 		return messageService.addAttachments(channel, user, attachments);

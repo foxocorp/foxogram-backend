@@ -2,27 +2,26 @@ package app.foxochat.controller;
 
 import app.foxochat.constant.APIConstant;
 import app.foxochat.constant.AttributeConstant;
-import app.foxochat.dto.api.request.AttachmentAddDTO;
-import app.foxochat.dto.api.request.OTPDTO;
-import app.foxochat.dto.api.request.UserDeleteDTO;
-import app.foxochat.dto.api.request.UserEditDTO;
+import app.foxochat.dto.api.request.*;
 import app.foxochat.dto.api.response.ChannelDTO;
+import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.OkDTO;
-import app.foxochat.dto.api.response.UploadAttachmentDTO;
 import app.foxochat.dto.api.response.UserDTO;
-import app.foxochat.dto.internal.AttachmentPresignedDTO;
-import app.foxochat.exception.message.AttachmentsCannotBeEmpty;
-import app.foxochat.exception.message.UnknownAttachmentsException;
+import app.foxochat.dto.internal.MediaPresignedURLDTO;
+import app.foxochat.exception.media.MediaCannotBeEmptyException;
+import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.exception.otp.OTPExpiredException;
 import app.foxochat.exception.otp.OTPsInvalidException;
 import app.foxochat.exception.user.UserContactAlreadyExistException;
 import app.foxochat.exception.user.UserContactNotFoundException;
 import app.foxochat.exception.user.UserCredentialsIsInvalidException;
 import app.foxochat.exception.user.UserNotFoundException;
+import app.foxochat.model.Avatar;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Message;
 import app.foxochat.model.User;
-import app.foxochat.service.AttachmentService;
+import app.foxochat.service.MediaService;
 import app.foxochat.service.MemberService;
 import app.foxochat.service.MessageService;
 import app.foxochat.service.UserService;
@@ -46,13 +45,13 @@ public class UserController {
 
 	private final MessageService messageService;
 
-	private final AttachmentService attachmentService;
+	private final MediaService mediaService;
 
-	public UserController(UserService userService, MemberService memberService, MessageService messageService, AttachmentService attachmentService) {
+	public UserController(UserService userService, MemberService memberService, MessageService messageService, MediaService mediaService) {
 		this.userService = userService;
 		this.memberService = memberService;
 		this.messageService = messageService;
-		this.attachmentService = attachmentService;
+		this.mediaService = mediaService;
 	}
 
 	@Operation(summary = "Get me")
@@ -105,18 +104,23 @@ public class UserController {
 
 	@Operation(summary = "Upload avatar")
 	@PutMapping("/@me/avatar")
-	public UploadAttachmentDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		AttachmentPresignedDTO data = attachmentService.upload(authenticatedUser, attachment);
+	public MediaUploadDTO uploadAvatar(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AvatarUploadDTO avatar) throws UnknownMediaException, MediaCannotBeEmptyException, UploadFailedException {
+		MediaPresignedURLDTO data = mediaService.uploadAvatar(authenticatedUser, null, avatar);
 
-		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
+		Avatar media;
+		try {
+			media = (Avatar) data.getMedia().getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new UploadFailedException();
+		}
+
+		return new MediaUploadDTO(data.getUrl(), media.getId());
 	}
 
 	@Operation(summary = "Upload banner")
 	@PutMapping("/@me/banner")
-	public UploadAttachmentDTO uploadBanner(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentAddDTO attachment) throws UnknownAttachmentsException, AttachmentsCannotBeEmpty {
-		AttachmentPresignedDTO data = attachmentService.upload(authenticatedUser, attachment);
-
-		return new UploadAttachmentDTO(data.getUrl(), data.getAttachment().getId());
+	public List<MediaUploadDTO> uploadBanner(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser, @RequestBody AttachmentUploadDTO attachment) throws MediaCannotBeEmptyException {
+		return mediaService.uploadAttachments(authenticatedUser, List.of(attachment));
 	}
 
 	@Operation(summary = "Delete")

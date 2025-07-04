@@ -2,14 +2,16 @@ package app.foxochat.service.impl;
 
 import app.foxochat.constant.GatewayConstant;
 import app.foxochat.constant.MemberConstant;
-import app.foxochat.dto.api.request.AttachmentAddDTO;
+import app.foxochat.dto.api.request.AttachmentUploadDTO;
 import app.foxochat.dto.api.request.MessageCreateDTO;
+import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.MessageDTO;
-import app.foxochat.dto.api.response.UploadAttachmentDTO;
 import app.foxochat.exception.channel.ChannelNotFoundException;
+import app.foxochat.exception.media.MediaCannotBeEmptyException;
+import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.exception.member.MemberInChannelNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
-import app.foxochat.exception.message.AttachmentsCannotBeEmpty;
 import app.foxochat.exception.message.MessageNotFoundException;
 import app.foxochat.model.*;
 import app.foxochat.repository.MessageRepository;
@@ -32,15 +34,15 @@ public class MessageServiceImpl implements MessageService {
 
 	private final MemberService memberService;
 
-	private final AttachmentService attachmentService;
+	private final MediaService mediaService;
 
 	private final ChannelService channelService;
 
-	public MessageServiceImpl(MessageRepository messageRepository, GatewayService gatewayService, MemberService memberService, AttachmentService attachmentService, ChannelService channelService) {
+	public MessageServiceImpl(MessageRepository messageRepository, GatewayService gatewayService, MemberService memberService, MediaService mediaService, ChannelService channelService) {
 		this.messageRepository = messageRepository;
 		this.gatewayService = gatewayService;
 		this.memberService = memberService;
-		this.attachmentService = attachmentService;
+		this.mediaService = mediaService;
 		this.channelService = channelService;
 	}
 
@@ -70,7 +72,7 @@ public class MessageServiceImpl implements MessageService {
 			throw new MissingPermissionsException();
 
 		List<Attachment> attachments = new ArrayList<>();
-		if (body.getAttachments() != null) attachments = attachmentService.get(user, body.getAttachments());
+		if (body.getAttachments() != null) attachments = mediaService.getAttachments(user, body.getAttachments());
 
 		Message message = new Message(channel, body.getContent(), member, attachments);
 		messageRepository.save(message);
@@ -82,8 +84,8 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public List<UploadAttachmentDTO> addAttachments(Channel channel, User user, List<AttachmentAddDTO> attachments) throws MissingPermissionsException, AttachmentsCannotBeEmpty, MemberInChannelNotFoundException {
-		if (attachments.isEmpty()) throw new AttachmentsCannotBeEmpty();
+	public List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments) throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException {
+		if (attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
 		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).orElseThrow(MemberInChannelNotFoundException::new);
 
@@ -91,7 +93,7 @@ public class MessageServiceImpl implements MessageService {
 			throw new MissingPermissionsException();
 
 		log.debug("Successfully added attachments to message {} by user {}", channel.getId(), user.getId());
-		return attachmentService.uploadAll(user, attachments);
+		return mediaService.uploadAttachments(user, attachments);
 	}
 
 	@Override

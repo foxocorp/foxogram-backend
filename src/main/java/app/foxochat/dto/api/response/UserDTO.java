@@ -15,7 +15,7 @@ public class UserDTO {
 
 	private long id;
 
-	private AttachmentDTO avatar;
+	private AvatarDTO avatar;
 
 	private AttachmentDTO banner;
 
@@ -50,7 +50,7 @@ public class UserDTO {
 	public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
 		this.id = user.getId();
 		if (user.getAvatar() != null) {
-			this.avatar = new AttachmentDTO(user.getAvatar());
+			this.avatar = new AvatarDTO(user.getAvatar());
 		}
 		if (user.getBanner() != null) {
 			this.banner = new AttachmentDTO(user.getBanner());

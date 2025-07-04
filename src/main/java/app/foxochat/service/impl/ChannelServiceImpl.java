@@ -7,20 +7,20 @@ import app.foxochat.dto.api.request.ChannelCreateDTO;
 import app.foxochat.dto.api.request.ChannelEditDTO;
 import app.foxochat.dto.api.response.ChannelDTO;
 import app.foxochat.dto.api.response.MemberDTO;
-import app.foxochat.exception.cdn.UploadFailedException;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
+import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.exception.member.MemberAlreadyInChannelException;
 import app.foxochat.exception.member.MemberInChannelNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
-import app.foxochat.exception.message.UnknownAttachmentsException;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Member;
 import app.foxochat.model.User;
 import app.foxochat.repository.ChannelRepository;
-import app.foxochat.service.AttachmentService;
 import app.foxochat.service.ChannelService;
 import app.foxochat.service.GatewayService;
+import app.foxochat.service.MediaService;
 import app.foxochat.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -42,13 +42,13 @@ public class ChannelServiceImpl implements ChannelService {
 
 	private final GatewayService gatewayService;
 
-	private final AttachmentService attachmentService;
+	private final MediaService mediaService;
 
-	public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService, @Lazy GatewayService gatewayService, AttachmentService attachmentService) {
+	public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService, @Lazy GatewayService gatewayService, MediaService mediaService) {
 		this.channelRepository = channelRepository;
 		this.memberService = memberService;
 		this.gatewayService = gatewayService;
-		this.attachmentService = attachmentService;
+		this.mediaService = mediaService;
 	}
 
 	@Override
@@ -99,14 +99,14 @@ public class ChannelServiceImpl implements ChannelService {
 			if (name != null) channel.setName(name);
 			if (displayName != null) channel.setDisplayName(body.getDisplayName());
 			if (icon != null) {
-				if (icon == 0) channel.setIcon(null);
-				else channel.setIcon(attachmentService.getById(icon));
+				if (icon == 0) channel.setAvatar(null);
+				else channel.setAvatar(mediaService.getAvatarById(icon));
 			}
 
 			channelRepository.save(channel);
 		} catch (DataIntegrityViolationException e) {
 			throw new ChannelAlreadyExistException();
-		} catch (UnknownAttachmentsException e) {
+		} catch (UnknownMediaException e) {
 			throw new UploadFailedException();
 		}
 
