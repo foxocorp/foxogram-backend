@@ -2,7 +2,7 @@ package app.foxochat.constant;
 
 import lombok.Getter;
 
-public class AttachmentConstant {
+public class MediaConstant {
 
 	@Getter
 	public enum Flags {
