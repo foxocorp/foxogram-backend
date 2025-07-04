@@ -15,5 +15,5 @@ public class AttachmentUploadDTO {
 
 	private String contentType;
 
-	private long flags;
+	private boolean spoiler;
 }

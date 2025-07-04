@@ -1,5 +1,6 @@
 package app.foxochat.service.impl;
 
+import app.foxochat.constant.MediaConstant;
 import app.foxochat.constant.StorageConstant;
 import app.foxochat.dto.api.request.AttachmentUploadDTO;
 import app.foxochat.dto.api.request.AvatarUploadDTO;
@@ -110,7 +111,7 @@ public class MediaServiceImpl implements MediaService {
 
 		attachments.forEach(attachment -> {
 			try {
-				MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment.getClass(), user, null, attachment.getFlags());
+				MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment.getClass(), user, null, attachment.isSpoiler() ? MediaConstant.Flags.SPOILER.getBit() : 0);
 
 				Attachment media;
 				try {
