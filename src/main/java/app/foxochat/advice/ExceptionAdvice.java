@@ -75,7 +75,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionDTO> handleException(Exception exception) {
 		String message = exception.getMessage();
-		if (!apiConfig.isDevelopment() || SPRING_BOOT_EXCEPTIONS.stream().noneMatch(e -> e.isAssignableFrom(exception.getClass())))
+		if (!apiConfig.isDevelopment() && SPRING_BOOT_EXCEPTIONS.stream().noneMatch(e -> e.isAssignableFrom(exception.getClass())))
 			message = ExceptionConstant.Messages.INTERNAL_ERROR.getValue();
 
 		log.error(ExceptionConstant.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), exception);
