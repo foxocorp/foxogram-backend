@@ -15,16 +15,16 @@ public class UserResetPasswordConfirmDTO {
 
     @NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
-            message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
-    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
+            message = "Email" + ValidationConstant.Messages.WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = "Email" + ValidationConstant.Messages.INCORRECT)
     private String email;
 
     @NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-    @Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
+    @Size(min = 6, max = 6, message = "OTP" + ValidationConstant.Messages.WRONG_LENGTH)
     private String OTP;
 
     @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
-            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+            message = "Password" + ValidationConstant.Messages.WRONG_LENGTH)
     private String newPassword;
 }

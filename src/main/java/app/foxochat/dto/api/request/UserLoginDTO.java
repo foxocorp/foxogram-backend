@@ -15,12 +15,12 @@ public class UserLoginDTO {
 
     @NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
-            message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
-    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
+            message = "Email" + ValidationConstant.Messages.WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = "Email" + ValidationConstant.Messages.INCORRECT)
     private String email;
 
     @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
-            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+            message = "Password" + ValidationConstant.Messages.WRONG_LENGTH)
     private String password;
 }

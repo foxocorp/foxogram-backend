@@ -13,6 +13,6 @@ import lombok.Setter;
 public class OTPDTO {
 
     @NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-    @Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
+    @Size(min = 6, max = 6, message = "OTP" + ValidationConstant.Messages.WRONG_LENGTH)
     private String OTP;
 }

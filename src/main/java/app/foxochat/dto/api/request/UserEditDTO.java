@@ -14,30 +14,30 @@ import lombok.Setter;
 public class UserEditDTO {
 
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.DISPLAY_NAME,
-            message = ValidationConstant.Messages.DISPLAY_NAME_WRONG_LENGTH)
+            message = "Display name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String displayName;
 
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.USERNAME,
-            message = ValidationConstant.Messages.USERNAME_WRONG_LENGTH)
-    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = ValidationConstant.Messages.USERNAME_INCORRECT)
+            message = "Username" + ValidationConstant.Messages.WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = "Username" + ValidationConstant.Messages.INCORRECT)
     private String username;
 
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.BIO,
-            message = ValidationConstant.Messages.BIO_WRONG_LENGTH)
+            message = "Bio" + ValidationConstant.Messages.WRONG_LENGTH)
     private String bio;
 
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
-            message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
-    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
+            message = "Email" + ValidationConstant.Messages.WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = "Email" + ValidationConstant.Messages.INCORRECT)
     private String email;
 
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
-            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+            message = "Password" + ValidationConstant.Messages.WRONG_LENGTH)
     private String password;
 
-    @PositiveOrZero(message = ValidationConstant.Messages.USER_AVATAR_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = "Avatar" + ValidationConstant.Messages.MUST_BE_POSITIVE_OR_ZERO)
     private Long avatar;
 
-    @PositiveOrZero(message = ValidationConstant.Messages.USER_BANNER_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = "Banner" + ValidationConstant.Messages.MUST_BE_POSITIVE_OR_ZERO)
     private Long banner;
 }
