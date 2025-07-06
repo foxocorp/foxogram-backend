@@ -52,8 +52,19 @@ public class ChannelController {
     }
 
     @Operation(summary = "Create channel")
-    @PostMapping("/{partnerId}")
+    @PostMapping("/")
     public ChannelDTO create(
+            @RequestAttribute(value = AttributeConstant.USER) User user,
+            @RequestBody ChannelCreateDTO body
+    ) throws ChannelAlreadyExistException, UserNotFoundException {
+        Channel channel = channelService.add(user, 0, body);
+
+        return new ChannelDTO(channel, null, null, null, null);
+    }
+
+    @Operation(summary = "Create DM channel")
+    @PostMapping("/{partnerId}")
+    public ChannelDTO createDM(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestBody ChannelCreateDTO body, @PathVariable long partnerId
     ) throws ChannelAlreadyExistException, UserNotFoundException {
