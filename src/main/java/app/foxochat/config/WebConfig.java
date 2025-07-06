@@ -17,7 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final MemberInterceptor memberInterceptor;
 
-    public WebConfig(AuthenticationInterceptor authenticationInterceptor, ChannelInterceptor channelInterceptor, MemberInterceptor memberInterceptor) {
+    public WebConfig(AuthenticationInterceptor authenticationInterceptor, ChannelInterceptor channelInterceptor,
+                     MemberInterceptor memberInterceptor) {
         this.authenticationInterceptor = authenticationInterceptor;
         this.channelInterceptor = channelInterceptor;
         this.memberInterceptor = memberInterceptor;

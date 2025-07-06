@@ -34,7 +34,8 @@ public class EmailServiceImpl implements EmailService {
 
     private final APIConfig apiConfig;
 
-    public EmailServiceImpl(OTPService otpService, JavaMailSender javaMailSender, ResourceLoader resourceLoader, EmailConfig emailConfig, APIConfig apiConfig) {
+    public EmailServiceImpl(OTPService otpService, JavaMailSender javaMailSender, ResourceLoader resourceLoader,
+                            EmailConfig emailConfig, APIConfig apiConfig) {
         this.otpService = otpService;
         this.javaMailSender = javaMailSender;
         this.resourceLoader = resourceLoader;
@@ -44,7 +45,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void send(String to, long id, String type, String username, String digitCode, long issuedAt, long expiresAt, String token) {
+    public void send(String to, long id, String type, String username, String digitCode, long issuedAt, long expiresAt,
+                     String token) {
         if (apiConfig.isDevelopment()) return;
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();

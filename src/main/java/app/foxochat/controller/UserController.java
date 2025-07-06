@@ -47,7 +47,8 @@ public class UserController {
 
     private final MediaService mediaService;
 
-    public UserController(UserService userService, MemberService memberService, MessageService messageService, MediaService mediaService) {
+    public UserController(UserService userService, MemberService memberService, MessageService messageService,
+                          MediaService mediaService) {
         this.userService = userService;
         this.memberService = memberService;
         this.messageService = messageService;

@@ -33,7 +33,8 @@ public class MediaServiceImpl implements MediaService {
 
     private final AvatarRepository avatarRepository;
 
-    public MediaServiceImpl(AttachmentRepository attachmentRepository, StorageService storageService, AvatarRepository avatarRepository) {
+    public MediaServiceImpl(AttachmentRepository attachmentRepository, StorageService storageService,
+                            AvatarRepository avatarRepository) {
         this.attachmentRepository = attachmentRepository;
         this.storageService = storageService;
         this.avatarRepository = avatarRepository;

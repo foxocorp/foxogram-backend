@@ -17,6 +17,7 @@ public class MessageCreateDTO {
             "Message content" + ValidationConstant.Messages.WRONG_LENGTH)
     private String content;
 
-    @Size(max = ValidationConstant.Lengths.ATTACHMENTS_MAX, message = ValidationConstant.Messages.ATTACHMENTS_WRONG_SIZE)
+    @Size(max = ValidationConstant.Lengths.ATTACHMENTS_MAX,
+            message = ValidationConstant.Messages.ATTACHMENTS_WRONG_SIZE)
     private List<Long> attachments;
 }

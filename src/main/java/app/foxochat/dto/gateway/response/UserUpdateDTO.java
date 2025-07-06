@@ -21,7 +21,8 @@ public class UserUpdateDTO {
 
     private long banner;
 
-    public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar, long banner) {
+    public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar,
+                         long banner) {
         this.id = id;
         this.username = username;
         this.displayName = displayName;
