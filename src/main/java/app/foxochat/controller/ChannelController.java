@@ -2,6 +2,7 @@ package app.foxochat.controller;
 
 import app.foxochat.constant.APIConstant;
 import app.foxochat.constant.AttributeConstant;
+import app.foxochat.constant.ChannelConstant;
 import app.foxochat.dto.api.request.*;
 import app.foxochat.dto.api.response.*;
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
@@ -14,6 +15,7 @@ import app.foxochat.exception.member.MemberInChannelNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.message.MessageCannotBeEmpty;
 import app.foxochat.exception.message.MessageNotFoundException;
+import app.foxochat.exception.user.UserNotFoundException;
 import app.foxochat.model.*;
 import app.foxochat.service.ChannelService;
 import app.foxochat.service.MediaService;
@@ -50,23 +52,40 @@ public class ChannelController {
 	}
 
 	@Operation(summary = "Create channel")
-	@PostMapping("/")
-	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody ChannelCreateDTO body) throws ChannelAlreadyExistException {
-		Channel channel = channelService.add(user, body);
+	@PostMapping("/{partnerId}")
+	public ChannelDTO create(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestBody ChannelCreateDTO body, @PathVariable long partnerId) throws ChannelAlreadyExistException, UserNotFoundException {
+		Channel channel = channelService.add(user, partnerId, body);
 
-		return new ChannelDTO(channel, null);
+		return new ChannelDTO(channel, null, null, null, null);
 	}
 
 	@Operation(summary = "Get channel by id")
 	@GetMapping("/{channelId}")
-	public ChannelDTO getById(@RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId) {
-		return new ChannelDTO(channel, null);
+	public ChannelDTO getById(@RequestAttribute(value = AttributeConstant.USER) User user, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId) {
+		ChannelDTO dto = new ChannelDTO(channel, null, null, null, null);
+
+		if (channel.getType() != ChannelConstant.Type.DM.getType()) {
+			User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
+					.findFirst().get().getUser();
+			dto = new ChannelDTO(channel, null, partnerUser.getDisplayName(), partnerUser.getUsername(), partnerUser.getAvatar());
+		}
+
+		return dto;
 	}
 
 	@Operation(summary = "Get channel by name")
 	@GetMapping("/@{name}")
-	public ChannelDTO getByName(@PathVariable String name) throws ChannelNotFoundException {
-		return new ChannelDTO(channelService.getByName(name), null);
+	public ChannelDTO getByName(@RequestAttribute(value = AttributeConstant.USER) User user, @PathVariable String name) throws ChannelNotFoundException {
+		Channel channel = channelService.getByName(name);
+		ChannelDTO dto = new ChannelDTO(channel, null, name, null, null);
+
+		if (channel.getType() != ChannelConstant.Type.DM.getType()) {
+			User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
+					.findFirst().get().getUser();
+			dto = new ChannelDTO(channel, null, partnerUser.getDisplayName(), partnerUser.getUsername(), partnerUser.getAvatar());
+		}
+
+		return dto;
 	}
 
 	@Operation(summary = "Edit channel")
@@ -74,7 +93,7 @@ public class ChannelController {
 	public ChannelDTO edit(@RequestAttribute(value = AttributeConstant.MEMBER) Member member, @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel, @PathVariable long channelId, @RequestBody ChannelEditDTO body) throws Exception {
 		channel = channelService.update(member, channel, body);
 
-		return new ChannelDTO(channel, null);
+		return new ChannelDTO(channel, null, null, null, null);
 	}
 
 	@Operation(summary = "Upload icon")

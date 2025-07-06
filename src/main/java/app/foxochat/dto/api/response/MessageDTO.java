@@ -30,7 +30,7 @@ public class MessageDTO {
 		this.id = message.getId();
 		this.content = message.getContent();
 		this.author = new MemberDTO(message.getAuthor(), false);
-		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null);
+		if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null, content, null, null);
 		if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
 					.map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
 					.collect(Collectors.toList());

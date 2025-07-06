@@ -36,10 +36,6 @@ public class Channel {
 	@Column
 	public long flags;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	public User owner;
-
 	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Member> members;
 
@@ -51,11 +47,10 @@ public class Channel {
 
 	public Channel() {}
 
-	public Channel(String displayName, String name, long flags, int type, User owner) {
+	public Channel(String displayName, String name, long flags, int type) {
 		this.displayName = displayName;
 		this.name = name.toLowerCase();
 		this.type = type;
-		this.owner = owner;
 		this.flags = flags;
 		this.createdAt = System.currentTimeMillis();
 	}
