@@ -8,8 +8,6 @@ import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.MessageDTO;
 import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.media.UnknownMediaException;
-import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.exception.member.MemberInChannelNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.message.MessageNotFoundException;
@@ -69,7 +67,9 @@ public class MessageServiceImpl implements MessageService {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberInChannelNotFoundException::new);
 
-        if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
+        if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
+                MemberConstant.Permissions.ADMIN,
+                MemberConstant.Permissions.SEND_MESSAGES))
             throw new MissingPermissionsException();
 
         List<Attachment> attachments = new ArrayList<>();
@@ -89,13 +89,15 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException {
         if (attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberInChannelNotFoundException::new);
 
-        if (!member.hasAnyPermission(MemberConstant.Permissions.ADMIN, MemberConstant.Permissions.SEND_MESSAGES))
+        if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
+                MemberConstant.Permissions.ADMIN,
+                MemberConstant.Permissions.SEND_MESSAGES))
             throw new MissingPermissionsException();
 
         log.debug("Successfully added attachments to message {} by user {}", channel.getId(), user.getId());
@@ -106,7 +108,8 @@ public class MessageServiceImpl implements MessageService {
     public void delete(long id, Member member, Channel channel) throws Exception {
         Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
-        if (!message.isAuthor(member) && !member.hasAnyPermission(MemberConstant.Permissions.ADMIN,
+        if (!message.isAuthor(member) && !member.hasAnyPermission(MemberConstant.Permissions.OWNER,
+                MemberConstant.Permissions.ADMIN,
                 MemberConstant.Permissions.MANAGE_MESSAGES))
             throw new MissingPermissionsException();
 
