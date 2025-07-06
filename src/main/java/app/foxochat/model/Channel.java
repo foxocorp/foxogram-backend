@@ -39,10 +39,13 @@ public class Channel {
 
     @Column
     public long flags;
+
     @Column
     public long createdAt;
+
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Member> members;
+
     @OneToMany(mappedBy = "channel", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Message> messages;
 

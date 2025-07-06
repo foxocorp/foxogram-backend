@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 public class ChannelInterceptor implements HandlerInterceptor {
 
     private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
+
     private final ChannelService channelService;
 
     public ChannelInterceptor(ChannelService channelService) {

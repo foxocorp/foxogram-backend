@@ -30,28 +30,39 @@ public class User {
 
     @Column
     public String bio;
+
     @JoinColumn(name = "avatar_id")
     @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public Avatar avatar;
+
     @JoinColumn(name = "banner_id")
     @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public Avatar banner;
+
     @Column
     public long flags;
+
     @Column
     public int type;
+
     @Column
     private String email;
+
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<UserContact> contacts;
+
     @Column
     private int status;
+
     @Column
     private long statusUpdatedAt;
+
     @Column
     private String password;
+
     @Column(nullable = false)
     private int tokenVersion;
+
     @Column
     private long createdAt;
 
