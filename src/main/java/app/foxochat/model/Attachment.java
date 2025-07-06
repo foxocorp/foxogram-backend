@@ -33,6 +33,9 @@ public class Attachment {
     @Column
     private long flags;
 
+    @Column
+    private String tumbhash;
+
     public Attachment() {
     }
 

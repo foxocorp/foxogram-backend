@@ -15,5 +15,7 @@ public class AttachmentUploadDTO {
 
     private String contentType;
 
+    private String tumbhash;
+
     private boolean spoiler;
 }
