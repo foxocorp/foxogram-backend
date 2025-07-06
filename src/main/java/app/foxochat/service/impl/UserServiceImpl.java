@@ -126,7 +126,8 @@ public class UserServiceImpl implements UserService {
             gatewayService.sendMessageToSpecificSessions(user.getContacts().stream()
                             .map(userContact -> userContact.getContact().getId()).toList(),
                     GatewayConstant.Opcode.DISPATCH.ordinal(),
-                    new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar, banner),
+                    new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar != null ? avatar : 0,
+                            banner != null ? banner : 0),
                     GatewayConstant.Event.USER_UPDATE.getValue());
         }
         if (body.getEmail() != null) changeEmail(user, body);
