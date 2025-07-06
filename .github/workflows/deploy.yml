@@ -42,6 +42,7 @@ jobs:
           minio.url=${{ vars.MINIO_URL }}
           minio.name=${{ secrets.MINIO_NAME }}
           minio.secret=${{ secrets.MINIO_SECRET }}
+          meili.master_key=${{ secrets.MEILI_MASTER_KEY }}
           api.version=1
           api.env=${{ vars.ENV }}
           api.url=${{ vars.ENV == 'dev' && 'https://api-dev.foxochat.app' || 'https://api.foxochat.app' }}

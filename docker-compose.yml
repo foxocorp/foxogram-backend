@@ -5,6 +5,7 @@ x-common-settings: &common-settings
   networks:
     - db_network
     - minio_network
+    - meilisearch_network
     - traefik
 
 services:
@@ -32,6 +33,8 @@ networks:
   db_network:
     external: true
   minio_network:
+    external: true
+  meilisearch_network:
     external: true
   traefik:
     external: true
