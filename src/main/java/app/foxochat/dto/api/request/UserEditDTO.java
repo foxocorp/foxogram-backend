@@ -13,7 +13,7 @@ import lombok.Setter;
 @Schema(name = "UserEdit")
 public class UserEditDTO {
 
-    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.DISPLAY_NAME,
+    @Size(min = 1, max = ValidationConstant.Lengths.DISPLAY_NAME,
             message = "Display name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String displayName;
 
@@ -22,7 +22,7 @@ public class UserEditDTO {
     @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = "Username" + ValidationConstant.Messages.INCORRECT)
     private String username;
 
-    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.BIO,
+    @Size(min = 1, max = ValidationConstant.Lengths.BIO,
             message = "Bio" + ValidationConstant.Messages.WRONG_LENGTH)
     private String bio;
 
