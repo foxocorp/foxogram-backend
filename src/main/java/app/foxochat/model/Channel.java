@@ -30,6 +30,10 @@ public class Channel {
     @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     public Avatar avatar;
 
+    @JoinColumn(name = "banner_id")
+    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    public Avatar banner;
+
     @Column
     public int type;
 
