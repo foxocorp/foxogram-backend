@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-@Schema(name = "AttachmentsAdd")
+@Schema(name = "AvatarUpload")
 public class AvatarUploadDTO {
 
     private String filename;

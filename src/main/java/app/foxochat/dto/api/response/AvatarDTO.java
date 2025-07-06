@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(name = "Attachment")
+@Schema(name = "Avatar")
 public class AvatarDTO {
 
     public long id;
