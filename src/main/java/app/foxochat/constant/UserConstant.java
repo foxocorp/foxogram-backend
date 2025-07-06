@@ -4,40 +4,40 @@ import lombok.Getter;
 
 public class UserConstant {
 
-	@Getter
-	public enum Flags {
-		AWAITING_CONFIRMATION(1),
-		EMAIL_VERIFIED(1 << 1),
-		DISABLED(1 << 2);
+    @Getter
+    public enum Flags {
+        AWAITING_CONFIRMATION(1),
+        EMAIL_VERIFIED(1 << 1),
+        DISABLED(1 << 2);
 
-		private final long bit;
+        private final long bit;
 
-		Flags(long bit) {
-			this.bit = bit;
-		}
-	}
+        Flags(long bit) {
+            this.bit = bit;
+        }
+    }
 
-	@Getter
-	public enum Type {
-		USER(1),
-		BOT(2);
+    @Getter
+    public enum Type {
+        USER(1),
+        BOT(2);
 
-		private final int type;
+        private final int type;
 
-		Type(int type) {
-			this.type = type;
-		}
-	}
+        Type(int type) {
+            this.type = type;
+        }
+    }
 
-	@Getter
-	public enum Status {
-		OFFLINE(0),
-		ONLINE(1);
+    @Getter
+    public enum Status {
+        OFFLINE(0),
+        ONLINE(1);
 
-		private final int status;
+        private final int status;
 
-		Status(int status) {
-			this.status = status;
-		}
-	}
+        Status(int status) {
+            this.status = status;
+        }
+    }
 }

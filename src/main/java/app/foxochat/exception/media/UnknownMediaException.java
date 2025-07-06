@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UnknownMediaException extends BaseException {
 
-	public UnknownMediaException() {
-		super(ExceptionConstant.Messages.UNKNOWN_MEDIA.getValue(), UnknownMediaException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.Media.UNKNOWN.getValue());
-	}
+    public UnknownMediaException() {
+        super(
+                ExceptionConstant.Messages.UNKNOWN_MEDIA.getValue(),
+                UnknownMediaException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.Media.UNKNOWN.getValue()
+        );
+    }
 }

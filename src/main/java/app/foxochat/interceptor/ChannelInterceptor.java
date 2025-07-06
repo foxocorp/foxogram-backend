@@ -21,37 +21,41 @@ import java.util.regex.Pattern;
 @Component
 public class ChannelInterceptor implements HandlerInterceptor {
 
-	private final ChannelService channelService;
+    private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
+    private final ChannelService channelService;
 
-	private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
+    public ChannelInterceptor(ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
-	public ChannelInterceptor(ChannelService channelService) {
-		this.channelService = channelService;
-	}
+    @Override
+    public boolean preHandle(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull Object handler
+    ) throws ChannelNotFoundException {
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) return true;
 
-	@Override
-	public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws ChannelNotFoundException {
-		if (HttpMethod.OPTIONS.matches(request.getMethod())) return true;
+        String uri = request.getRequestURI();
+        Matcher matcher = CHANNEL_ID_PATTERN.matcher(uri);
 
-		String uri = request.getRequestURI();
-		Matcher matcher = CHANNEL_ID_PATTERN.matcher(uri);
+        if (!matcher.find()) {
+            throw new ChannelNotFoundException();
+        }
 
-		if (!matcher.find()) {
-			throw new ChannelNotFoundException();
-		}
+        long id = Long.parseLong(matcher.group(1));
+        Channel channel = channelService.getById(id);
 
-		long id = Long.parseLong(matcher.group(1));
-		Channel channel = channelService.getById(id);
+        User user = (User) request.getAttribute(AttributeConstant.USER);
 
-		User user = (User) request.getAttribute(AttributeConstant.USER);
+        if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream()
+                .noneMatch(u -> u.getUser().getId() == user.getId())) {
+            throw new ChannelNotFoundException();
+        }
 
-		if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream().noneMatch(u -> u.getUser().getId() == user.getId())) {
-			throw new ChannelNotFoundException();
-		}
+        request.setAttribute(AttributeConstant.CHANNEL, channel);
 
-		request.setAttribute(AttributeConstant.CHANNEL, channel);
-
-		log.debug("Got channel {} successfully", channel.getId());
-		return true;
-	}
+        log.debug("Got channel {} successfully", channel.getId());
+        return true;
+    }
 }

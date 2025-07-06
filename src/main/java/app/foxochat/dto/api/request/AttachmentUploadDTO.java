@@ -11,9 +11,9 @@ import lombok.Setter;
 @Schema(name = "AttachmentsAdd")
 public class AttachmentUploadDTO {
 
-	private String filename;
+    private String filename;
 
-	private String contentType;
+    private String contentType;
 
-	private boolean spoiler;
+    private boolean spoiler;
 }

@@ -17,34 +17,34 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class StorageServiceImpl implements StorageService {
 
-	private final MinioAsyncClient minioClient;
+    private final MinioAsyncClient minioClient;
 
-	public StorageServiceImpl(MinioAsyncClient minioClient) {
-		this.minioClient = minioClient;
-	}
+    public StorageServiceImpl(MinioAsyncClient minioClient) {
+        this.minioClient = minioClient;
+    }
 
-	@Override
-	public MediaPresignedURLDTO getPresignedUrl(String bucketName) {
-		Map<String, String> reqParams = new HashMap<>();
-		reqParams.put("response-content-type", "application/json");
+    @Override
+    public MediaPresignedURLDTO getPresignedUrl(String bucketName) {
+        Map<String, String> reqParams = new HashMap<>();
+        reqParams.put("response-content-type", "application/json");
 
-		String url;
-		String uuid = String.valueOf(UUID.randomUUID());
+        String url;
+        String uuid = String.valueOf(UUID.randomUUID());
 
-		try {
-			url = minioClient.getPresignedObjectUrl(
-					GetPresignedObjectUrlArgs.builder()
-							.method(Method.PUT)
-							.bucket(bucketName)
-							.object(uuid)
-							.expiry(10, TimeUnit.MINUTES)
-							.extraQueryParams(reqParams)
-							.build());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            url = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.PUT)
+                            .bucket(bucketName)
+                            .object(uuid)
+                            .expiry(10, TimeUnit.MINUTES)
+                            .extraQueryParams(reqParams)
+                            .build());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-		log.debug("Successfully get presigned url to bucket {} with uuid {}", bucketName, uuid);
-		return new MediaPresignedURLDTO(url, uuid, null);
-	}
+        log.debug("Successfully get presigned url to bucket {} with uuid {}", bucketName, uuid);
+        return new MediaPresignedURLDTO(url, uuid, null);
+    }
 }

@@ -4,5 +4,5 @@ import app.foxochat.dto.internal.MediaPresignedURLDTO;
 
 public interface StorageService {
 
-	MediaPresignedURLDTO getPresignedUrl(String bucketName);
+    MediaPresignedURLDTO getPresignedUrl(String bucketName);
 }

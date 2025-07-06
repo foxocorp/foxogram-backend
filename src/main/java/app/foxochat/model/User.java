@@ -12,90 +12,80 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @Table(name = "users", indexes = {
-		@Index(name = "idx_user_id", columnList = "id"),
-		@Index(name = "idx_user_username", columnList = "username", unique = true),
-		@Index(name = "idx_user_email", columnList = "email", unique = true)
+        @Index(name = "idx_user_id", columnList = "id"),
+        @Index(name = "idx_user_username", columnList = "username", unique = true),
+        @Index(name = "idx_user_email", columnList = "email", unique = true)
 })
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
 
-	@Column
-	public String displayName;
+    @Column
+    public String displayName;
 
-	@Column
-	public String username;
+    @Column
+    public String username;
 
-	@Column
-	public String bio;
+    @Column
+    public String bio;
+    @JoinColumn(name = "avatar_id")
+    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    public Avatar avatar;
+    @JoinColumn(name = "banner_id")
+    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    public Attachment banner;
+    @Column
+    public long flags;
+    @Column
+    public int type;
+    @Column
+    private String email;
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<UserContact> contacts;
+    @Column
+    private int status;
+    @Column
+    private long statusUpdatedAt;
+    @Column
+    private String password;
+    @Column(nullable = false)
+    private int tokenVersion;
+    @Column
+    private long createdAt;
 
-	@Column
-	private String email;
+    @Column
+    private long deletedAt;
 
-	@OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	private List<UserContact> contacts;
+    public User() {
+    }
 
-	@Column
-	private int status;
+    public User(String username, String email, String password, long flags, int type) {
+        this.displayName = null;
+        this.username = username.toLowerCase();
+        this.bio = null;
+        this.email = email;
+        this.password = password;
+        if (this.contacts != null) this.contacts = contacts.stream()
+                .map(userContact -> new UserContact(this, userContact.getContact()))
+                .collect(Collectors.toList());
+        this.status = UserConstant.Status.OFFLINE.getStatus();
+        this.statusUpdatedAt = System.currentTimeMillis();
+        this.flags = flags;
+        this.type = type;
+        this.createdAt = System.currentTimeMillis();
+    }
 
-	@Column
-	private long statusUpdatedAt;
+    public void addFlag(UserConstant.Flags flag) {
+        this.flags |= flag.getBit();
+    }
 
-	@Column
-	private String password;
+    public void removeFlag(UserConstant.Flags flag) {
+        this.flags &= ~flag.getBit();
+    }
 
-	@Column(nullable = false)
-	private int tokenVersion;
-
-	@JoinColumn(name = "avatar_id")
-	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	public Avatar avatar;
-
-	@JoinColumn(name = "banner_id")
-	@ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-	public Attachment banner;
-
-	@Column
-	public long flags;
-
-	@Column
-	public int type;
-
-	@Column
-	private long createdAt;
-
-	@Column
-	private long deletedAt;
-
-	public User() {}
-
-	public User(String username, String email, String password, long flags, int type) {
-		this.displayName = null;
-		this.username = username.toLowerCase();
-		this.bio = null;
-		this.email = email;
-		this.password = password;
-		if (this.contacts != null) this.contacts = contacts.stream()
-				.map(userContact -> new UserContact(this, userContact.getContact()))
-				.collect(Collectors.toList());
-		this.status = UserConstant.Status.OFFLINE.getStatus();
-		this.statusUpdatedAt = System.currentTimeMillis();
-		this.flags = flags;
-		this.type = type;
-		this.createdAt = System.currentTimeMillis();
-	}
-
-	public void addFlag(UserConstant.Flags flag) {
-		this.flags |= flag.getBit();
-	}
-
-	public void removeFlag(UserConstant.Flags flag) {
-		this.flags &= ~flag.getBit();
-	}
-
-	public boolean hasFlag(UserConstant.Flags flag) {
-		return (this.flags & flag.getBit()) != 0;
-	}
+    public boolean hasFlag(UserConstant.Flags flag) {
+        return (this.flags & flag.getBit()) != 0;
+    }
 }

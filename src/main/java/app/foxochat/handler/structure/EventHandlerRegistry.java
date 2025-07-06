@@ -9,15 +9,15 @@ import java.util.Map;
 @Component
 public class EventHandlerRegistry {
 
-	private final Map<Integer, BaseHandler> handlers = new HashMap<>();
+    private final Map<Integer, BaseHandler> handlers = new HashMap<>();
 
-	public EventHandlerRegistry(List<BaseHandler> handlers) {
-		for (BaseHandler handler : handlers) {
-			this.handlers.put(handler.getOpcode(), handler);
-		}
-	}
+    public EventHandlerRegistry(List<BaseHandler> handlers) {
+        for (BaseHandler handler : handlers) {
+            this.handlers.put(handler.getOpcode(), handler);
+        }
+    }
 
-	public BaseHandler getHandler(int event) {
-		return handlers.get(event);
-	}
+    public BaseHandler getHandler(int event) {
+        return handlers.get(event);
+    }
 }

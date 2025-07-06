@@ -22,37 +22,41 @@ import java.util.Set;
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-	private static final Set<String> EMAIL_VERIFICATION_IGNORE_PATHS = Set.of(
-			"/auth/email/verify",
-			"/users/@me",
-			"/auth/email/resend"
-	);
+    private static final Set<String> EMAIL_VERIFICATION_IGNORE_PATHS = Set.of(
+            "/auth/email/verify",
+            "/users/@me",
+            "/auth/email/resend"
+    );
 
-	final AuthenticationService authenticationService;
+    final AuthenticationService authenticationService;
 
-	final APIConfig apiConfig;
+    final APIConfig apiConfig;
 
-	public AuthenticationInterceptor(AuthenticationService authenticationService, APIConfig apiConfig) {
-		this.authenticationService = authenticationService;
-		this.apiConfig = apiConfig;
-	}
+    public AuthenticationInterceptor(AuthenticationService authenticationService, APIConfig apiConfig) {
+        this.authenticationService = authenticationService;
+        this.apiConfig = apiConfig;
+    }
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws UserUnauthorizedException, UserEmailNotVerifiedException {
-		if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
+    @Override
+    public boolean preHandle(
+            HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull Object handler
+    ) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+        if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
 
-		String requestURI = request.getRequestURI();
-		boolean ignoreEmailVerification = EMAIL_VERIFICATION_IGNORE_PATHS.stream().anyMatch(requestURI::contains);
-		if (apiConfig.isDevelopment()) ignoreEmailVerification = true;
+        String requestURI = request.getRequestURI();
+        boolean ignoreEmailVerification = EMAIL_VERIFICATION_IGNORE_PATHS.stream().anyMatch(requestURI::contains);
+        if (apiConfig.isDevelopment()) ignoreEmailVerification = true;
 
-		String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-		User user = authenticationService.authUser(accessToken, ignoreEmailVerification);
+        User user = authenticationService.authUser(accessToken, ignoreEmailVerification);
 
-		request.setAttribute(AttributeConstant.USER, user);
-		request.setAttribute(AttributeConstant.ACCESS_TOKEN, accessToken);
+        request.setAttribute(AttributeConstant.USER, user);
+        request.setAttribute(AttributeConstant.ACCESS_TOKEN, accessToken);
 
-		log.debug("Authenticated user {} successfully", user.getUsername());
-		return true;
-	}
+        log.debug("Authenticated user {} successfully", user.getUsername());
+        return true;
+    }
 }

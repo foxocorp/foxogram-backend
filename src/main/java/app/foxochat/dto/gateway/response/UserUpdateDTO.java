@@ -7,27 +7,27 @@ import lombok.Setter;
 @Setter
 public class UserUpdateDTO {
 
-	private long id;
+    private long id;
 
-	private String username;
+    private String username;
 
-	private String displayName;
+    private String displayName;
 
-	private String bio;
+    private String bio;
 
-	private int status;
+    private int status;
 
-	private long avatar;
+    private long avatar;
 
-	private long banner;
+    private long banner;
 
-	public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar, long banner) {
-		this.id = id;
-		this.username = username;
-		this.displayName = displayName;
-		this.bio = bio;
-		this.status = status;
-		this.avatar = avatar;
-		this.banner = banner;
-	}
+    public UserUpdateDTO(long id, String username, String displayName, String bio, int status, long avatar, long banner) {
+        this.id = id;
+        this.username = username;
+        this.displayName = displayName;
+        this.bio = bio;
+        this.status = status;
+        this.avatar = avatar;
+        this.banner = banner;
+    }
 }

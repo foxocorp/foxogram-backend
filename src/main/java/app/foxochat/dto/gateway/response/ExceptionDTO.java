@@ -7,12 +7,12 @@ import lombok.Setter;
 @Setter
 public class ExceptionDTO {
 
-	private int op;
+    private int op;
 
-	private String m;
+    private String m;
 
-	public ExceptionDTO(int opcode, String message) {
-		this.op = opcode;
-		this.m = message;
-	}
+    public ExceptionDTO(int opcode, String message) {
+        this.op = opcode;
+        this.m = message;
+    }
 }

@@ -11,5 +11,5 @@ import lombok.Setter;
 @Schema(name = "AttachmentsAdd")
 public class AvatarUploadDTO {
 
-	private String filename;
+    private String filename;
 }

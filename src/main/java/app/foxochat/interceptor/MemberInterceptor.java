@@ -20,29 +20,34 @@ import java.util.Objects;
 @Component
 public class MemberInterceptor implements HandlerInterceptor {
 
-	private final MemberService memberService;
+    private final MemberService memberService;
 
-	public MemberInterceptor(MemberService memberService) {
-		this.memberService = memberService;
-	}
+    public MemberInterceptor(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
-	@Override
-	public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws ChannelNotFoundException {
-		if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
+    @Override
+    public boolean preHandle(
+            HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull Object handler
+    ) throws ChannelNotFoundException {
+        if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
 
-		if (Objects.equals(request.getMethod(), HttpMethod.PUT.name()) && request.getRequestURI().matches("/channels/\\d+/members/@me")) {
-			return true;
-		}
+        if (Objects.equals(request.getMethod(), HttpMethod.PUT.name()) && request.getRequestURI()
+                .matches("/channels/\\d+/members/@me")) {
+            return true;
+        }
 
-		User user = (User) request.getAttribute(AttributeConstant.USER);
-		Channel channel = (Channel) request.getAttribute(AttributeConstant.CHANNEL);
+        User user = (User) request.getAttribute(AttributeConstant.USER);
+        Channel channel = (Channel) request.getAttribute(AttributeConstant.CHANNEL);
 
-		Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
-				.orElseThrow(ChannelNotFoundException::new);
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+                .orElseThrow(ChannelNotFoundException::new);
 
-		request.setAttribute(AttributeConstant.MEMBER, member);
+        request.setAttribute(AttributeConstant.MEMBER, member);
 
-		log.debug("Got member {} in channel {} successfully", member.getId(), channel.getId());
-		return true;
-	}
+        log.debug("Got member {} in channel {} successfully", member.getId(), channel.getId());
+        return true;
+    }
 }

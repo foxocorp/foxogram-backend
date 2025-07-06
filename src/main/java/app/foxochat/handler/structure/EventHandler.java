@@ -28,79 +28,82 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class EventHandler extends TextWebSocketHandler {
 
-	private final EventHandlerRegistry handlerRegistry;
+    private final EventHandlerRegistry handlerRegistry;
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	@Getter
-	private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
+    @Getter
+    private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 
-	private final UserService userService;
+    private final UserService userService;
 
-	public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper, UserService userService) {
-		this.handlerRegistry = handlerRegistry;
-		this.objectMapper = objectMapper;
-		this.userService = userService;
+    public EventHandler(EventHandlerRegistry handlerRegistry, ObjectMapper objectMapper, UserService userService) {
+        this.handlerRegistry = handlerRegistry;
+        this.objectMapper = objectMapper;
+        this.userService = userService;
 
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
-		Runnable task = () -> sessions.values().forEach(session -> {
-			long lastPingTimestamp = session.getLastPingTimestamp();
+        Runnable task = () -> sessions.values().forEach(session -> {
+            long lastPingTimestamp = session.getLastPingTimestamp();
 
-			long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
+            long timeout = (GatewayConstant.HEARTBEAT_INTERVAL + GatewayConstant.HEARTBEAT_TIMEOUT);
 
-			if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
-				try {
-					session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
-					log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
-				} catch (IOException e) {
-					log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
-					throw new RuntimeException(e);
-				}
-			}
-		});
+            if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
+                try {
+                    session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
+                    log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
+                } catch (IOException e) {
+                    log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-		executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
-	}
+        executor.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
+    }
 
-	@Override
-	public void afterConnectionEstablished(@NonNull WebSocketSession session) {
-		log.debug("Connection for session ({}) established", session.getId());
-		sessions.put(session.getId(), new Session(session));
-	}
+    @Override
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) {
+        log.debug("Connection for session ({}) established", session.getId());
+        sessions.put(session.getId(), new Session(session));
+    }
 
-	@Override
-	public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) throws Exception {
-		log.debug("Connection for session ({}) closed with status {} ({})", session.getId(), status.getReason(), status.getCode());
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) throws Exception {
+        log.debug("Connection for session ({}) closed with status {} ({})",
+                session.getId(),
+                status.getReason(),
+                status.getCode());
 
-		Session userSession = sessions.get(session.getId());
+        Session userSession = sessions.get(session.getId());
 
-		if (userSession.isAuthenticated()) {
-			userService.setStatus(userSession.getUserId(), UserConstant.Status.OFFLINE.getStatus());
-		}
+        if (userSession.isAuthenticated()) {
+            userService.setStatus(userSession.getUserId(), UserConstant.Status.OFFLINE.getStatus());
+        }
 
-		sessions.remove(session.getId());
-	}
+        sessions.remove(session.getId());
+    }
 
-	@Override
-	protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
-		try {
-			EventDTO payload = objectMapper.readValue(message.getPayload(), EventDTO.class);
-			int opcode = payload.getOp();
+    @Override
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
+        try {
+            EventDTO payload = objectMapper.readValue(message.getPayload(), EventDTO.class);
+            int opcode = payload.getOp();
 
-			BaseHandler handler = handlerRegistry.getHandler(opcode);
+            BaseHandler handler = handlerRegistry.getHandler(opcode);
 
-			if (handler != null) {
-				handler.handle(session, sessions, payload);
-				log.debug("Handling {} event with opcode {}", payload.getT(), payload.getOp());
-			}
-		} catch (UserUnauthorizedException e) {
-			log.error(ExceptionConstant.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
+            if (handler != null) {
+                handler.handle(session, sessions, payload);
+                log.debug("Handling {} event with opcode {}", payload.getT(), payload.getOp());
+            }
+        } catch (UserUnauthorizedException e) {
+            log.error(ExceptionConstant.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
 
-			session.close(CloseCodeConstant.UNAUTHORIZED);
-		} catch (Exception e) {
-			log.error(ExceptionConstant.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
-			log.error(ExceptionConstant.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), e);
-		}
-	}
+            session.close(CloseCodeConstant.UNAUTHORIZED);
+        } catch (Exception e) {
+            log.error(ExceptionConstant.Messages.SERVER_EXCEPTION.getValue(), null, null, message);
+            log.error(ExceptionConstant.Messages.SERVER_EXCEPTION_STACKTRACE.getValue(), e);
+        }
+    }
 }

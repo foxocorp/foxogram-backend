@@ -13,16 +13,18 @@ import lombok.Setter;
 @Schema(name = "UserResetPasswordConfirm")
 public class UserResetPasswordConfirmDTO {
 
-	@NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL, message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
-	@Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
-	private String email;
+    @NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
+            message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
+    private String email;
 
-	@NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
-	private String OTP;
+    @NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
+    private String OTP;
 
-	@NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD, message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
-	private String newPassword;
+    @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
+            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+    private String newPassword;
 }

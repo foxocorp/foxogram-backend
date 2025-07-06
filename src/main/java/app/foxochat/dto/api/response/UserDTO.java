@@ -13,64 +13,65 @@ import java.util.List;
 @Schema(name = "User")
 public class UserDTO {
 
-	private long id;
+    private long id;
 
-	private AvatarDTO avatar;
+    private AvatarDTO avatar;
 
-	private AttachmentDTO banner;
+    private AttachmentDTO banner;
 
-	private String displayName;
+    private String displayName;
 
-	private String username;
+    private String username;
 
-	private String bio;
+    private String bio;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String email;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String email;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<Long> channels;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Long> channels;
 
-	private int status;
+    private int status;
 
-	private long statusUpdatedAt;
+    private long statusUpdatedAt;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<Long> contacts;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Long> contacts;
 
-	private long flags;
+    private long flags;
 
-	private int type;
+    private int type;
 
-	private long createdAt;
+    private long createdAt;
 
-	@SuppressWarnings("unused")
-	public UserDTO() {}
+    @SuppressWarnings("unused")
+    public UserDTO() {
+    }
 
-	public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
-		this.id = user.getId();
-		if (user.getAvatar() != null) {
-			this.avatar = new AvatarDTO(user.getAvatar());
-		}
-		if (user.getBanner() != null) {
-			this.banner = new AttachmentDTO(user.getBanner());
-		}
-		this.displayName = user.getDisplayName();
-		this.username = user.getUsername();
-		this.bio = user.getBio();
-		if (includeEmail) {
-			this.email = user.getEmail();
-		}
-		if (includeChannels) {
-			this.channels = channels;
-		}
-		if (includeContacts) {
-			this.contacts = contacts;
-		}
-		this.status = user.getStatus();
-		this.statusUpdatedAt = user.getStatusUpdatedAt();
-		this.flags = user.getFlags();
-		this.type = user.getType();
-		this.createdAt = user.getCreatedAt();
-	}
+    public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
+        this.id = user.getId();
+        if (user.getAvatar() != null) {
+            this.avatar = new AvatarDTO(user.getAvatar());
+        }
+        if (user.getBanner() != null) {
+            this.banner = new AttachmentDTO(user.getBanner());
+        }
+        this.displayName = user.getDisplayName();
+        this.username = user.getUsername();
+        this.bio = user.getBio();
+        if (includeEmail) {
+            this.email = user.getEmail();
+        }
+        if (includeChannels) {
+            this.channels = channels;
+        }
+        if (includeContacts) {
+            this.contacts = contacts;
+        }
+        this.status = user.getStatus();
+        this.statusUpdatedAt = user.getStatusUpdatedAt();
+        this.flags = user.getFlags();
+        this.type = user.getType();
+        this.createdAt = user.getCreatedAt();
+    }
 }

@@ -10,17 +10,18 @@ import app.foxochat.model.Member;
 import app.foxochat.model.User;
 
 public interface ChannelService {
-	Channel add(User user, long partnerId, ChannelCreateDTO body) throws ChannelAlreadyExistException, UserNotFoundException;
+    Channel add(User user, long partnerId, ChannelCreateDTO body)
+            throws ChannelAlreadyExistException, UserNotFoundException;
 
-	Channel getById(long id) throws ChannelNotFoundException;
+    Channel getById(long id) throws ChannelNotFoundException;
 
-	Channel getByName(String name) throws ChannelNotFoundException;
+    Channel getByName(String name) throws ChannelNotFoundException;
 
-	Channel update(Member member, Channel channel, ChannelEditDTO body) throws Exception;
+    Channel update(Member member, Channel channel, ChannelEditDTO body) throws Exception;
 
-	void delete(Channel channel, User user) throws Exception;
+    void delete(Channel channel, User user) throws Exception;
 
-	Member addMember(Channel channel, User user) throws Exception;
+    Member addMember(Channel channel, User user) throws Exception;
 
-	void removeMember(Channel channel, User user) throws Exception;
+    void removeMember(Channel channel, User user) throws Exception;
 }
