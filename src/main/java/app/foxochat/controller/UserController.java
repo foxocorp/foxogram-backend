@@ -89,7 +89,7 @@ public class UserController {
 				.stream()
 				.map(channel -> {
 					Message lastMessage = messageService.getLastByChannel(channel);
-					return new ChannelDTO(channel, lastMessage);
+					return new ChannelDTO(channel, lastMessage, null, null, null);
 				})
 				.collect(Collectors.toList());
 	}

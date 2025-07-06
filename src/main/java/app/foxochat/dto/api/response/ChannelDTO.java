@@ -1,5 +1,8 @@
 package app.foxochat.dto.api.response;
 
+import app.foxochat.constant.ChannelConstant;
+import app.foxochat.constant.MemberConstant;
+import app.foxochat.model.Avatar;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Message;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,7 +21,7 @@ public class ChannelDTO {
 
 	private String name;
 
-	private AvatarDTO icon;
+	private AvatarDTO avatar;
 
 	private int type;
 
@@ -33,22 +36,29 @@ public class ChannelDTO {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private MessageDTO lastMessage;
 
-	public ChannelDTO(Channel channel, Message lastMessage) {
+	public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar) {
 		this.id = channel.getId();
-		this.displayName = channel.getDisplayName();
-		this.name = channel.getName();
+		if (channel.getType() == ChannelConstant.Type.DM.getType()) {
+			this.displayName = displayName;
+			this.name = username;
+			this.avatar = new AvatarDTO(avatar);
+		} else {
+			this.displayName = channel.getDisplayName();
+			this.name = channel.getName();
+		}
 		if (channel.getAvatar() != null) {
-			this.icon = new AvatarDTO(channel.getAvatar());
+			this.avatar = new AvatarDTO(channel.getAvatar());
 		}
 		this.type = channel.getType();
 		this.flags = channel.getFlags();
-		if (channel.getMembers() != null) {
+		if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
 			this.memberCount = channel.getMembers().size();
 		}
 		if (lastMessage != null) {
 			this.lastMessage = new MessageDTO(lastMessage, false);
 		}
-		this.owner = new UserDTO(channel.getOwner(), null, null, false, false, false);
+
+		this.owner = new UserDTO(channel.getMembers().stream().filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER)).findFirst().get().getUser(), null, null, false, false, false);
 		this.createdAt = channel.getCreatedAt();
 	}
 }

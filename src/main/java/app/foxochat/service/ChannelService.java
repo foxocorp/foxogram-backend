@@ -4,12 +4,13 @@ import app.foxochat.dto.api.request.ChannelCreateDTO;
 import app.foxochat.dto.api.request.ChannelEditDTO;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
+import app.foxochat.exception.user.UserNotFoundException;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Member;
 import app.foxochat.model.User;
 
 public interface ChannelService {
-	Channel add(User user, ChannelCreateDTO body) throws ChannelAlreadyExistException;
+	Channel add(User user, long partnerId, ChannelCreateDTO body) throws ChannelAlreadyExistException, UserNotFoundException;
 
 	Channel getById(long id) throws ChannelNotFoundException;
 
