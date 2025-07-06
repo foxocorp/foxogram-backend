@@ -15,56 +15,56 @@ import lombok.Setter;
 @Schema(name = "Channel")
 public class ChannelDTO {
 
-	private long id;
+    private long id;
 
-	private String displayName;
+    private String displayName;
 
-	private String name;
+    private String name;
 
-	private AvatarDTO avatar;
+    private AvatarDTO avatar;
 
-	private AvatarDTO banner;
+    private AvatarDTO banner;
 
-	private int type;
+    private int type;
 
-	private long flags;
+    private long flags;
 
-	private int memberCount;
+    private int memberCount;
 
-	private UserDTO owner;
+    private UserDTO owner;
 
-	private long createdAt;
+    private long createdAt;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private MessageDTO lastMessage;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private MessageDTO lastMessage;
 
-	public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar) {
-		this.id = channel.getId();
-		if (channel.getType() == ChannelConstant.Type.DM.getType()) {
-			this.displayName = displayName;
-			this.name = username;
-			this.avatar = new AvatarDTO(avatar);
-		} else {
-			this.displayName = channel.getDisplayName();
-			this.name = channel.getName();
-		}
-		if (channel.getAvatar() != null) {
-			this.avatar = new AvatarDTO(channel.getAvatar());
-		}
-		if (channel.getBanner() != null) {
-			this.banner = new AvatarDTO(channel.getBanner());
-		}
-		this.type = channel.getType();
-		this.flags = channel.getFlags();
-		if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
-			this.memberCount = channel.getMembers().size();
-			this.owner = new UserDTO(channel.getMembers().stream()
-					.filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-					.findFirst().get().getUser(), null, null, false, false, false);
-		}
-		if (lastMessage != null) {
-			this.lastMessage = new MessageDTO(lastMessage, false);
-		}
-		this.createdAt = channel.getCreatedAt();
-	}
+    public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar) {
+        this.id = channel.getId();
+        if (channel.getType() == ChannelConstant.Type.DM.getType()) {
+            this.displayName = displayName;
+            this.name = username;
+            this.avatar = new AvatarDTO(avatar);
+        } else {
+            this.displayName = channel.getDisplayName();
+            this.name = channel.getName();
+        }
+        if (channel.getAvatar() != null) {
+            this.avatar = new AvatarDTO(channel.getAvatar());
+        }
+        if (channel.getBanner() != null) {
+            this.banner = new AvatarDTO(channel.getBanner());
+        }
+        this.type = channel.getType();
+        this.flags = channel.getFlags();
+        if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
+            this.memberCount = channel.getMembers().size();
+            this.owner = new UserDTO(channel.getMembers().stream()
+                    .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
+                    .findFirst().get().getUser(), null, null, false, false, false);
+        }
+        if (lastMessage != null) {
+            this.lastMessage = new MessageDTO(lastMessage, false);
+        }
+        this.createdAt = channel.getCreatedAt();
+    }
 }

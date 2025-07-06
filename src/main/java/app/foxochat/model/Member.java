@@ -20,11 +20,14 @@ public class Member {
 
     @Column
     public long permissions;
+
     @Column
     public long joinedAt;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
     @ManyToOne
     @JoinColumn(name = "channel_id", nullable = false)
     private Channel channel;
