@@ -38,7 +38,8 @@ public class Avatar {
     public Avatar() {
     }
 
-    public Avatar(User user, Channel channel, String uuid, String filename, boolean includeUser, boolean includeChannel) {
+    public Avatar(User user, Channel channel, String uuid, String filename, boolean includeUser,
+                  boolean includeChannel) {
         if (includeUser) this.user = user;
         if (includeChannel) this.channel = channel;
         this.uuid = uuid;

@@ -48,7 +48,8 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels, boolean includeContacts) {
+    public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels,
+                   boolean includeContacts) {
         this.id = user.getId();
         if (user.getAvatar() != null) {
             this.avatar = new AvatarDTO(user.getAvatar());

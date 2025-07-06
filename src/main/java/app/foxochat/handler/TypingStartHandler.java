@@ -28,7 +28,8 @@ public class TypingStartHandler implements BaseHandler {
 
     private final ChannelService channelService;
 
-    public TypingStartHandler(@Lazy GatewayService gatewayService, ObjectMapper objectMapper, ChannelService channelService) {
+    public TypingStartHandler(@Lazy GatewayService gatewayService, ObjectMapper objectMapper,
+                              ChannelService channelService) {
         this.gatewayService = gatewayService;
         this.objectMapper = objectMapper;
         this.channelService = channelService;

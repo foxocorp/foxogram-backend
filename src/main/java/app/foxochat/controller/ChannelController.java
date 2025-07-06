@@ -44,7 +44,8 @@ public class ChannelController {
 
     private final MediaService mediaService;
 
-    public ChannelController(ChannelService channelService, MessageService messageService, MemberService memberService, MediaService mediaService) {
+    public ChannelController(ChannelService channelService, MessageService messageService, MemberService memberService,
+                             MediaService mediaService) {
         this.channelService = channelService;
         this.messageService = messageService;
         this.memberService = memberService;
@@ -270,7 +271,7 @@ public class ChannelController {
             @PathVariable String channelId,
             @RequestBody List<AttachmentUploadDTO> attachments
     )
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException {
         if (attachments == null || attachments.isEmpty()) {
             throw new MediaCannotBeEmptyException();
         }

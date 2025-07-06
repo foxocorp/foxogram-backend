@@ -27,7 +27,8 @@ public class HelloHandler implements BaseHandler {
 
     private final UserService userService;
 
-    public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper, UserService userService) {
+    public HelloHandler(AuthenticationService authenticationService, ObjectMapper objectMapper,
+                        UserService userService) {
         this.authenticationService = authenticationService;
         this.objectMapper = objectMapper;
         this.userService = userService;

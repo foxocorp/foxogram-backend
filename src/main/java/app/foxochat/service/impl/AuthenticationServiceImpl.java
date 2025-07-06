@@ -37,7 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final APIConfig apiConfig;
 
-    public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService, OTPService otpService, APIConfig apiConfig) {
+    public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService,
+                                     OTPService otpService, APIConfig apiConfig) {
         this.userService = userService;
         this.emailService = emailService;
         this.jwtService = jwtService;

@@ -44,7 +44,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     private final UserService userService;
 
-    public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService, @Lazy GatewayService gatewayService, MediaService mediaService, UserService userService) {
+    public ChannelServiceImpl(ChannelRepository channelRepository, MemberService memberService,
+                              @Lazy GatewayService gatewayService, MediaService mediaService, UserService userService) {
         this.channelRepository = channelRepository;
         this.memberService = memberService;
         this.gatewayService = gatewayService;

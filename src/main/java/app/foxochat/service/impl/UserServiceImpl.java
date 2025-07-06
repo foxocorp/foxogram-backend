@@ -47,7 +47,9 @@ public class UserServiceImpl implements UserService {
 
     private final MemberService memberService;
 
-    public UserServiceImpl(UserRepository userRepository, EmailService emailService, OTPService otpService, MediaService mediaService, APIConfig apiConfig, @Lazy GatewayService gatewayService, MemberService memberService) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService, OTPService otpService,
+                           MediaService mediaService, APIConfig apiConfig, @Lazy GatewayService gatewayService,
+                           MemberService memberService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.otpService = otpService;

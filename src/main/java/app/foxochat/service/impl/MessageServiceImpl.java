@@ -36,7 +36,8 @@ public class MessageServiceImpl implements MessageService {
 
     private final ChannelService channelService;
 
-    public MessageServiceImpl(MessageRepository messageRepository, GatewayService gatewayService, MemberService memberService, MediaService mediaService, ChannelService channelService) {
+    public MessageServiceImpl(MessageRepository messageRepository, GatewayService gatewayService,
+                              MemberService memberService, MediaService mediaService, ChannelService channelService) {
         this.messageRepository = messageRepository;
         this.gatewayService = gatewayService;
         this.memberService = memberService;
