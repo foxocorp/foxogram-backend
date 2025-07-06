@@ -16,25 +16,25 @@ import java.util.List;
 @Configuration
 public class RestClientConfig {
 
-	private final APIConfig apiConfig;
+    private final APIConfig apiConfig;
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	public RestClientConfig(APIConfig apiConfig, ObjectMapper objectMapper) {
-		this.apiConfig = apiConfig;
-		this.objectMapper = objectMapper;
-	}
+    public RestClientConfig(APIConfig apiConfig, ObjectMapper objectMapper) {
+        this.apiConfig = apiConfig;
+        this.objectMapper = objectMapper;
+    }
 
-	@Bean
-	public RestClient restClient() {
-		HttpClient httpClient = HttpClient.newBuilder()
-				.connectTimeout(Duration.ofMillis(1000))
-				.build();
+    @Bean
+    public RestClient restClient() {
+        HttpClient httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofMillis(1000))
+                .build();
 
-		return RestClient.builder()
-				.requestFactory(new JdkClientHttpRequestFactory(httpClient))
-				.messageConverters(List.of(new MappingJackson2HttpMessageConverter(objectMapper)))
-				.baseUrl(apiConfig.getUrl())
-				.build();
-	}
+        return RestClient.builder()
+                .requestFactory(new JdkClientHttpRequestFactory(httpClient))
+                .messageConverters(List.of(new MappingJackson2HttpMessageConverter(objectMapper)))
+                .baseUrl(apiConfig.getUrl())
+                .build();
+    }
 }

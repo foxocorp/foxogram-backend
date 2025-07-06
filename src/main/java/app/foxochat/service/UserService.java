@@ -14,27 +14,27 @@ import java.util.Optional;
 
 public interface UserService {
 
-	Optional<User> getById(long id);
+    Optional<User> getById(long id);
 
-	Optional<User> getByUsername(String username);
+    Optional<User> getByUsername(String username);
 
-	Optional<User> getByEmail(String email);
+    Optional<User> getByEmail(String email);
 
-	void updateFlags(User user, UserConstant.Flags removeFlag, UserConstant.Flags addFlag);
+    void updateFlags(User user, UserConstant.Flags removeFlag, UserConstant.Flags addFlag);
 
-	User add(String username, String email, String password) throws UserCredentialsDuplicateException;
+    User add(String username, String email, String password) throws UserCredentialsDuplicateException;
 
-	User update(User user, UserEditDTO body) throws Exception;
+    User update(User user, UserEditDTO body) throws Exception;
 
-	void requestDelete(User user, String password) throws UserCredentialsIsInvalidException;
+    void requestDelete(User user, String password) throws UserCredentialsIsInvalidException;
 
-	void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
+    void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
 
-	void setStatus(long userId, int status) throws Exception;
+    void setStatus(long userId, int status) throws Exception;
 
-	User addContact(User user, long id) throws UserContactAlreadyExistException;
+    User addContact(User user, long id) throws UserContactAlreadyExistException;
 
-	void deleteContact(User user, long id) throws UserContactNotFoundException;
+    void deleteContact(User user, long id) throws UserContactNotFoundException;
 
-	void save(User user);
+    void save(User user);
 }

@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class MemberAlreadyInChannelException extends BaseException {
 
-	public MemberAlreadyInChannelException() {
-		super(ExceptionConstant.Messages.MEMBER_ALREADY_EXIST.getValue(), MemberAlreadyInChannelException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.Member.ALREADY_EXIST.getValue());
-	}
+    public MemberAlreadyInChannelException() {
+        super(
+                ExceptionConstant.Messages.MEMBER_ALREADY_EXIST.getValue(),
+                MemberAlreadyInChannelException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.Member.ALREADY_EXIST.getValue()
+        );
+    }
 }

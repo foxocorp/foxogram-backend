@@ -7,15 +7,15 @@ import lombok.Setter;
 @Setter
 public class MediaPresignedURLDTO {
 
-	private String url;
+    private String url;
 
-	private String uuid;
+    private String uuid;
 
-	private Class<?> media;
+    private Class<?> media;
 
-	public MediaPresignedURLDTO(String url, String uuid, Class<?> media) {
-		this.url = url;
-		this.uuid = uuid;
-		this.media = media;
-	}
+    public MediaPresignedURLDTO(String url, String uuid, Class<?> media) {
+        this.url = url;
+        this.uuid = uuid;
+        this.media = media;
+    }
 }

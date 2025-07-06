@@ -11,44 +11,45 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @Table(name = "messages", indexes = {
-		@Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
+        @Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
 })
 public class Message {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
 
-	@Column(columnDefinition = "TEXT")
-	public String content;
+    @Column(columnDefinition = "TEXT")
+    public String content;
 
-	@ManyToOne
-	@JoinColumn(name = "author", nullable = false)
-	public Member author;
+    @ManyToOne
+    @JoinColumn(name = "author", nullable = false)
+    public Member author;
 
-	@Column
-	public long timestamp;
+    @Column
+    public long timestamp;
 
-	@OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	public List<MessageAttachment> attachments;
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    public List<MessageAttachment> attachments;
 
-	@ManyToOne
-	@JoinColumn(name = "channel_id", nullable = false)
-	private Channel channel;
+    @ManyToOne
+    @JoinColumn(name = "channel_id", nullable = false)
+    private Channel channel;
 
-	public Message() {}
+    public Message() {
+    }
 
-	public Message(Channel channel, String content, Member member, List<Attachment> attachments) {
-		this.channel = channel;
-		this.author = member;
-		this.content = content;
-		this.timestamp = System.currentTimeMillis();
-		this.attachments = attachments.stream()
-				.map(attachment -> new MessageAttachment(this, attachment))
-				.collect(Collectors.toList());
-	}
+    public Message(Channel channel, String content, Member member, List<Attachment> attachments) {
+        this.channel = channel;
+        this.author = member;
+        this.content = content;
+        this.timestamp = System.currentTimeMillis();
+        this.attachments = attachments.stream()
+                .map(attachment -> new MessageAttachment(this, attachment))
+                .collect(Collectors.toList());
+    }
 
-	public boolean isAuthor(Member member) {
-		return author.getUser().getUsername().equals(member.getUser().getUsername());
-	}
+    public boolean isAuthor(Member member) {
+        return author.getUser().getUsername().equals(member.getUser().getUsername());
+    }
 }

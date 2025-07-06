@@ -12,7 +12,8 @@ import lombok.Setter;
 @Schema(name = "UserDelete")
 public class UserDeleteDTO {
 
-	@NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD, message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
-	private String password;
+    @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
+            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+    private String password;
 }

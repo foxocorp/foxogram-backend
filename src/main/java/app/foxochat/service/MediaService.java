@@ -16,17 +16,20 @@ import java.util.List;
 
 public interface MediaService {
 
-	MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags) throws UploadFailedException;
+    MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags)
+            throws UploadFailedException;
 
-	MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar) throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException;
+    MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)
+            throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException;
 
-	List<MediaUploadDTO> uploadAttachments(User user, List<AttachmentUploadDTO> attachments) throws MediaCannotBeEmptyException;
+    List<MediaUploadDTO> uploadAttachments(User user, List<AttachmentUploadDTO> attachments)
+            throws MediaCannotBeEmptyException;
 
-	Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException;
+    Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException;
 
-	List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException;
+    List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException;
 
-	Avatar getAvatarById(long id) throws UnknownMediaException;
+    Avatar getAvatarById(long id) throws UnknownMediaException;
 
-	Attachment getAttachmentById(long id) throws UnknownMediaException;
+    Attachment getAttachmentById(long id) throws UnknownMediaException;
 }

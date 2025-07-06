@@ -10,15 +10,15 @@ import lombok.Setter;
 @Schema(name = "Attachment")
 public class AvatarDTO {
 
-	public long id;
+    public long id;
 
-	public String uuid;
+    public String uuid;
 
-	public String filename;
+    public String filename;
 
-	public AvatarDTO(Avatar avatar) {
-		this.id = avatar.getId();
-		this.uuid = avatar.getUuid();
-		this.filename = avatar.getFilename();
-	}
+    public AvatarDTO(Avatar avatar) {
+        this.id = avatar.getId();
+        this.uuid = avatar.getUuid();
+        this.filename = avatar.getFilename();
+    }
 }

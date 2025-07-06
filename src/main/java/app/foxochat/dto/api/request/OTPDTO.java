@@ -12,7 +12,7 @@ import lombok.Setter;
 @Schema(name = "OTP")
 public class OTPDTO {
 
-	@NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
-	private String OTP;
+    @NotNull(message = "OTP" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = 6, max = 6, message = ValidationConstant.Messages.OTP_NAME_WRONG_LENGTH)
+    private String OTP;
 }

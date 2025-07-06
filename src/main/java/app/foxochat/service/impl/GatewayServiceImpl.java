@@ -17,32 +17,36 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GatewayServiceImpl implements GatewayService {
 
-	private final EventHandler webSocketHandler;
+    private final EventHandler webSocketHandler;
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	public GatewayServiceImpl(EventHandler webSocketHandler, ObjectMapper objectMapper) {
-		this.webSocketHandler = webSocketHandler;
-		this.objectMapper = objectMapper;
-	}
+    public GatewayServiceImpl(EventHandler webSocketHandler, ObjectMapper objectMapper) {
+        this.webSocketHandler = webSocketHandler;
+        this.objectMapper = objectMapper;
+    }
 
-	@Override
-	public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type) throws Exception {
-		ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
-		log.debug("Trying to send message to users ({}) with (opcode: {}, type: {})", userIds, opcode, type);
-		for (Session session : sessions.values()) {
-			if (session != null) {
-				if (!userIds.contains(session.getUserId())) continue;
+    @Override
+    public void sendMessageToSpecificSessions(List<Long> userIds, int opcode, Object data, String type)
+            throws Exception {
+        ConcurrentHashMap<String, Session> sessions = webSocketHandler.getSessions();
+        log.debug("Trying to send message to users ({}) with (opcode: {}, type: {})", userIds, opcode, type);
+        for (Session session : sessions.values()) {
+            if (session != null) {
+                if (!userIds.contains(session.getUserId())) continue;
 
-				int seqNumber = session.getSequence();
-				session.increaseSequence();
-				WebSocketSession wsSession = session.getWebSocketSession();
+                int seqNumber = session.getSequence();
+                session.increaseSequence();
+                WebSocketSession wsSession = session.getWebSocketSession();
 
-				if (!wsSession.isOpen()) continue;
+                if (!wsSession.isOpen()) continue;
 
-				wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode, data, seqNumber, type))));
-				log.debug("Sent message to userId ({}) with (opcode: {}, type: {})", session.getUserId(), opcode, type);
-			}
-		}
-	}
+                wsSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(new EventDTO(opcode,
+                        data,
+                        seqNumber,
+                        type))));
+                log.debug("Sent message to userId ({}) with (opcode: {}, type: {})", session.getUserId(), opcode, type);
+            }
+        }
+    }
 }

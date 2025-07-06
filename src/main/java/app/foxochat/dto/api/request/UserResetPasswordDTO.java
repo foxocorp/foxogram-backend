@@ -13,8 +13,9 @@ import lombok.Setter;
 @Schema(name = "UserResetPassword")
 public class UserResetPasswordDTO {
 
-	@NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-	@Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL, message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
-	@Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
-	private String email;
+    @NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
+            message = ValidationConstant.Messages.EMAIL_WRONG_LENGTH)
+    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = ValidationConstant.Messages.EMAIL_INCORRECT)
+    private String email;
 }

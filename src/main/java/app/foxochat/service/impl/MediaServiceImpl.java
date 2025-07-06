@@ -27,48 +27,58 @@ import java.util.List;
 @Service
 public class MediaServiceImpl implements MediaService {
 
-	public final AttachmentRepository attachmentRepository;
+    public final AttachmentRepository attachmentRepository;
 
-	public final StorageService storageService;
+    public final StorageService storageService;
 
-	private final AvatarRepository avatarRepository;
+    private final AvatarRepository avatarRepository;
 
-	public MediaServiceImpl(AttachmentRepository attachmentRepository, StorageService storageService, AvatarRepository avatarRepository) {
-		this.attachmentRepository = attachmentRepository;
-		this.storageService = storageService;
-		this.avatarRepository = avatarRepository;
-	}
+    public MediaServiceImpl(AttachmentRepository attachmentRepository, StorageService storageService, AvatarRepository avatarRepository) {
+        this.attachmentRepository = attachmentRepository;
+        this.storageService = storageService;
+        this.avatarRepository = avatarRepository;
+    }
 
-	@Override
-	public MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags) throws UploadFailedException {
-		if (media == AttachmentUploadDTO.class) {
-			try {
-				AttachmentUploadDTO attachment = (AttachmentUploadDTO) media.getDeclaredConstructor().newInstance();
-				MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
-				Attachment obj = attachmentRepository.save(new Attachment(user, dto.getUuid(), attachment.getFilename(), attachment.getContentType(), flags));
+    @Override
+    public MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags)
+            throws UploadFailedException {
+        if (media == AttachmentUploadDTO.class) {
+            try {
+                AttachmentUploadDTO attachment = (AttachmentUploadDTO) media.getDeclaredConstructor().newInstance();
+                MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
+                Attachment obj = attachmentRepository.save(new Attachment(user,
+                        dto.getUuid(),
+                        attachment.getFilename(),
+                        attachment.getContentType(),
+                        flags));
 
-				log.debug("Successfully got presigned url and saved attachment {}", dto.getUuid());
-				return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
-			} catch (Exception e) {
-				throw new UploadFailedException();
-			}
-		} else if (media == AvatarUploadDTO.class) {
-			try {
-				AvatarUploadDTO avatar = (AvatarUploadDTO) media.getDeclaredConstructor().newInstance();
-				MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.AVATARS_BUCKET);
-				boolean isUser = false;
-				boolean isChannel = false;
+                log.debug("Successfully got presigned url and saved attachment {}", dto.getUuid());
+                return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
+            } catch (Exception e) {
+                throw new UploadFailedException();
+            }
+        } else if (media == AvatarUploadDTO.class) {
+            try {
+                AvatarUploadDTO avatar = (AvatarUploadDTO) media.getDeclaredConstructor().newInstance();
+                MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.AVATARS_BUCKET);
+                boolean isUser = false;
+                boolean isChannel = false;
 
-				if (user != null) isUser = true;
-				if (channel != null) isChannel = true;
+                if (user != null) isUser = true;
+                if (channel != null) isChannel = true;
 
-				Avatar obj = avatarRepository.save(new Avatar(user, channel, dto.getUuid(), avatar.getFilename(), isUser, isChannel));
-				return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
-			} catch (Exception e) {
-				throw new UploadFailedException();
-			}
-		} else throw new UploadFailedException();
-	}
+                Avatar obj = avatarRepository.save(new Avatar(user,
+                        channel,
+                        dto.getUuid(),
+                        avatar.getFilename(),
+                        isUser,
+                        isChannel));
+                return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
+            } catch (Exception e) {
+                throw new UploadFailedException();
+            }
+        } else throw new UploadFailedException();
+    }
 
 //	@Override
 //	public List<MediaUploadDTO> uploadAll(User user, List<AttachmentUploadDTO> attachments) {
@@ -83,95 +93,101 @@ public class MediaServiceImpl implements MediaService {
 //		return attachmentsData;
 //	}
 
-	@Override
-	public MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar) throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException {
-		if (avatar == null) throw new MediaCannotBeEmptyException();
+    @Override
+    public MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)
+            throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException {
+        if (avatar == null) throw new MediaCannotBeEmptyException();
 
-		MediaPresignedURLDTO dto = getPresignedURLAndSave(avatar.getClass(), user, channel, 0);
+        MediaPresignedURLDTO dto = getPresignedURLAndSave(avatar.getClass(), user, channel, 0);
 
-		Avatar media;
-		try {
-			media = (Avatar) dto.getMedia().getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new UploadFailedException();
-		}
+        Avatar media;
+        try {
+            media = (Avatar) dto.getMedia().getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new UploadFailedException();
+        }
 
-		if (user != null && media.getUser().getId() != user.getId() || channel != null && media.getChannel().getId() != channel.getId()) {
-			throw new UnknownMediaException();
-		}
+        if (user != null && media.getUser().getId() != user.getId() || channel != null && media.getChannel()
+                .getId() != channel.getId()) {
+            throw new UnknownMediaException();
+        }
 
-		return dto;
-	}
+        return dto;
+    }
 
-	@Override
-	public List<MediaUploadDTO> uploadAttachments(User user, List<AttachmentUploadDTO> attachments) throws MediaCannotBeEmptyException {
-		if (attachments == null || attachments.isEmpty()) throw new MediaCannotBeEmptyException();
+    @Override
+    public List<MediaUploadDTO> uploadAttachments(User user, List<AttachmentUploadDTO> attachments)
+            throws MediaCannotBeEmptyException {
+        if (attachments == null || attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
-		List<MediaUploadDTO> uploaded = new ArrayList<>();
+        List<MediaUploadDTO> uploaded = new ArrayList<>();
 
-		attachments.forEach(attachment -> {
-			try {
-				MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment.getClass(), user, null, attachment.isSpoiler() ? MediaConstant.Flags.SPOILER.getBit() : 0);
+        attachments.forEach(attachment -> {
+            try {
+                MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment.getClass(),
+                        user,
+                        null,
+                        attachment.isSpoiler() ? MediaConstant.Flags.SPOILER.getBit() : 0);
 
-				Attachment media;
-				try {
-					media = (Attachment) dto.getMedia().getDeclaredConstructor().newInstance();
-				} catch (Exception e) {
-					throw new UploadFailedException();
-				}
+                Attachment media;
+                try {
+                    media = (Attachment) dto.getMedia().getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new UploadFailedException();
+                }
 
-				if (user != null && media.getUser().getId() != user.getId()) {
-					throw new UnknownMediaException();
-				}
+                if (user != null && media.getUser().getId() != user.getId()) {
+                    throw new UnknownMediaException();
+                }
 
-				MediaUploadDTO urlDTO = new MediaUploadDTO(dto.getUrl(), media.getId());
+                MediaUploadDTO urlDTO = new MediaUploadDTO(dto.getUrl(), media.getId());
 
-				log.debug("Successfully uploaded attachment by user {}", user.getUsername());
-				uploaded.add(urlDTO);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		});
+                log.debug("Successfully uploaded attachment by user {}", user.getUsername());
+                uploaded.add(urlDTO);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-		return uploaded;
-	}
+        return uploaded;
+    }
 
-	@Override
-	public Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException {
-		Avatar avatar = avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    @Override
+    public Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException {
+        Avatar avatar = avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
 
-		if (avatar.getUser().getId() != user.getId()) throw new UnknownMediaException();
-		else if (avatar.getChannel().getId() != channel.getId()) throw new UnknownMediaException();
+        if (avatar.getUser().getId() != user.getId()) throw new UnknownMediaException();
+        else if (avatar.getChannel().getId() != channel.getId()) throw new UnknownMediaException();
 
-		log.debug("Successfully got avatar for user {}, or channel {}", user.getUsername(), channel.getName());
-		return avatar;
-	}
+        log.debug("Successfully got avatar for user {}, or channel {}", user.getUsername(), channel.getName());
+        return avatar;
+    }
 
-	@Override
-	public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException {
-		List<Attachment> attachments = new ArrayList<>();
+    @Override
+    public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException {
+        List<Attachment> attachments = new ArrayList<>();
 
-		if (!attachmentsIds.isEmpty()) {
-			for (Long id : attachmentsIds) {
-				Attachment attachment = attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
+        if (!attachmentsIds.isEmpty()) {
+            for (Long id : attachmentsIds) {
+                Attachment attachment = attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
 
-				if (attachment.getUser().getId() != user.getId()) throw new UnknownMediaException();
+                if (attachment.getUser().getId() != user.getId()) throw new UnknownMediaException();
 
-				attachments.add(attachment);
-			}
-		}
+                attachments.add(attachment);
+            }
+        }
 
-		log.debug("Successfully got all attachments by user {}", user.getUsername());
-		return attachments;
-	}
+        log.debug("Successfully got all attachments by user {}", user.getUsername());
+        return attachments;
+    }
 
-	@Override
-	public Avatar getAvatarById(long id) throws UnknownMediaException {
-		return avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
-	}
+    @Override
+    public Avatar getAvatarById(long id) throws UnknownMediaException {
+        return avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    }
 
-	@Override
-	public Attachment getAttachmentById(long id) throws UnknownMediaException {
-		return attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
-	}
+    @Override
+    public Attachment getAttachmentById(long id) throws UnknownMediaException {
+        return attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    }
 }

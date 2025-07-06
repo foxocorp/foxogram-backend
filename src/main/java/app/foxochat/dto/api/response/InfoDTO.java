@@ -9,18 +9,18 @@ import lombok.Setter;
 @Schema(name = "Info")
 public class InfoDTO {
 
-	private String version;
+    private String version;
 
-	private String cdnURL;
+    private String cdnURL;
 
-	private String gatewayURL;
+    private String gatewayURL;
 
-	private String appURL;
+    private String appURL;
 
-	public InfoDTO(String version, String cdnURL, String gatewayURL, String appURL) {
-		this.version = version;
-		this.cdnURL = cdnURL;
-		this.gatewayURL = gatewayURL;
-		this.appURL = appURL;
-	}
+    public InfoDTO(String version, String cdnURL, String gatewayURL, String appURL) {
+        this.version = version;
+        this.cdnURL = cdnURL;
+        this.gatewayURL = gatewayURL;
+        this.appURL = appURL;
+    }
 }

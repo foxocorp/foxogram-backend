@@ -4,14 +4,14 @@ import lombok.Getter;
 
 public class MediaConstant {
 
-	@Getter
-	public enum Flags {
-		SPOILER(1);
+    @Getter
+    public enum Flags {
+        SPOILER(1);
 
-		private final long bit;
+        private final long bit;
 
-		Flags(long bit) {
-			this.bit = bit;
-		}
-	}
+        Flags(long bit) {
+            this.bit = bit;
+        }
+    }
 }

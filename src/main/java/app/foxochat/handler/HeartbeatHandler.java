@@ -19,26 +19,30 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class HeartbeatHandler implements BaseHandler {
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	public HeartbeatHandler(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
+    public HeartbeatHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
-	@Override
-	public int getOpcode() {
-		return GatewayConstant.Opcode.HEARTBEAT.ordinal();
-	}
+    @Override
+    public int getOpcode() {
+        return GatewayConstant.Opcode.HEARTBEAT.ordinal();
+    }
 
-	@Override
-	public void handle(WebSocketSession session, ConcurrentHashMap<String, Session> sessions, EventDTO payload) throws IOException {
-		Session userSession = sessions.get(session.getId());
+    @Override
+    public void handle(
+            WebSocketSession session,
+            ConcurrentHashMap<String, Session> sessions,
+            EventDTO payload
+    ) throws IOException {
+        Session userSession = sessions.get(session.getId());
 
-		if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
+        if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
 
-		userSession.setLastPingTimestamp(System.currentTimeMillis());
+        userSession.setLastPingTimestamp(System.currentTimeMillis());
 
-		session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HeartbeatACKDTO())));
-		log.debug("Got heartbeat from session ({})", session.getId());
-	}
+        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(new HeartbeatACKDTO())));
+        log.debug("Got heartbeat from session ({})", session.getId());
+    }
 }

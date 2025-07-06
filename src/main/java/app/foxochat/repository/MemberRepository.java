@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends CrudRepository<Member, Long> {
 
-	Optional<Member> findByChannelIdAndUserId(long channelId, long userId);
+    Optional<Member> findByChannelIdAndUserId(long channelId, long userId);
 
-	List<Member> findAllByUserId(long userId);
+    List<Member> findAllByUserId(long userId);
 
-	List<Member> findAllByChannelId(long channelId);
+    List<Member> findAllByChannelId(long channelId);
 }

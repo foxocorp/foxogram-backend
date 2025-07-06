@@ -21,49 +21,49 @@ import java.util.List;
 @Configuration
 public class OpenAPIConfig {
 
-	private final APIConfig apiConfig;
+    private final APIConfig apiConfig;
 
-	public OpenAPIConfig(APIConfig apiConfig) {
-		this.apiConfig = apiConfig;
-	}
+    public OpenAPIConfig(APIConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
 
-	@Bean
-	public OpenAPI openAPI() {
-		Info info = new Info()
-				.title("FoxoChat")
-				.version(apiConfig.getVersion());
+    @Bean
+    public OpenAPI openAPI() {
+        Info info = new Info()
+                .title("FoxoChat")
+                .version(apiConfig.getVersion());
 
-		List<Server> servers = Arrays.asList(
-				new Server().url("https://api.foxochat.app").description("Production"),
-				new Server().url("https://api-dev.foxochat.app").description("Development")
-		);
+        List<Server> servers = Arrays.asList(
+                new Server().url("https://api.foxochat.app").description("Production"),
+                new Server().url("https://api-dev.foxochat.app").description("Development")
+        );
 
-		if (apiConfig.isDevelopment()) {
-			Collections.reverse(servers);
-		}
+        if (apiConfig.isDevelopment()) {
+            Collections.reverse(servers);
+        }
 
-		// Enable bearer authorization
-		SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
+        // Enable bearer authorization
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
 
-		Components components = new Components()
-				.addSecuritySchemes("Authorization", new SecurityScheme()
-						.type(SecurityScheme.Type.HTTP)
-						.scheme("bearer")
-						.bearerFormat("JWT"));
+        Components components = new Components()
+                .addSecuritySchemes("Authorization", new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"));
 
-		// Disable constructor fields and set snake_case
-		ObjectMapper objectMapper = new ObjectMapper();
+        // Disable constructor fields and set snake_case
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
-						.withCreatorVisibility(JsonAutoDetect.Visibility.NONE))
-				.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
+                        .withCreatorVisibility(JsonAutoDetect.Visibility.NONE))
+                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
-		ModelConverters.getInstance().addConverter(new ModelResolver(objectMapper));
+        ModelConverters.getInstance().addConverter(new ModelResolver(objectMapper));
 
-		return new OpenAPI()
-				.info(info)
-				.servers(servers)
-				.addSecurityItem(securityRequirement)
-				.components(components);
-	}
+        return new OpenAPI()
+                .info(info)
+                .servers(servers)
+                .addSecurityItem(securityRequirement)
+                .components(components);
+    }
 }

@@ -18,27 +18,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = APIConstant.COMMON, produces = "application/json")
 public class CommonController {
 
-	private final APIConfig apiConfig;
+    private final APIConfig apiConfig;
 
-	public CommonController(APIConfig apiConfig) {
-		this.apiConfig = apiConfig;
-	}
+    public CommonController(APIConfig apiConfig) {
+        this.apiConfig = apiConfig;
+    }
 
-	@SecurityRequirements
-	@Operation(summary = "Get info")
-	@GetMapping("/info")
-	public InfoDTO get() {
-		String gatewayURL = apiConfig.isDevelopment() ? apiConfig.getDevGatewayURL() : apiConfig.getGatewayURL();
-		String appURL = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
+    @SecurityRequirements
+    @Operation(summary = "Get info")
+    @GetMapping("/info")
+    public InfoDTO get() {
+        String gatewayURL = apiConfig.isDevelopment() ? apiConfig.getDevGatewayURL() : apiConfig.getGatewayURL();
+        String appURL = apiConfig.isDevelopment() ? apiConfig.getDevAppURL() : apiConfig.getAppURL();
 
-		return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
-	}
+        return new InfoDTO(apiConfig.getVersion(), apiConfig.getCdnURL(), gatewayURL, appURL);
+    }
 
-	@SuppressWarnings("SameReturnValue")
-	@Hidden
-	@SecurityRequirements
-	@GetMapping("/actuator/health")
-	public String health() {
-		return "{\"status\":\"UP\"}";
-	}
+    @SuppressWarnings("SameReturnValue")
+    @Hidden
+    @SecurityRequirements
+    @GetMapping("/actuator/health")
+    public String health() {
+        return "{\"status\":\"UP\"}";
+    }
 }

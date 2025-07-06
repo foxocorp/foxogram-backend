@@ -12,11 +12,11 @@ import java.util.List;
 @Schema(name = "Messages")
 public class MessagesDTO {
 
-	private List<MessageDTO> messages;
+    private List<MessageDTO> messages;
 
-	public MessagesDTO(List<Message> messages) {
-		for (Message message : messages) {
-			this.messages.add(new MessageDTO(message, true));
-		}
-	}
+    public MessagesDTO(List<Message> messages) {
+        for (Message message : messages) {
+            this.messages.add(new MessageDTO(message, true));
+        }
+    }
 }

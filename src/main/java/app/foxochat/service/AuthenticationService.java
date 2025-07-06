@@ -13,19 +13,22 @@ import app.foxochat.model.User;
 
 public interface AuthenticationService {
 
-	User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString) throws UserUnauthorizedException, UserEmailNotVerifiedException;
+    User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString)
+            throws UserUnauthorizedException, UserEmailNotVerifiedException;
 
-	String register(String username, String email, String password) throws UserCredentialsDuplicateException;
+    String register(String username, String email, String password) throws UserCredentialsDuplicateException;
 
-	String login(String email, String password) throws UserCredentialsIsInvalidException;
+    String login(String email, String password) throws UserCredentialsIsInvalidException;
 
-	void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
+    void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
 
-	void resendEmail(User user, String accessToken) throws OTPsInvalidException, NeedToWaitBeforeResendException;
+    void resendEmail(User user, String accessToken) throws OTPsInvalidException, NeedToWaitBeforeResendException;
 
-	void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException;
+    void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException;
 
-	void confirmResetPassword(UserResetPasswordConfirmDTO body) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException;
+    void confirmResetPassword(UserResetPasswordConfirmDTO body)
+            throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException;
 
-	User authUser(String accessToken, boolean ignoreEmailVerification) throws UserUnauthorizedException, UserEmailNotVerifiedException;
+    User authUser(String accessToken, boolean ignoreEmailVerification)
+            throws UserUnauthorizedException, UserEmailNotVerifiedException;
 }

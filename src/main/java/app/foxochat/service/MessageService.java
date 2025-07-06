@@ -18,17 +18,18 @@ import java.util.List;
 
 public interface MessageService {
 
-	List<Message> getAllByChannel(long before, int limit, Channel channel);
+    List<Message> getAllByChannel(long before, int limit, Channel channel);
 
-	Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException;
+    Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException;
 
-	Message add(Channel channel, User user, MessageCreateDTO body) throws Exception;
+    Message add(Channel channel, User user, MessageCreateDTO body) throws Exception;
 
-	List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments) throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException;
+    List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException, UnknownMediaException, UploadFailedException;
 
-	void delete(long id, Member member, Channel channel) throws Exception;
+    void delete(long id, Member member, Channel channel) throws Exception;
 
-	Message update(long id, Channel channel, Member member, MessageCreateDTO body) throws Exception;
+    Message update(long id, Channel channel, Member member, MessageCreateDTO body) throws Exception;
 
-	Message getLastByChannel(Channel channel);
+    Message getLastByChannel(Channel channel);
 }

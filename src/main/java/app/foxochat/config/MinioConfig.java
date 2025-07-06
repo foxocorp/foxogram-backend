@@ -14,20 +14,20 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class MinioConfig {
 
-	@Value("${minio.url}")
-	private String url;
+    @Value("${minio.url}")
+    private String url;
 
-	@Value("${minio.name}")
-	private String accessKey;
+    @Value("${minio.name}")
+    private String accessKey;
 
-	@Value("${minio.secret}")
-	private String accessSecret;
+    @Value("${minio.secret}")
+    private String accessSecret;
 
-	@Bean
-	public MinioAsyncClient minioClient() {
-		return MinioAsyncClient.builder()
-				.endpoint(url)
-				.credentials(accessKey, accessSecret)
-				.build();
-	}
+    @Bean
+    public MinioAsyncClient minioClient() {
+        return MinioAsyncClient.builder()
+                .endpoint(url)
+                .credentials(accessKey, accessSecret)
+                .build();
+    }
 }

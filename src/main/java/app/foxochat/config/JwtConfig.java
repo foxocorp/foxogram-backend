@@ -11,5 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class JwtConfig {
 
-	private String secret;
+    private String secret;
 }

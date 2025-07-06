@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface OTPRepository extends CrudRepository<OTP, Long> {
 
-	Optional<OTP> findByUserId(long userId);
+    Optional<OTP> findByUserId(long userId);
 
-	Optional<OTP> findByValue(String value);
+    Optional<OTP> findByValue(String value);
 }

@@ -6,11 +6,11 @@ import app.foxochat.model.OTP;
 
 public interface OTPService {
 
-	OTP validate(String pathCode) throws OTPsInvalidException, OTPExpiredException;
+    OTP validate(String pathCode) throws OTPsInvalidException, OTPExpiredException;
 
-	void delete(OTP OTP);
+    void delete(OTP OTP);
 
-	void save(long id, String type, String digitCode, long issuedAt, long expiresAt);
+    void save(long id, String type, String digitCode, long issuedAt, long expiresAt);
 
-	OTP getByUserId(long userId) throws OTPsInvalidException;
+    OTP getByUserId(long userId) throws OTPsInvalidException;
 }

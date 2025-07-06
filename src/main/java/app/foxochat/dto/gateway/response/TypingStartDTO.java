@@ -1,4 +1,3 @@
-
 package app.foxochat.dto.gateway.response;
 
 import app.foxochat.constant.GatewayConstant;
@@ -11,12 +10,12 @@ import java.util.Map;
 @Setter
 public class TypingStartDTO {
 
-	private int op;
+    private int op;
 
-	private Map<String, Long> d;
+    private Map<String, Long> d;
 
-	public TypingStartDTO(long channelId, long userId, long timestamp) {
-		this.op = GatewayConstant.Opcode.HELLO.ordinal();
-		this.d = Map.of("channel_id", channelId, "user_id", userId, "timestamp", timestamp);
-	}
+    public TypingStartDTO(long channelId, long userId, long timestamp) {
+        this.op = GatewayConstant.Opcode.HELLO.ordinal();
+        this.d = Map.of("channel_id", channelId, "user_id", userId, "timestamp", timestamp);
+    }
 }

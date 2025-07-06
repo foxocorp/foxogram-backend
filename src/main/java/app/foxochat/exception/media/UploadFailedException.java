@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 public class UploadFailedException extends BaseException {
 
-	public UploadFailedException() {
-		super(ExceptionConstant.Messages.UPLOAD_FAILED.getValue(), UploadFailedException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.Media.UPLOAD_FAILED.getValue());
-	}
+    public UploadFailedException() {
+        super(
+                ExceptionConstant.Messages.UPLOAD_FAILED.getValue(),
+                UploadFailedException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.Media.UPLOAD_FAILED.getValue()
+        );
+    }
 }

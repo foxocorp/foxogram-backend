@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 public class HeartbeatACKDTO {
 
-	private int op;
+    private int op;
 
-	public HeartbeatACKDTO() {
-		this.op = GatewayConstant.Opcode.HEARTBEAT_ACK.ordinal();
-	}
+    public HeartbeatACKDTO() {
+        this.op = GatewayConstant.Opcode.HEARTBEAT_ACK.ordinal();
+    }
 }

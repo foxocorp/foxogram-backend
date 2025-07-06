@@ -8,24 +8,24 @@ import org.springframework.web.socket.WebSocketSession;
 @Setter
 public class Session {
 
-	private long userId;
+    private long userId;
 
-	private long lastPingTimestamp;
+    private long lastPingTimestamp;
 
-	private int sequence;
+    private int sequence;
 
-	private WebSocketSession webSocketSession;
+    private WebSocketSession webSocketSession;
 
-	public Session(WebSocketSession webSocketSession) {
-		this.lastPingTimestamp = System.currentTimeMillis();
-		this.webSocketSession = webSocketSession;
-	}
+    public Session(WebSocketSession webSocketSession) {
+        this.lastPingTimestamp = System.currentTimeMillis();
+        this.webSocketSession = webSocketSession;
+    }
 
-	public boolean isAuthenticated() {
-		return this.userId > 0;
-	}
+    public boolean isAuthenticated() {
+        return this.userId > 0;
+    }
 
-	public void increaseSequence() {
-		this.sequence++;
-	}
+    public void increaseSequence() {
+        this.sequence++;
+    }
 }

@@ -7,21 +7,21 @@ import lombok.Setter;
 @Setter
 public class EventDTO {
 
-	private int op;
+    private int op;
 
-	private Object d;
+    private Object d;
 
-	private int s;
+    private int s;
 
-	private String t;
+    private String t;
 
-	public EventDTO() {
-	}
+    public EventDTO() {
+    }
 
-	public EventDTO(int opcode, Object data, int sequence, String type) {
-		this.op = opcode;
-		this.d = data;
-		this.s = sequence;
-		this.t = type;
-	}
+    public EventDTO(int opcode, Object data, int sequence, String type) {
+        this.op = opcode;
+        this.d = data;
+        this.s = sequence;
+        this.t = type;
+    }
 }

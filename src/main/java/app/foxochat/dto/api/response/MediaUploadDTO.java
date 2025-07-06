@@ -9,12 +9,12 @@ import lombok.Setter;
 @Schema(name = "Attachments")
 public class MediaUploadDTO {
 
-	public String url;
+    public String url;
 
-	public long id;
+    public long id;
 
-	public MediaUploadDTO(String url, long id) {
-		this.url = url;
-		this.id = id;
-	}
+    public MediaUploadDTO(String url, long id) {
+        this.url = url;
+        this.id = id;
+    }
 }

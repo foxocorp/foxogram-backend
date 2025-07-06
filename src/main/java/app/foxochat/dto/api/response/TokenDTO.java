@@ -9,9 +9,9 @@ import lombok.Setter;
 @Schema(name = "Token")
 public class TokenDTO {
 
-	private String accessToken;
+    private String accessToken;
 
-	public TokenDTO(String accessToken) {
-		this.accessToken = accessToken;
-	}
+    public TokenDTO(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

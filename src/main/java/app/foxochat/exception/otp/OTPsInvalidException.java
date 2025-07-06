@@ -8,7 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class OTPsInvalidException extends BaseException {
 
-	public OTPsInvalidException() {
-		super(ExceptionConstant.Messages.OTP_IS_INVALID.getValue(), OTPsInvalidException.class.getAnnotation(ResponseStatus.class).value(), ExceptionConstant.OTP.IS_INVALID.getValue());
-	}
+    public OTPsInvalidException() {
+        super(
+                ExceptionConstant.Messages.OTP_IS_INVALID.getValue(),
+                OTPsInvalidException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.OTP.IS_INVALID.getValue()
+        );
+    }
 }
