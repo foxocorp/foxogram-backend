@@ -42,6 +42,9 @@ minio:
   name: # access key
   secret: # secret key
 
+meili:
+  master_key: # meilisearch master key
+
 jwt:
   secret: # random secret key
 
