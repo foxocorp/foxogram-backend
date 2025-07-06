@@ -75,24 +75,10 @@ public class MediaServiceImpl implements MediaService {
                         isChannel));
                 return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new UploadFailedException();
             }
         } else throw new UploadFailedException();
     }
-
-//	@Override
-//	public List<MediaUploadDTO> uploadAll(User user, List<AttachmentUploadDTO> attachments) {
-//		List<MediaUploadDTO> attachmentsData = new ArrayList<>();
-//
-//		attachments.forEach(attachment -> {
-//			MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment, user);
-//			attachmentsData.add(new MediaUploadDTO(dto.getUrl(), dto.getAttachment().getId()));
-//		});
-//
-//		log.debug("Successfully uploaded all media by user {}", user.getUsername());
-//		return attachmentsData;
-//	}
 
     @Override
     public MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)

@@ -36,29 +36,6 @@ public class ValidationConstant {
         public static final String MUST_NOT_BE_NULL = " must not be null";
 
         public static final String ATTACHMENTS_WRONG_SIZE = "Message can contain only {max} attachments";
-
-//        public static final String PASSWORD_WRONG_LENGTH = "Password must be between {min} and {max} characters long";
-//
-//        public static final String DISPLAY_NAME_WRONG_LENGTH = "Display name must be between {min} and {max} characters long";
-//
-//        public static final String BIO_WRONG_LENGTH = "Bio name must be between {min} and {max} characters long";
-//
-//        public static final String USERNAME_WRONG_LENGTH = "Username must be between {min} and {max} characters long";
-//
-//        public static final String USERNAME_INCORRECT = "Incorrect username format";
-
-//        public static final String CHANNEL_NAME_WRONG_LENGTH = "Channel name must be between {min} and {max} characters long";
-//
-//        public static final String CHANNEL_NAME_INCORRECT = "Incorrect channel format";
-//
-//        public static final String CHANNEL_TYPE_INCORRECT = "Channel type are incorrect";
-//
-//        public static final String MESSAGE_WRONG_LENGTH = "Message length must be between {min} and {max} characters long";
-//
-//
-//
-//        public static final String OTP_NAME_WRONG_LENGTH = "OTP must be {min} characters long";
-//
     }
 
     public static class Regex {

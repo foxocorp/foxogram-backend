@@ -42,7 +42,6 @@ public class StorageServiceImpl implements StorageService {
                             .extraQueryParams(reqParams)
                             .build());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new UploadFailedException();
         }
 
