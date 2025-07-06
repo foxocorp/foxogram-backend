@@ -14,17 +14,17 @@ import lombok.Setter;
 public class ChannelEditDTO {
 
     @Size(min = 1, max = ValidationConstant.Lengths.CHANNEL_NAME,
-            message = ValidationConstant.Messages.CHANNEL_NAME_WRONG_LENGTH)
+            message = "Display name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String displayName;
 
-    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = ValidationConstant.Messages.CHANNEL_NAME_INCORRECT)
+    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = "Name" + ValidationConstant.Messages.INCORRECT)
     @Size(min = 1, max = ValidationConstant.Lengths.CHANNEL_NAME,
-            message = ValidationConstant.Messages.CHANNEL_NAME_WRONG_LENGTH)
+            message = "Name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String name;
 
-    @PositiveOrZero(message = ValidationConstant.Messages.CHANNEL_ICON_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = "Avatar" + ValidationConstant.Messages.MUST_BE_POSITIVE_OR_ZERO)
     private Long avatar;
 
-    @PositiveOrZero(message = ValidationConstant.Messages.CHANNEL_BANNER_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = "Banner" + ValidationConstant.Messages.MUST_BE_POSITIVE_OR_ZERO)
     private Long banner;
 }

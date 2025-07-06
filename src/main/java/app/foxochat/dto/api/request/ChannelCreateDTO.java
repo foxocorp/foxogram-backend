@@ -13,20 +13,20 @@ public class ChannelCreateDTO {
 
     @NotNull(message = "Display name" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = 1, max = ValidationConstant.Lengths.CHANNEL_NAME,
-            message = ValidationConstant.Messages.CHANNEL_NAME_WRONG_LENGTH)
+            message = "Display name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String displayName;
 
     @NotNull(message = "Name" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = ValidationConstant.Messages.CHANNEL_NAME_INCORRECT)
+    @Pattern(regexp = ValidationConstant.Regex.NAME_REGEX, message = "Name" + ValidationConstant.Messages.INCORRECT)
     @Size(min = 1, max = ValidationConstant.Lengths.CHANNEL_NAME,
-            message = ValidationConstant.Messages.CHANNEL_NAME_WRONG_LENGTH)
+            message = "Name" + ValidationConstant.Messages.WRONG_LENGTH)
     private String name;
 
     @NotNull(message = "Type" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
-    @Min(value = 1, message = ValidationConstant.Messages.CHANNEL_TYPE_INCORRECT)
-    @Max(value = 3, message = ValidationConstant.Messages.CHANNEL_TYPE_INCORRECT)
+    @Min(value = 1, message = "Type" + ValidationConstant.Messages.INCORRECT)
+    @Max(value = 3, message = "Type" + ValidationConstant.Messages.INCORRECT)
     private int type;
 
-    @NotNull(message = "Public" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @NotNull(message = "Is public" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     private boolean isPublic;
 }

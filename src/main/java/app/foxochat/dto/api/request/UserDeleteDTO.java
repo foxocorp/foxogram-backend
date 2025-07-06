@@ -14,6 +14,6 @@ public class UserDeleteDTO {
 
     @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,
-            message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
+            message = "Password" + ValidationConstant.Messages.WRONG_LENGTH)
     private String password;
 }
