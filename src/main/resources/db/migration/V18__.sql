@@ -1,2 +1,3 @@
 ALTER TABLE channels
-    DROP COLUMN owner;
+    DROP CONSTRAINT FK_CHANNELS_ON_USER,
+    DROP COLUMN user_id;
