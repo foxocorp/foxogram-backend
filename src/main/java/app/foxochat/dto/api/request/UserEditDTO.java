@@ -3,7 +3,7 @@ package app.foxochat.dto.api.request;
 import app.foxochat.constant.ValidationConstant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,9 +35,9 @@ public class UserEditDTO {
             message = ValidationConstant.Messages.PASSWORD_WRONG_LENGTH)
     private String password;
 
-    @Positive(message = ValidationConstant.Messages.USER_AVATAR_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = ValidationConstant.Messages.USER_AVATAR_MUST_BE_POSITIVE)
     private Long avatar;
 
-    @Positive(message = ValidationConstant.Messages.USER_BANNER_MUST_BE_POSITIVE)
+    @PositiveOrZero(message = ValidationConstant.Messages.USER_BANNER_MUST_BE_POSITIVE)
     private Long banner;
 }

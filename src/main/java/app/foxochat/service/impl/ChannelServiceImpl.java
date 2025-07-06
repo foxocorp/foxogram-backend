@@ -5,8 +5,8 @@ import app.foxochat.constant.GatewayConstant;
 import app.foxochat.constant.MemberConstant;
 import app.foxochat.dto.api.request.ChannelCreateDTO;
 import app.foxochat.dto.api.request.ChannelEditDTO;
-import app.foxochat.dto.api.response.ChannelDTO;
 import app.foxochat.dto.api.response.MemberDTO;
+import app.foxochat.dto.gateway.response.ChannelUpdateDTO;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.UnknownMediaException;
@@ -108,16 +108,16 @@ public class ChannelServiceImpl implements ChannelService {
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
 
-        try {
-            String name = body.getName();
-            String displayName = body.getDisplayName();
-            Long icon = body.getIcon();
+        String name = body.getName();
+        String displayName = body.getDisplayName();
+        Long avatar = body.getAvatar();
 
+        try {
             if (name != null) channel.setName(name);
             if (displayName != null) channel.setDisplayName(body.getDisplayName());
-            if (icon != null) {
-                if (icon == 0) channel.setAvatar(null);
-                else channel.setAvatar(mediaService.getAvatarById(icon));
+            if (avatar != null) {
+                if (avatar == 0) channel.setAvatar(null);
+                else channel.setAvatar(mediaService.getAvatarById(avatar));
             }
 
             channelRepository.save(channel);
@@ -129,7 +129,7 @@ public class ChannelServiceImpl implements ChannelService {
 
         gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
-                new ChannelDTO(channel, null, null, null, null),
+                new ChannelUpdateDTO(channel.getId(), displayName, name, 0, avatar != null ? avatar : 0),
                 GatewayConstant.Event.CHANNEL_UPDATE.getValue());
         log.debug("Channel ({}) edited successfully", channel.getName());
         return channel;
