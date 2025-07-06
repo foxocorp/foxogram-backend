@@ -12,4 +12,6 @@ import lombok.Setter;
 public class AvatarUploadDTO {
 
     private String filename;
+
+    private String tumbhash;
 }

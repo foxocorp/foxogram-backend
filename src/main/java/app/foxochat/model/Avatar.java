@@ -32,6 +32,9 @@ public class Avatar {
     @Column
     private String filename;
 
+    @Column
+    private String tumbhash;
+
     public Avatar() {
     }
 

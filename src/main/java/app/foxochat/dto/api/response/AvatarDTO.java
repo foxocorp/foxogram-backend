@@ -16,9 +16,12 @@ public class AvatarDTO {
 
     public String filename;
 
+    public String tumbhash;
+
     public AvatarDTO(Avatar avatar) {
         this.id = avatar.getId();
         this.uuid = avatar.getUuid();
         this.filename = avatar.getFilename();
+        this.tumbhash = avatar.getTumbhash();
     }
 }
