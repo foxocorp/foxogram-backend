@@ -23,6 +23,8 @@ public class ChannelDTO {
 
 	private AvatarDTO avatar;
 
+	private AvatarDTO banner;
+
 	private int type;
 
 	private long flags;
@@ -48,6 +50,9 @@ public class ChannelDTO {
 		}
 		if (channel.getAvatar() != null) {
 			this.avatar = new AvatarDTO(channel.getAvatar());
+		}
+		if (channel.getBanner() != null) {
+			this.banner = new AvatarDTO(channel.getBanner());
 		}
 		this.type = channel.getType();
 		this.flags = channel.getFlags();

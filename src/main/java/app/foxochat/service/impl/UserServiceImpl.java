@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
             }
             if (banner != null) {
                 if (banner == 0) user.setBanner(null);
-                else user.setBanner(mediaService.getAttachmentById(banner));
+                else user.setBanner(mediaService.getAvatarById(banner));
             }
 
             gatewayService.sendMessageToSpecificSessions(user.getContacts().stream()

@@ -17,7 +17,7 @@ public class UserDTO {
 
     private AvatarDTO avatar;
 
-    private AttachmentDTO banner;
+    private AvatarDTO banner;
 
     private String displayName;
 
@@ -54,7 +54,7 @@ public class UserDTO {
             this.avatar = new AvatarDTO(user.getAvatar());
         }
         if (user.getBanner() != null) {
-            this.banner = new AttachmentDTO(user.getBanner());
+            this.banner = new AvatarDTO(user.getBanner());
         }
         this.displayName = user.getDisplayName();
         this.username = user.getUsername();

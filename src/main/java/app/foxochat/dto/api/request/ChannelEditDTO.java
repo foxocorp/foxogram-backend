@@ -24,4 +24,7 @@ public class ChannelEditDTO {
 
     @PositiveOrZero(message = ValidationConstant.Messages.CHANNEL_ICON_MUST_BE_POSITIVE)
     private Long avatar;
+
+    @PositiveOrZero(message = ValidationConstant.Messages.CHANNEL_BANNER_MUST_BE_POSITIVE)
+    private Long banner;
 }

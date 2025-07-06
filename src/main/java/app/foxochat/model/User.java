@@ -35,7 +35,7 @@ public class User {
     public Avatar avatar;
     @JoinColumn(name = "banner_id")
     @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    public Attachment banner;
+    public Avatar banner;
     @Column
     public long flags;
     @Column

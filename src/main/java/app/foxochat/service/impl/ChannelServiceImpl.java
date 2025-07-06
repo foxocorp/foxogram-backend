@@ -111,6 +111,7 @@ public class ChannelServiceImpl implements ChannelService {
         String name = body.getName();
         String displayName = body.getDisplayName();
         Long avatar = body.getAvatar();
+        Long banner = body.getBanner();
 
         try {
             if (name != null) channel.setName(name);
@@ -118,6 +119,10 @@ public class ChannelServiceImpl implements ChannelService {
             if (avatar != null) {
                 if (avatar == 0) channel.setAvatar(null);
                 else channel.setAvatar(mediaService.getAvatarById(avatar));
+            }
+            if (banner != null) {
+                if (banner == 0) channel.setBanner(null);
+                else channel.setBanner(mediaService.getAvatarById(banner));
             }
 
             channelRepository.save(channel);
@@ -153,7 +158,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Member addMember(Channel channel, User user) throws Exception {
-        // check if member not exist in channel
         if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).isPresent())
             throw new MemberAlreadyInChannelException();
 
