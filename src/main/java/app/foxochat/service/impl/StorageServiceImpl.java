@@ -1,6 +1,7 @@
 package app.foxochat.service.impl;
 
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
+import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.service.StorageService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioAsyncClient;
@@ -24,7 +25,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public MediaPresignedURLDTO getPresignedUrl(String bucketName) {
+    public MediaPresignedURLDTO getPresignedUrl(String bucketName) throws UploadFailedException {
         Map<String, String> reqParams = new HashMap<>();
         reqParams.put("response-content-type", "application/json");
 
@@ -41,7 +42,8 @@ public class StorageServiceImpl implements StorageService {
                             .extraQueryParams(reqParams)
                             .build());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new UploadFailedException();
         }
 
         log.debug("Successfully get presigned url to bucket {} with uuid {}", bucketName, uuid);

@@ -40,11 +40,12 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    public MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags)
-            throws UploadFailedException {
-        if (media == AttachmentUploadDTO.class) {
+    public MediaPresignedURLDTO getPresignedURLAndSave(AttachmentUploadDTO attachment, AvatarUploadDTO avatar,
+                                                       User user,
+                                                       Channel channel,
+                                                       long flags) throws UploadFailedException {
+        if (attachment != null) {
             try {
-                AttachmentUploadDTO attachment = (AttachmentUploadDTO) media.getDeclaredConstructor().newInstance();
                 MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
                 Attachment obj = attachmentRepository.save(new Attachment(user,
                         dto.getUuid(),
@@ -57,9 +58,8 @@ public class MediaServiceImpl implements MediaService {
             } catch (Exception e) {
                 throw new UploadFailedException();
             }
-        } else if (media == AvatarUploadDTO.class) {
+        } else if (avatar != null) {
             try {
-                AvatarUploadDTO avatar = (AvatarUploadDTO) media.getDeclaredConstructor().newInstance();
                 MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.AVATARS_BUCKET);
                 boolean isUser = false;
                 boolean isChannel = false;
@@ -75,6 +75,7 @@ public class MediaServiceImpl implements MediaService {
                         isChannel));
                 return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new UploadFailedException();
             }
         } else throw new UploadFailedException();
@@ -98,7 +99,7 @@ public class MediaServiceImpl implements MediaService {
             throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException {
         if (avatar == null) throw new MediaCannotBeEmptyException();
 
-        MediaPresignedURLDTO dto = getPresignedURLAndSave(avatar.getClass(), user, channel, 0);
+        MediaPresignedURLDTO dto = getPresignedURLAndSave(null, avatar, user, channel, 0);
 
         Avatar media;
         try {
@@ -124,7 +125,7 @@ public class MediaServiceImpl implements MediaService {
 
         attachments.forEach(attachment -> {
             try {
-                MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment.getClass(),
+                MediaPresignedURLDTO dto = getPresignedURLAndSave(attachment, null,
                         user,
                         null,
                         attachment.isSpoiler() ? MediaConstant.Flags.SPOILER.getBit() : 0);

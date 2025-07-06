@@ -16,8 +16,10 @@ import java.util.List;
 
 public interface MediaService {
 
-    MediaPresignedURLDTO getPresignedURLAndSave(Class<?> media, User user, Channel channel, long flags)
-            throws UploadFailedException;
+    MediaPresignedURLDTO getPresignedURLAndSave(AttachmentUploadDTO attachment, AvatarUploadDTO avatar,
+                                                User user,
+                                                Channel channel,
+                                                long flags) throws UploadFailedException;
 
     MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)
             throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException;
