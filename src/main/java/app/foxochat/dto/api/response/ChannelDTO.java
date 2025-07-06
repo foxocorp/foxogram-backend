@@ -53,14 +53,13 @@ public class ChannelDTO {
 		this.flags = channel.getFlags();
 		if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
 			this.memberCount = channel.getMembers().size();
+			this.owner = new UserDTO(channel.getMembers().stream()
+					.filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
+					.findFirst().get().getUser(), null, null, false, false, false);
 		}
 		if (lastMessage != null) {
 			this.lastMessage = new MessageDTO(lastMessage, false);
 		}
-
-		this.owner = new UserDTO(channel.getMembers().stream()
-				.filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-				.findFirst().get().getUser(), null, null, false, false, false);
 		this.createdAt = channel.getCreatedAt();
 	}
 }
