@@ -248,7 +248,7 @@ public class ChannelController {
 
     @Operation(summary = "Create message")
     @PostMapping("/{channelId}/messages")
-    public MessageDTO createMessage(
+    public OkDTO createMessage(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
@@ -258,9 +258,9 @@ public class ChannelController {
             throw new MessageCannotBeEmpty();
         }
 
-        Message message = messageService.add(channel, user, body);
+        messageService.add(channel, user, body);
 
-        return new MessageDTO(message, true);
+        return new OkDTO(true);
     }
 
     @Operation(summary = "Add attachments")
