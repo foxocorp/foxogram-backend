@@ -95,10 +95,10 @@ public class MediaServiceImpl implements MediaService {
             throw new UploadFailedException();
         }
 
-        if (user != null && media.getUser().getId() != user.getId() || channel != null && media.getChannel()
-                .getId() != channel.getId()) {
-            throw new UnknownMediaException();
-        }
+//        if (user != null && media.getUser().getId() != user.getId() || channel != null && media.getChannel()
+//                .getId() != channel.getId()) {
+//            throw new UnknownMediaException();
+//        }
 
         return dto;
     }
@@ -124,9 +124,9 @@ public class MediaServiceImpl implements MediaService {
                     throw new UploadFailedException();
                 }
 
-                if (user != null && media.getUser().getId() != user.getId()) {
-                    throw new UnknownMediaException();
-                }
+//                if (user != null && media.getUser().getId() != user.getId()) {
+//                    throw new UnknownMediaException();
+//                }
 
                 MediaUploadDTO urlDTO = new MediaUploadDTO(dto.getUrl(), media.getId());
 
