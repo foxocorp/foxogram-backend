@@ -144,8 +144,8 @@ public class MediaServiceImpl implements MediaService {
     public Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException {
         Avatar avatar = avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
 
-        if (avatar.getUser().getId() != user.getId()) throw new UnknownMediaException();
-        else if (avatar.getChannel().getId() != channel.getId()) throw new UnknownMediaException();
+//        if (avatar.getUser().getId() != user.getId()) throw new UnknownMediaException();
+//        else if (avatar.getChannel().getId() != channel.getId()) throw new UnknownMediaException();
 
         log.debug("Successfully got avatar for user {}, or channel {}", user.getUsername(), channel.getName());
         return avatar;
@@ -159,7 +159,7 @@ public class MediaServiceImpl implements MediaService {
             for (Long id : attachmentsIds) {
                 Attachment attachment = attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
 
-                if (attachment.getUser().getId() != user.getId()) throw new UnknownMediaException();
+//                if (attachment.getUser().getId() != user.getId()) throw new UnknownMediaException();
 
                 attachments.add(attachment);
             }
