@@ -54,6 +54,7 @@ public class MediaServiceImpl implements MediaService {
                         attachment.getContentType(),
                         flags));
 
+                attachmentRepository.save(obj);
                 log.debug("Successfully got presigned url and saved attachment {}", dto.getUuid());
                 return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
             } catch (Exception e) {
@@ -68,12 +69,14 @@ public class MediaServiceImpl implements MediaService {
                 if (user != null) isUser = true;
                 if (channel != null) isChannel = true;
 
-                Avatar obj = avatarRepository.save(new Avatar(user,
+                Avatar obj = new Avatar(user,
                         channel,
                         dto.getUuid(),
                         avatar.getFilename(),
                         isUser,
-                        isChannel));
+                        isChannel);
+
+                avatarRepository.save(obj);
                 return new MediaPresignedURLDTO(dto.getUrl(), dto.getUuid(), obj.getClass());
             } catch (Exception e) {
                 throw new UploadFailedException();
