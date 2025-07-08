@@ -18,6 +18,10 @@ public class UserShortDTO {
 
     private String username;
 
+    private int status;
+
+    private long statusUpdatedAt;
+
     @SuppressWarnings("unused")
     public UserShortDTO() {
     }
@@ -29,5 +33,7 @@ public class UserShortDTO {
         }
         this.displayName = user.getDisplayName();
         this.username = user.getUsername();
+        this.status = user.getStatus();
+        this.statusUpdatedAt = user.getStatusUpdatedAt();
     }
 }
