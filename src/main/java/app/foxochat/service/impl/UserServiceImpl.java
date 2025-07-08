@@ -20,6 +20,7 @@ import app.foxochat.service.*;
 import app.foxochat.util.OTPGenerator;
 import app.foxochat.util.PasswordHasher;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -60,16 +61,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable("users")
     public Optional<User> getById(long id) {
         return userRepository.findById(id);
     }
 
     @Override
+    @Cacheable("users")
     public Optional<User> getByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
+    @Cacheable("users")
     public Optional<User> getByEmail(String email) {
         return userRepository.findByEmail(email);
     }

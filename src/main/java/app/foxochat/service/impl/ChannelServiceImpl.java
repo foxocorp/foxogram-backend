@@ -21,6 +21,7 @@ import app.foxochat.model.User;
 import app.foxochat.repository.ChannelRepository;
 import app.foxochat.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -89,11 +90,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    @Cacheable("channels")
     public Channel getById(long id) throws ChannelNotFoundException {
         return channelRepository.findById(id).orElseThrow(ChannelNotFoundException::new);
     }
 
     @Override
+    @Cacheable("channels")
     public Channel getByName(String name) throws ChannelNotFoundException {
         Channel channel = channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
         if (channel.hasFlag(ChannelConstant.Flags.PUBLIC)) return channel;
