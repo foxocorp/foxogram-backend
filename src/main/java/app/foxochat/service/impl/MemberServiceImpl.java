@@ -4,6 +4,7 @@ import app.foxochat.model.Channel;
 import app.foxochat.model.Member;
 import app.foxochat.repository.MemberRepository;
 import app.foxochat.service.MemberService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Cacheable("member")
     public List<Channel> getChannelsByUserId(long userId) {
         return memberRepository.findAllByUserId(userId)
                 .stream()
@@ -28,11 +30,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Cacheable("member")
     public List<Member> getAllByChannelId(long channelId) {
         return memberRepository.findAllByChannelId(channelId);
     }
 
     @Override
+    @Cacheable("member")
     public Optional<Member> getByChannelIdAndUserId(long channelId, long userId) {
         return memberRepository.findByChannelIdAndUserId(channelId, userId);
     }
