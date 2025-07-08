@@ -17,7 +17,6 @@ services:
       traefik.enable: true
       traefik.http.routers.foxochat-backend.rule: Host(`api.foxochat.app`)
       traefik.http.services.foxochat-backend.loadbalancer.server.port: 8080
-      traefik.http.routers.foxochat-backend.middlewares: ratelimit@file
 
   foxochat-backend-dev:
     <<: *common-settings
@@ -27,7 +26,6 @@ services:
       traefik.enable: true
       traefik.http.routers.foxochat-backend-dev.rule: Host(`api-dev.foxochat.app`)
       traefik.http.services.foxochat-backend-dev.loadbalancer.server.port: 8080
-      traefik.http.routers.foxochat-backend-dev.middlewares: ratelimit@file
 
 networks:
   db_network:
