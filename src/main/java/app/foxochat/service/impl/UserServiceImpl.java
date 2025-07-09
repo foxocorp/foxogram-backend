@@ -20,7 +20,9 @@ import app.foxochat.service.*;
 import app.foxochat.util.OTPGenerator;
 import app.foxochat.util.PasswordHasher;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -61,24 +63,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable("users")
+    @Caching(put = {
+            @CachePut(value = "usersById", key = "#id")
+    })
     public Optional<User> getById(long id) {
         return userRepository.findById(id);
     }
 
     @Override
-    @Cacheable("users")
+    @Caching(put = {
+            @CachePut(value = "usersByUsername", key = "#username")
+    })
     public Optional<User> getByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
-    @Cacheable("users")
+    @Caching(put = {
+            @CachePut(value = "usersByEmail", key = "#email"),
+    })
     public Optional<User> getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "usersByUsername", key = "#user.username"),
+            @CachePut(value = "usersById", key = "#user.id"),
+            @CachePut(value = "usersByEmail", key = "#user.email")
+    })
     public void save(User user) {
         userRepository.save(user);
     }
@@ -91,6 +104,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "usersByUsername", key = "#username"),
+            @CachePut(value = "usersByEmail", key = "#email")
+    })
     public User add(String username, String email, String password) throws UserCredentialsDuplicateException {
         long flags = UserConstant.Flags.AWAITING_CONFIRMATION.getBit();
         if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
@@ -109,6 +126,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "usersByUsername", allEntries = true),
+            @CacheEvict(value = "usersByEmail", allEntries = true)
+    })
     public User update(User user, UserEditDTO body) throws Exception {
         String username = body.getUsername();
         String displayName = body.getDisplayName();
@@ -160,6 +181,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "usersById", allEntries = true),
+            @CacheEvict(value = "usersByUsername", allEntries = true),
+            @CacheEvict(value = "usersByEmail", allEntries = true)
+    })
     public void confirmDelete(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
         OTP OTP = otpService.validate(pathCode);
 

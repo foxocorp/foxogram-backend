@@ -21,7 +21,9 @@ import app.foxochat.model.User;
 import app.foxochat.repository.ChannelRepository;
 import app.foxochat.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "channelsByUserId", key = "#user.id"),
+            @CachePut(value = "channelsByName", key = "#body.name")
+    })
     public Channel add(User user, long partnerId, ChannelCreateDTO body)
             throws ChannelAlreadyExistException, UserNotFoundException {
         Channel channel;
@@ -90,13 +96,17 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    @Cacheable("channels")
+    @Caching(put = {
+            @CachePut(value = "channelsById", key = "#id")
+    })
     public Channel getById(long id) throws ChannelNotFoundException {
         return channelRepository.findById(id).orElseThrow(ChannelNotFoundException::new);
     }
 
     @Override
-    @Cacheable("channels")
+    @Caching(put = {
+            @CachePut(value = "channelsByName", key = "#name")
+    })
     public Channel getByName(String name) throws ChannelNotFoundException {
         Channel channel = channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
         if (channel.hasFlag(ChannelConstant.Flags.PUBLIC)) return channel;
@@ -104,6 +114,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "channelsById", allEntries = true),
+            @CacheEvict(value = "channelsByName", allEntries = true)
+    })
     public Channel update(Member member, Channel channel, ChannelEditDTO body) throws Exception {
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
                 MemberConstant.Permissions.ADMIN,

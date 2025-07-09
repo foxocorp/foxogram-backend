@@ -18,7 +18,8 @@ import app.foxochat.repository.AvatarRepository;
 import app.foxochat.service.MediaService;
 import app.foxochat.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -145,7 +146,10 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    @Cacheable("media")
+    @Caching(put = {
+            @CachePut(value = "avatarsByUserId", key = "#user.id"),
+            @CachePut(value = "avatarsByChannelId", key = "#channel.id")
+    })
     public Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException {
         Avatar avatar = avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
 
@@ -157,7 +161,9 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    @Cacheable("media")
+    @Caching(put = {
+            @CachePut(value = "attachmentsByUserId", key = "#user.id"),
+    })
     public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException {
         List<Attachment> attachments = new ArrayList<>();
 
@@ -176,13 +182,17 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    @Cacheable("media")
+    @Caching(put = {
+            @CachePut(value = "avatarsById", key = "#id"),
+    })
     public Avatar getAvatarById(long id) throws UnknownMediaException {
         return avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
     }
 
     @Override
-    @Cacheable("media")
+    @Caching(put = {
+            @CachePut(value = "attachmentsById", key = "#id"),
+    })
     public Attachment getAttachmentById(long id) throws UnknownMediaException {
         return attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
     }

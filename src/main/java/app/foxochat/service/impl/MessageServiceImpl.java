@@ -15,7 +15,9 @@ import app.foxochat.model.*;
 import app.foxochat.repository.MessageRepository;
 import app.foxochat.service.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,7 +49,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    @Cacheable("messages")
+    @Caching(put = {
+            @CachePut(value = "messagesByChannelId", key = "#channel.id")
+    })
     public List<Message> getAllByChannel(long before, int limit, Channel channel) {
         List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit);
 
@@ -57,7 +61,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    @Cacheable("messages")
+    @Caching(put = {
+            @CachePut(value = "messagesByChannelId", key = "#channel.id"),
+            @CachePut(value = "messagesById", key = "#id")
+    })
     public Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException {
         Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
 
@@ -67,7 +74,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    @Cacheable("messages")
+    @Caching(put = {
+            @CachePut(value = "messagesByChannelId", key = "#channel.id"),
+            @CachePut(value = "messagesByUserId", key = "#user.id")
+    })
     public Message add(Channel channel, User user, MessageCreateDTO body) throws Exception {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberInChannelNotFoundException::new);
@@ -127,6 +137,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "messagesByChannelId", allEntries = true),
+            @CacheEvict(value = "messagesById", allEntries = true),
+            @CacheEvict(value = "messagesByUserId", allEntries = true)
+    })
     public Message update(long id, Channel channel, Member member, MessageCreateDTO body) throws Exception {
         Message message = messageRepository.findByChannelAndId(channel, id).orElseThrow(MessageNotFoundException::new);
         String content = body.getContent();
@@ -146,6 +161,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "messagesByChannelId", key = "#channel.id"),
+    })
     public Message getLastByChannel(Channel channel) {
         return messageRepository.getLastMessageByChannel(channel).orElse(null);
     }
