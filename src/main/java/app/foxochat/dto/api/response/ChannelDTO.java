@@ -31,12 +31,12 @@ public class ChannelDTO {
 
     private int memberCount;
 
-    private UserDTO owner;
+    private long ownerId;
 
     private long createdAt;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private MessageDTO lastMessage;
+    private long lastMessage;
 
     public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar) {
         this.id = channel.getId();
@@ -58,12 +58,12 @@ public class ChannelDTO {
         this.flags = channel.getFlags();
         if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
             this.memberCount = channel.getMembers().size();
-            this.owner = new UserDTO(channel.getMembers().stream()
+            this.ownerId = channel.getMembers().stream()
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                    .findFirst().get().getUser(), null, null, false, false, false);
+                    .findFirst().get().getUser().getId();
         }
         if (lastMessage != null) {
-            this.lastMessage = new MessageDTO(lastMessage, false);
+            this.lastMessage = lastMessage.getId();
         }
         this.createdAt = channel.getCreatedAt();
     }

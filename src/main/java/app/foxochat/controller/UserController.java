@@ -3,10 +3,7 @@ package app.foxochat.controller;
 import app.foxochat.constant.APIConstant;
 import app.foxochat.constant.AttributeConstant;
 import app.foxochat.dto.api.request.*;
-import app.foxochat.dto.api.response.ChannelDTO;
-import app.foxochat.dto.api.response.MediaUploadDTO;
-import app.foxochat.dto.api.response.OkDTO;
-import app.foxochat.dto.api.response.UserDTO;
+import app.foxochat.dto.api.response.*;
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
 import app.foxochat.exception.media.UnknownMediaException;
@@ -103,13 +100,13 @@ public class UserController {
 
     @Operation(summary = "Edit user")
     @PatchMapping("/@me")
-    public UserDTO edit(
+    public UserShortDTO edit(
             @RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
             @RequestBody UserEditDTO body
     ) throws Exception {
         authenticatedUser = userService.update(authenticatedUser, body);
 
-        return new UserDTO(authenticatedUser, null, null, true, true, false);
+        return new UserShortDTO(authenticatedUser);
     }
 
     @Operation(summary = "Upload avatar")
@@ -177,11 +174,11 @@ public class UserController {
 
     @Operation(summary = "Add contact")
     @PostMapping("/{id}")
-    public UserDTO addContact(
+    public UserShortDTO addContact(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable long id
     ) throws UserContactAlreadyExistException {
-        return new UserDTO(userService.addContact(user, id), null, null, false, false, false);
+        return new UserShortDTO(userService.addContact(user, id));
     }
 
     @Operation(summary = "Delete contact")

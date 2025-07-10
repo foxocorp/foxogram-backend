@@ -120,7 +120,7 @@ public class ChannelController {
 
     @Operation(summary = "Edit channel")
     @PatchMapping("/{channelId}")
-    public ChannelDTO edit(
+    public ChannelShortDTO edit(
             @RequestAttribute(value = AttributeConstant.MEMBER) Member member,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
@@ -128,7 +128,7 @@ public class ChannelController {
     ) throws Exception {
         channel = channelService.update(member, channel, body);
 
-        return new ChannelDTO(channel, null, null, null, null);
+        return new ChannelShortDTO(channel);
     }
 
     @Operation(summary = "Upload icon")
@@ -164,14 +164,14 @@ public class ChannelController {
 
     @Operation(summary = "Join channel")
     @PutMapping("/{channelId}/members/@me")
-    public MemberDTO addMember(
+    public OkDTO addMember(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId
     ) throws Exception {
-        Member member = channelService.addMember(channel, user);
+        channelService.addMember(channel, user);
 
-        return new MemberDTO(member, true);
+        return new OkDTO(true);
     }
 
     @Operation(summary = "Leave channel")

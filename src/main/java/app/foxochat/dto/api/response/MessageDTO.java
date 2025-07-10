@@ -1,6 +1,7 @@
 package app.foxochat.dto.api.response;
 
 import app.foxochat.model.Message;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +19,10 @@ public class MessageDTO {
 
     private String content;
 
-    private MemberDTO author;
+    private long authorId;
 
-    private ChannelDTO channel;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private long channelId;
 
     private List<AttachmentDTO> attachments;
 
@@ -29,8 +31,8 @@ public class MessageDTO {
     public MessageDTO(Message message, boolean includeChannel) {
         this.id = message.getId();
         this.content = message.getContent();
-        this.author = new MemberDTO(message.getAuthor(), false);
-        if (includeChannel) this.channel = new ChannelDTO(message.getChannel(), null, content, null, null);
+        this.authorId = message.getAuthor().getId();
+        if (includeChannel) this.channelId = message.getChannel().getId();
         if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
                 .map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
                 .collect(Collectors.toList());
