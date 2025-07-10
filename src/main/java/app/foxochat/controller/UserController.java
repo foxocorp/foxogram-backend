@@ -6,12 +6,13 @@ import app.foxochat.dto.api.request.*;
 import app.foxochat.dto.api.response.*;
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.MediaNotFoundException;
 import app.foxochat.exception.media.UploadFailedException;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.otp.OTPExpiredException;
 import app.foxochat.exception.otp.OTPsInvalidException;
-import app.foxochat.exception.user.UserContactAlreadyExistException;
-import app.foxochat.exception.user.UserContactNotFoundException;
+import app.foxochat.exception.user.ContactAlreadyExistException;
+import app.foxochat.exception.user.ContactNotFoundException;
 import app.foxochat.exception.user.UserCredentialsIsInvalidException;
 import app.foxochat.exception.user.UserNotFoundException;
 import app.foxochat.model.Avatar;
@@ -93,7 +94,11 @@ public class UserController {
                 .stream()
                 .map(channel -> {
                     Message lastMessage = messageService.getLastByChannel(channel);
-                    return new ChannelDTO(channel, lastMessage, null, null, null);
+                    try {
+                        return new ChannelDTO(channel, lastMessage, null, null, null);
+                    } catch (MemberNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 })
                 .collect(Collectors.toList());
     }
@@ -114,7 +119,7 @@ public class UserController {
     public MediaUploadDTO uploadAvatar(
             @RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
             @RequestBody AvatarUploadDTO avatar
-    ) throws UnknownMediaException, MediaCannotBeEmptyException, UploadFailedException {
+    ) throws MediaNotFoundException, MediaCannotBeEmptyException, UploadFailedException {
         MediaPresignedURLDTO data = mediaService.uploadAvatar(authenticatedUser, null, avatar);
 
         Avatar media;
@@ -177,7 +182,7 @@ public class UserController {
     public UserShortDTO addContact(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable long id
-    ) throws UserContactAlreadyExistException {
+    ) throws ContactAlreadyExistException {
         return new UserShortDTO(userService.addContact(user, id));
     }
 
@@ -186,7 +191,7 @@ public class UserController {
     public OkDTO deleteContact(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable long id
-    ) throws UserContactNotFoundException {
+    ) throws ContactNotFoundException {
         userService.deleteContact(user, id);
 
         return new OkDTO(true);

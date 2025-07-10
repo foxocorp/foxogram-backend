@@ -54,7 +54,7 @@ public class TypingStartHandler implements BaseHandler {
 
         List<Long> recipients = channelService.getById(channelId).getMembers().stream().map(Member::getId).toList();
 
-        gatewayService.sendMessageToSpecificSessions(recipients,
+        gatewayService.sendToSpecificSessions(recipients,
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new TypingStartDTO(channelId, userSession.getUserId(), System.currentTimeMillis()),
                 GatewayConstant.Event.TYPING_START.getValue());

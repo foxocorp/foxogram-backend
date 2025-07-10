@@ -13,7 +13,7 @@ public interface MemberService {
 
     Optional<Member> getByChannelIdAndUserId(long channelId, long userId);
 
-    Member add(Member member);
+    void add(Member member);
 
     void delete(Member member);
 }

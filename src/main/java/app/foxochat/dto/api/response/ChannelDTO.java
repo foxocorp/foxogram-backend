@@ -2,6 +2,7 @@ package app.foxochat.dto.api.response;
 
 import app.foxochat.constant.ChannelConstant;
 import app.foxochat.constant.MemberConstant;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.model.Avatar;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Message;
@@ -38,7 +39,8 @@ public class ChannelDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private long lastMessage;
 
-    public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar) {
+    public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar)
+            throws MemberNotFoundException {
         this.id = channel.getId();
         if (channel.getType() == ChannelConstant.Type.DM.getType()) {
             this.displayName = displayName;
@@ -60,7 +62,7 @@ public class ChannelDTO {
             this.memberCount = channel.getMembers().size();
             this.ownerId = channel.getMembers().stream()
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                    .findFirst().get().getUser().getId();
+                    .findFirst().orElseThrow(MemberNotFoundException::new).getUser().getId();
         }
         if (lastMessage != null) {
             this.lastMessage = lastMessage.getId();

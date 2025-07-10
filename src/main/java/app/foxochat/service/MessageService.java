@@ -4,7 +4,7 @@ import app.foxochat.dto.api.request.AttachmentUploadDTO;
 import app.foxochat.dto.api.request.MessageCreateDTO;
 import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.member.MemberInChannelNotFoundException;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.message.MessageNotFoundException;
 import app.foxochat.model.Channel;
@@ -20,10 +20,10 @@ public interface MessageService {
 
     Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException;
 
-    Message add(Channel channel, User user, MessageCreateDTO body) throws Exception;
+    void add(Channel channel, User user, MessageCreateDTO body) throws Exception;
 
     List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException;
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException;
 
     void delete(long id, Member member, Channel channel) throws Exception;
 

@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class UserContactNotFoundException extends BaseException {
+public class ContactNotFoundException extends BaseException {
 
-    public UserContactNotFoundException() {
+    public ContactNotFoundException() {
         super(
-                ExceptionConstant.Messages.USER_CONTACT_NOT_FOUND.getValue(),
-                UserContactNotFoundException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.Messages.CONTACT_NOT_FOUND.getValue(),
+                ContactNotFoundException.class.getAnnotation(ResponseStatus.class).value(),
                 ExceptionConstant.User.CONTACT_NOT_FOUND.getValue()
         );
     }

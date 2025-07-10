@@ -9,9 +9,9 @@ import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.MediaNotFoundException;
 import app.foxochat.exception.media.UploadFailedException;
-import app.foxochat.exception.member.MemberInChannelNotFoundException;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.message.MessageCannotBeEmpty;
 import app.foxochat.exception.message.MessageNotFoundException;
@@ -57,7 +57,7 @@ public class ChannelController {
     public ChannelDTO create(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestBody ChannelCreateDTO body
-    ) throws ChannelAlreadyExistException, UserNotFoundException {
+    ) throws ChannelAlreadyExistException, UserNotFoundException, MemberNotFoundException {
         Channel channel = channelService.add(user, 0, body);
 
         return new ChannelDTO(channel, null, null, null, null);
@@ -68,7 +68,7 @@ public class ChannelController {
     public ChannelDTO createDM(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestBody ChannelCreateDTO body, @PathVariable long partnerId
-    ) throws ChannelAlreadyExistException, UserNotFoundException {
+    ) throws ChannelAlreadyExistException, UserNotFoundException, MemberNotFoundException {
         Channel channel = channelService.add(user, partnerId, body);
 
         return new ChannelDTO(channel, null, null, null, null);
@@ -80,12 +80,12 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId
-    ) {
+    ) throws UserNotFoundException, MemberNotFoundException {
         ChannelDTO dto = new ChannelDTO(channel, null, null, null, null);
 
         if (channel.getType() != ChannelConstant.Type.DM.getType()) {
             User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
-                    .findFirst().get().getUser();
+                    .findFirst().orElseThrow(UserNotFoundException::new).getUser();
             dto = new ChannelDTO(channel,
                     null,
                     partnerUser.getDisplayName(),
@@ -101,7 +101,7 @@ public class ChannelController {
     public ChannelDTO getByName(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable String name
-    ) throws ChannelNotFoundException {
+    ) throws ChannelNotFoundException, MemberNotFoundException {
         Channel channel = channelService.getByName(name);
         ChannelDTO dto = new ChannelDTO(channel, null, name, null, null);
 
@@ -137,7 +137,7 @@ public class ChannelController {
             @PathVariable String channelId,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @RequestBody AvatarUploadDTO avatar
-    ) throws UnknownMediaException, MediaCannotBeEmptyException, UploadFailedException {
+    ) throws MediaNotFoundException, MediaCannotBeEmptyException, UploadFailedException {
         MediaPresignedURLDTO data = mediaService.uploadAvatar(null, channel, avatar);
 
         Avatar media;
@@ -193,13 +193,13 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @PathVariable String memberId
-    ) throws MemberInChannelNotFoundException {
+    ) throws MemberNotFoundException {
         if (Objects.equals(memberId, "@me")) {
             memberId = String.valueOf(user.getId());
         }
 
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId))
-                .orElseThrow(MemberInChannelNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         return new MemberDTO(member, true);
     }
@@ -271,7 +271,7 @@ public class ChannelController {
             @PathVariable String channelId,
             @RequestBody List<AttachmentUploadDTO> attachments
     )
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException {
         if (attachments == null || attachments.isEmpty()) {
             throw new MediaCannotBeEmptyException();
         }

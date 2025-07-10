@@ -10,6 +10,7 @@ public class MediaConstant {
 
         private final long bit;
 
+        @SuppressWarnings("SameParameterValue")
         Flags(long bit) {
             this.bit = bit;
         }

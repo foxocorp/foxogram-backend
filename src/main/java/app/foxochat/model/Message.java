@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @Table(name = "messages", indexes = {
+        @Index(name = "idx_message_id", columnList = "id", unique = true),
         @Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
 })
 public class Message {
@@ -49,6 +50,7 @@ public class Message {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isAuthor(Member member) {
         return author.getUser().getUsername().equals(member.getUser().getUsername());
     }

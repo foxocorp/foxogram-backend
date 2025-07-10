@@ -9,10 +9,10 @@ import app.foxochat.dto.api.response.MemberDTO;
 import app.foxochat.dto.gateway.response.ChannelUpdateDTO;
 import app.foxochat.exception.channel.ChannelAlreadyExistException;
 import app.foxochat.exception.channel.ChannelNotFoundException;
-import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.MediaNotFoundException;
 import app.foxochat.exception.media.UploadFailedException;
-import app.foxochat.exception.member.MemberAlreadyInChannelException;
-import app.foxochat.exception.member.MemberInChannelNotFoundException;
+import app.foxochat.exception.member.MemberAlreadyExistException;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.user.UserNotFoundException;
 import app.foxochat.model.Channel;
@@ -146,11 +146,11 @@ public class ChannelServiceImpl implements ChannelService {
             channelRepository.save(channel);
         } catch (DataIntegrityViolationException e) {
             throw new ChannelAlreadyExistException();
-        } catch (UnknownMediaException e) {
+        } catch (MediaNotFoundException e) {
             throw new UploadFailedException();
         }
 
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new ChannelUpdateDTO(channel.getId(), displayName, name, 0, avatar != null ? avatar : 0),
                 GatewayConstant.Event.CHANNEL_UPDATE.getValue());
@@ -161,13 +161,13 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public void delete(Channel channel, User user) throws Exception {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
-                .orElseThrow(MemberInChannelNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER, MemberConstant.Permissions.ADMIN))
             throw new MissingPermissionsException();
 
         channelRepository.delete(channel);
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 Map.of("id", channel.getId()),
                 GatewayConstant.Event.CHANNEL_DELETE.getValue());
@@ -175,31 +175,31 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Member addMember(Channel channel, User user) throws Exception {
+    public void addMember(Channel channel, User user) throws Exception {
         if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).isPresent())
-            throw new MemberAlreadyInChannelException();
+            throw new MemberAlreadyExistException();
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
 
         Member member = new Member(user, channel, 0);
         member.setPermissions(MemberConstant.Permissions.ATTACH_FILES, MemberConstant.Permissions.SEND_MESSAGES);
         log.debug("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new MemberDTO(member, true),
                 GatewayConstant.Event.MEMBER_ADD.getValue());
-        return memberService.add(member);
+        memberService.add(member);
     }
 
     @Override
     public void removeMember(Channel channel, User user) throws Exception {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
-                .orElseThrow(MemberInChannelNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
 
         memberService.delete(member);
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new MemberDTO(member, true),
                 GatewayConstant.Event.MEMBER_REMOVE.getValue());

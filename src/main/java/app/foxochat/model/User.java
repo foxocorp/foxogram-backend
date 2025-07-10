@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @Table(name = "users", indexes = {
-        @Index(name = "idx_user_id", columnList = "id"),
+        @Index(name = "idx_user_id", columnList = "id", unique = true),
         @Index(name = "idx_user_username", columnList = "username", unique = true),
         @Index(name = "idx_user_email", columnList = "email", unique = true)
 })

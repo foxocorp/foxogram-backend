@@ -9,6 +9,8 @@ import app.foxochat.service.OTPService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Slf4j
 @Service
 public class OTPServiceImpl implements OTPService {
@@ -20,6 +22,16 @@ public class OTPServiceImpl implements OTPService {
     public OTPServiceImpl(OTPRepository otpRepository, APIConfig apiConfig) {
         this.apiConfig = apiConfig;
         this.otpRepository = otpRepository;
+    }
+
+    @Override
+    public String generate() {
+        Random random = new Random();
+        int min = 1;
+        int max = 999999;
+
+        int generatedNumber = random.nextInt((max - min) + 1) + min;
+        return String.format("%06d", generatedNumber);
     }
 
     @Override

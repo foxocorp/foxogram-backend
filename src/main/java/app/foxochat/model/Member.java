@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "members", indexes = {
+        @Index(name = "idx_member_id", columnList = "id", unique = true),
         @Index(name = "idx_member_user_channel", columnList = "user_id, channel_id")
 })
 public class Member {
@@ -77,6 +78,7 @@ public class Member {
         throw new MissingPermissionsException();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasAnyPermission(MemberConstant.Permissions... permissions) {
         for (MemberConstant.Permissions permission : permissions) {
             if ((this.permissions & permission.getBit()) != 0) {

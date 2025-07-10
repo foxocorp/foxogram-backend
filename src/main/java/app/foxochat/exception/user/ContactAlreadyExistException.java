@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class UserContactAlreadyExistException extends BaseException {
+public class ContactAlreadyExistException extends BaseException {
 
-    public UserContactAlreadyExistException() {
+    public ContactAlreadyExistException() {
         super(
-                ExceptionConstant.Messages.USER_CONTACT_ALREADY_EXIST.getValue(),
-                UserContactAlreadyExistException.class.getAnnotation(ResponseStatus.class).value(),
+                ExceptionConstant.Messages.CONTACT_ALREADY_EXIST.getValue(),
+                ContactAlreadyExistException.class.getAnnotation(ResponseStatus.class).value(),
                 ExceptionConstant.User.CONTACT_ALREADY_EXIST.getValue()
         );
     }

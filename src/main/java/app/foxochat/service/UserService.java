@@ -4,8 +4,8 @@ import app.foxochat.constant.UserConstant;
 import app.foxochat.dto.api.request.UserEditDTO;
 import app.foxochat.exception.otp.OTPExpiredException;
 import app.foxochat.exception.otp.OTPsInvalidException;
-import app.foxochat.exception.user.UserContactAlreadyExistException;
-import app.foxochat.exception.user.UserContactNotFoundException;
+import app.foxochat.exception.user.ContactAlreadyExistException;
+import app.foxochat.exception.user.ContactNotFoundException;
 import app.foxochat.exception.user.UserCredentialsDuplicateException;
 import app.foxochat.exception.user.UserCredentialsIsInvalidException;
 import app.foxochat.model.User;
@@ -32,9 +32,9 @@ public interface UserService {
 
     void setStatus(long userId, int status) throws Exception;
 
-    User addContact(User user, long id) throws UserContactAlreadyExistException;
+    User addContact(User user, long id) throws ContactAlreadyExistException;
 
-    void deleteContact(User user, long id) throws UserContactNotFoundException;
+    void deleteContact(User user, long id) throws ContactNotFoundException;
 
     void save(User user);
 }

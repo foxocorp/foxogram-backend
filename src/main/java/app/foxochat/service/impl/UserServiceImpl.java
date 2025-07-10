@@ -6,7 +6,7 @@ import app.foxochat.constant.GatewayConstant;
 import app.foxochat.constant.OTPConstant;
 import app.foxochat.constant.UserConstant;
 import app.foxochat.dto.api.request.UserEditDTO;
-import app.foxochat.dto.api.response.UserDTO;
+import app.foxochat.dto.api.response.UserShortDTO;
 import app.foxochat.dto.gateway.response.UserUpdateDTO;
 import app.foxochat.exception.otp.OTPExpiredException;
 import app.foxochat.exception.otp.OTPsInvalidException;
@@ -17,8 +17,6 @@ import app.foxochat.model.User;
 import app.foxochat.model.UserContact;
 import app.foxochat.repository.UserRepository;
 import app.foxochat.service.*;
-import app.foxochat.util.OTPGenerator;
-import app.foxochat.util.PasswordHasher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -29,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -50,9 +49,11 @@ public class UserServiceImpl implements UserService {
 
     private final MemberService memberService;
 
+    private final PasswordService passwordService;
+
     public UserServiceImpl(UserRepository userRepository, EmailService emailService, OTPService otpService,
                            MediaService mediaService, APIConfig apiConfig, @Lazy GatewayService gatewayService,
-                           MemberService memberService) {
+                           MemberService memberService, PasswordService passwordService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.otpService = otpService;
@@ -60,6 +61,7 @@ public class UserServiceImpl implements UserService {
         this.apiConfig = apiConfig;
         this.gatewayService = gatewayService;
         this.memberService = memberService;
+        this.passwordService = passwordService;
     }
 
     @Override
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
         if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
         int type = UserConstant.Type.USER.getType();
 
-        User user = new User(username, email, PasswordHasher.hashPassword(password), flags, type);
+        User user = new User(username, email, passwordService.hash(password), flags, type);
 
         try {
             userRepository.save(user);
@@ -150,7 +152,7 @@ public class UserServiceImpl implements UserService {
                 else user.setBanner(mediaService.getAvatarById(banner));
             }
 
-            gatewayService.sendMessageToSpecificSessions(user.getContacts().stream()
+            gatewayService.sendToSpecificSessions(user.getContacts().stream()
                             .map(userContact -> userContact.getContact().getId()).toList(),
                     GatewayConstant.Opcode.DISPATCH.ordinal(),
                     new UserUpdateDTO(user.getId(), username, displayName, bio, -1, avatar != null ? avatar : 0,
@@ -173,7 +175,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void requestDelete(User user, String password) throws UserCredentialsIsInvalidException {
-        if (!PasswordHasher.verifyPassword(password, user.getPassword()))
+        if (!passwordService.verify(password, user.getPassword()))
             throw new UserCredentialsIsInvalidException();
 
         sendEmail(user, EmailConstant.Type.ACCOUNT_DELETE);
@@ -212,7 +214,7 @@ public class UserServiceImpl implements UserService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        gatewayService.sendMessageToSpecificSessions(recipients,
+        gatewayService.sendToSpecificSessions(recipients,
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new UserUpdateDTO(userId, null, null, null, status, -1, -1),
                 GatewayConstant.Event.USER_UPDATE.getValue());
@@ -220,39 +222,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addContact(User user, long id) throws UserContactAlreadyExistException {
+    public User addContact(User user, long id) throws ContactAlreadyExistException {
         try {
             User contact = getById(id).orElseThrow(UserNotFoundException::new);
             user.getContacts().add(new UserContact(user, contact));
             userRepository.save(user);
 
-            gatewayService.sendMessageToSpecificSessions(Collections.singletonList(contact.getId()),
+            gatewayService.sendToSpecificSessions(Collections.singletonList(contact.getId()),
                     GatewayConstant.Opcode.DISPATCH.ordinal(),
-                    new UserDTO(user, null, null, false, false, false),
+                    new UserShortDTO(user),
                     GatewayConstant.Event.CONTACT_ADD.getValue());
             log.debug("Successfully added contact {} to user {}", contact.getId(), user.getId());
             return contact;
         } catch (DataIntegrityViolationException e) {
-            throw new UserContactAlreadyExistException();
+            throw new ContactAlreadyExistException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void deleteContact(User user, long id) throws UserContactNotFoundException {
+    public void deleteContact(User user, long id) throws ContactNotFoundException {
         try {
             User contact = getById(id).orElseThrow(UserNotFoundException::new);
             user.getContacts().remove(new UserContact(user, contact));
             userRepository.save(user);
 
-            gatewayService.sendMessageToSpecificSessions(Collections.singletonList(contact.getId()),
+            gatewayService.sendToSpecificSessions(Collections.singletonList(contact.getId()),
                     GatewayConstant.Opcode.DISPATCH.ordinal(),
-                    new UserDTO(user, null, null, false, false, false),
+                    Map.of("id", contact.getId()),
                     GatewayConstant.Event.CONTACT_DELETE.getValue());
             log.debug("Successfully deleted contact {} from user {}", contact.getId(), user.getId());
         } catch (DataIntegrityViolationException e) {
-            throw new UserContactNotFoundException();
+            throw new ContactNotFoundException();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -270,7 +272,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void changePassword(User user, UserEditDTO body) {
-        user.setPassword(PasswordHasher.hashPassword(body.getPassword()));
+        user.setPassword(passwordService.hash(body.getPassword()));
         user.setTokenVersion(user.getTokenVersion() + 1);
         user.addFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
 
@@ -280,7 +282,7 @@ public class UserServiceImpl implements UserService {
 
     private void sendEmail(User user, EmailConstant.Type type) {
         String emailType = type.getValue();
-        String code = OTPGenerator.generateDigitCode();
+        String code = otpService.generate();
         long issuedAt = System.currentTimeMillis();
         long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
 

@@ -7,7 +7,7 @@ import app.foxochat.dto.api.request.AvatarUploadDTO;
 import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.MediaNotFoundException;
 import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.model.Attachment;
 import app.foxochat.model.Avatar;
@@ -88,7 +88,7 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)
-            throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException {
+            throws MediaCannotBeEmptyException, MediaNotFoundException, UploadFailedException {
         if (avatar == null) throw new MediaCannotBeEmptyException();
 
         MediaPresignedURLDTO dto = getPresignedURLAndSave(null, avatar, user, channel, 0);
@@ -101,9 +101,7 @@ public class MediaServiceImpl implements MediaService {
         }
 
         if (user != null && media.getUser().getId() != user.getId() || channel != null && media.getChannel()
-                .getId() != channel.getId()) {
-            throw new UnknownMediaException();
-        }
+                .getId() != channel.getId()) throw new MediaNotFoundException();
 
         return dto;
     }
@@ -129,9 +127,10 @@ public class MediaServiceImpl implements MediaService {
                     throw new UploadFailedException();
                 }
 
-                if (user != null && media.getUser().getId() != user.getId()) {
-                    throw new UnknownMediaException();
-                }
+                if (user != null && media.getUser().getId() != user.getId()) throw new MediaNotFoundException();
+
+
+                if (user == null) throw new UploadFailedException();
 
                 MediaUploadDTO urlDTO = new MediaUploadDTO(dto.getUrl(), media.getId());
 
@@ -150,11 +149,11 @@ public class MediaServiceImpl implements MediaService {
             @CachePut(value = "avatarsByUserId", key = "#user.id"),
             @CachePut(value = "avatarsByChannelId", key = "#channel.id")
     })
-    public Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException {
-        Avatar avatar = avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    public Avatar getAvatar(User user, Channel channel, long id) throws MediaNotFoundException {
+        Avatar avatar = avatarRepository.findById(id).orElseThrow(MediaNotFoundException::new);
 
-        if (avatar.getUser().getId() != user.getId()) throw new UnknownMediaException();
-        else if (avatar.getChannel().getId() != channel.getId()) throw new UnknownMediaException();
+        if (avatar.getUser().getId() != user.getId()) throw new MediaNotFoundException();
+        else if (avatar.getChannel().getId() != channel.getId()) throw new MediaNotFoundException();
 
         log.debug("Successfully got avatar for user {}, or channel {}", user.getUsername(), channel.getName());
         return avatar;
@@ -164,14 +163,14 @@ public class MediaServiceImpl implements MediaService {
     @Caching(put = {
             @CachePut(value = "attachmentsByUserId", key = "#user.id"),
     })
-    public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException {
+    public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws MediaNotFoundException {
         List<Attachment> attachments = new ArrayList<>();
 
         if (!attachmentsIds.isEmpty()) {
             for (Long id : attachmentsIds) {
-                Attachment attachment = attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
+                Attachment attachment = attachmentRepository.findById(id).orElseThrow(MediaNotFoundException::new);
 
-                if (attachment.getUser().getId() != user.getId()) throw new UnknownMediaException();
+                if (attachment.getUser().getId() != user.getId()) throw new MediaNotFoundException();
 
                 attachments.add(attachment);
             }
@@ -185,15 +184,15 @@ public class MediaServiceImpl implements MediaService {
     @Caching(put = {
             @CachePut(value = "avatarsById", key = "#id"),
     })
-    public Avatar getAvatarById(long id) throws UnknownMediaException {
-        return avatarRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    public Avatar getAvatarById(long id) throws MediaNotFoundException {
+        return avatarRepository.findById(id).orElseThrow(MediaNotFoundException::new);
     }
 
     @Override
     @Caching(put = {
             @CachePut(value = "attachmentsById", key = "#id"),
     })
-    public Attachment getAttachmentById(long id) throws UnknownMediaException {
-        return attachmentRepository.findById(id).orElseThrow(UnknownMediaException::new);
+    public Attachment getAttachmentById(long id) throws MediaNotFoundException {
+        return attachmentRepository.findById(id).orElseThrow(MediaNotFoundException::new);
     }
 }

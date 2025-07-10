@@ -5,7 +5,7 @@ import app.foxochat.dto.api.request.AvatarUploadDTO;
 import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.internal.MediaPresignedURLDTO;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.media.UnknownMediaException;
+import app.foxochat.exception.media.MediaNotFoundException;
 import app.foxochat.exception.media.UploadFailedException;
 import app.foxochat.model.Attachment;
 import app.foxochat.model.Avatar;
@@ -22,16 +22,16 @@ public interface MediaService {
                                                 long flags) throws UploadFailedException;
 
     MediaPresignedURLDTO uploadAvatar(User user, Channel channel, AvatarUploadDTO avatar)
-            throws MediaCannotBeEmptyException, UnknownMediaException, UploadFailedException;
+            throws MediaCannotBeEmptyException, MediaNotFoundException, UploadFailedException;
 
     List<MediaUploadDTO> uploadAttachments(User user, List<AttachmentUploadDTO> attachments)
             throws MediaCannotBeEmptyException;
 
-    Avatar getAvatar(User user, Channel channel, long id) throws UnknownMediaException;
+    Avatar getAvatar(User user, Channel channel, long id) throws MediaNotFoundException;
 
-    List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws UnknownMediaException;
+    List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws MediaNotFoundException;
 
-    Avatar getAvatarById(long id) throws UnknownMediaException;
+    Avatar getAvatarById(long id) throws MediaNotFoundException;
 
-    Attachment getAttachmentById(long id) throws UnknownMediaException;
+    Attachment getAttachmentById(long id) throws MediaNotFoundException;
 }

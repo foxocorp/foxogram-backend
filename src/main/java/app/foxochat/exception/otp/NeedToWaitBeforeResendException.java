@@ -10,9 +10,9 @@ public class NeedToWaitBeforeResendException extends BaseException {
 
     public NeedToWaitBeforeResendException() {
         super(
-                ExceptionConstant.Messages.NEED_TO_WAIT.getValue(),
+                ExceptionConstant.Messages.NEED_TO_WAIT_BEFORE_RESEND.getValue(),
                 NeedToWaitBeforeResendException.class.getAnnotation(ResponseStatus.class).value(),
-                ExceptionConstant.OTP.WAIT_TO_RESEND.getValue()
+                ExceptionConstant.OTP.NEED_TO_WAIT_BEFORE_RESEND.getValue()
         );
     }
 }

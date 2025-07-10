@@ -18,6 +18,8 @@ public interface AuthenticationService {
 
     String register(String username, String email, String password) throws UserCredentialsDuplicateException;
 
+    void sendConfirmationEmail(User user);
+
     String login(String email, String password) throws UserCredentialsIsInvalidException;
 
     void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;

@@ -53,8 +53,8 @@ public class MemberServiceImpl implements MemberService {
     @Caching(put = {
             @CachePut(value = "membersById", key = "#member.id")
     })
-    public Member add(Member member) {
-        return memberRepository.save(member);
+    public void add(Member member) {
+        memberRepository.save(member);
     }
 
     @Override

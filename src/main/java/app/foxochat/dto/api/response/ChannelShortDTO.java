@@ -1,6 +1,7 @@
 package app.foxochat.dto.api.response;
 
 import app.foxochat.constant.MemberConstant;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.model.Channel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class ChannelShortDTO {
 
     private long flags;
 
-    public ChannelShortDTO(Channel channel) {
+    public ChannelShortDTO(Channel channel) throws MemberNotFoundException {
         this.id = channel.getId();
         this.displayName = channel.getDisplayName();
         this.name = channel.getName();
@@ -44,6 +45,6 @@ public class ChannelShortDTO {
         this.memberCount = channel.getMembers().size();
         this.ownerId = channel.getMembers().stream()
                 .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                .findFirst().get().getUser().getId();
+                .findFirst().orElseThrow(MemberNotFoundException::new).getUser().getId();
     }
 }

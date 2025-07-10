@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class MemberInChannelNotFoundException extends BaseException {
+public class MemberNotFoundException extends BaseException {
 
-    public MemberInChannelNotFoundException() {
+    public MemberNotFoundException() {
         super(
                 ExceptionConstant.Messages.MEMBER_NOT_FOUND.getValue(),
-                MemberInChannelNotFoundException.class.getAnnotation(ResponseStatus.class).value(),
+                MemberNotFoundException.class.getAnnotation(ResponseStatus.class).value(),
                 ExceptionConstant.Member.NOT_FOUND.getValue()
         );
     }

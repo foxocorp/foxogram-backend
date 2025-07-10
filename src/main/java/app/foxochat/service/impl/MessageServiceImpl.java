@@ -8,7 +8,7 @@ import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.MessageDTO;
 import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
-import app.foxochat.exception.member.MemberInChannelNotFoundException;
+import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
 import app.foxochat.exception.message.MessageNotFoundException;
 import app.foxochat.model.*;
@@ -78,9 +78,9 @@ public class MessageServiceImpl implements MessageService {
             @CachePut(value = "messagesByChannelId", key = "#channel.id"),
             @CachePut(value = "messagesByUserId", key = "#user.id")
     })
-    public Message add(Channel channel, User user, MessageCreateDTO body) throws Exception {
+    public void add(Channel channel, User user, MessageCreateDTO body) throws Exception {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
-                .orElseThrow(MemberInChannelNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
                 MemberConstant.Permissions.ADMIN,
@@ -93,22 +93,21 @@ public class MessageServiceImpl implements MessageService {
         Message message = new Message(channel, body.getContent(), member, attachments);
         messageRepository.save(message);
 
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new MessageDTO(message, true),
                 GatewayConstant.Event.MESSAGE_CREATE.getValue());
         log.debug("Message {} to channel {} created successfully", message.getId(), channel.getId());
 
-        return message;
     }
 
     @Override
     public List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberInChannelNotFoundException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException {
         if (attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
-                .orElseThrow(MemberInChannelNotFoundException::new);
+                .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
                 MemberConstant.Permissions.ADMIN,
@@ -129,7 +128,7 @@ public class MessageServiceImpl implements MessageService {
             throw new MissingPermissionsException();
 
         messageRepository.delete(message);
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 Map.of("id", id, "channel_id", channel.getId()),
                 GatewayConstant.Event.MESSAGE_DELETE.getValue());
@@ -151,7 +150,7 @@ public class MessageServiceImpl implements MessageService {
         message.setContent(content);
         messageRepository.save(message);
 
-        gatewayService.sendMessageToSpecificSessions(getRecipients(channel),
+        gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
                 new MessageDTO(message, true),
                 GatewayConstant.Event.MESSAGE_UPDATE.getValue());

@@ -29,22 +29,22 @@ public class ExceptionConstant {
         CHANNEL_NOT_FOUND("Unknown channel"),
         OTP_EXPIRED("OTP has expired"),
         OTP_IS_INVALID("OTP is invalid"),
-        NEED_TO_WAIT("You need to wait 1 minute to resend OTP again"),
+        NEED_TO_WAIT_BEFORE_RESEND("You need to wait 1 minute to resend OTP again"),
         MEMBER_ALREADY_EXIST("You've already joined this channel"),
         MEMBER_NOT_FOUND("Can't find member in this channel"),
-        MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
+        MEMBER_MISSING_PERMISSIONS("You don't have enough permissions to perform this action"),
         MESSAGE_NOT_FOUND("Unable to find message(s) for this channel or matching these parameters"),
         MESSAGE_CANNOT_BE_EMPTY("Message cannot be empty"),
         MEDIA_CANNOT_BE_EMPTY("Media cannot be empty"),
-        UNKNOWN_MEDIA("Unknown media id(s)"),
+        MEDIA_NOT_FOUND("Unknown media id(s)"),
         USER_CREDENTIALS_DUPLICATE("User with this username/email already exist"),
         USER_CREDENTIALS_IS_INVALID("Invalid password or email"),
-        USER_EMAIL_VERIFIED("You need to verify your email first"),
+        USER_EMAIL_NOT_VERIFIED("You need to verify your email first"),
         USER_NOT_FOUND("Unknown user"),
         USER_UNAUTHORIZED("You need to authorize first"),
         ROUTE_NOT_FOUND("Route not found"),
-        USER_CONTACT_ALREADY_EXIST("Contact already exist"),
-        USER_CONTACT_NOT_FOUND("Contact not found");
+        CONTACT_ALREADY_EXIST("Contact already exist"),
+        CONTACT_NOT_FOUND("Contact not found");
 
         private final String message;
 
@@ -102,7 +102,7 @@ public class ExceptionConstant {
     public enum OTP {
         IS_INVALID,
         EXPIRED,
-        WAIT_TO_RESEND;
+        NEED_TO_WAIT_BEFORE_RESEND;
 
         public int getValue() {
             return OTP_ERROR + this.ordinal();
@@ -113,7 +113,7 @@ public class ExceptionConstant {
         UPLOAD_FAILED,
         INVALID_FILE_FORMAT,
         CANNOT_BE_EMPTY,
-        UNKNOWN;
+        NOT_FOUND;
 
         public int getValue() {
             return CDN_ERROR + this.ordinal();

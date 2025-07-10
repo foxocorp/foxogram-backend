@@ -21,7 +21,7 @@ public interface ChannelService {
 
     void delete(Channel channel, User user) throws Exception;
 
-    Member addMember(Channel channel, User user) throws Exception;
+    void addMember(Channel channel, User user) throws Exception;
 
     void removeMember(Channel channel, User user) throws Exception;
 }

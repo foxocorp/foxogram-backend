@@ -16,8 +16,6 @@ import app.foxochat.exception.user.UserUnauthorizedException;
 import app.foxochat.model.OTP;
 import app.foxochat.model.User;
 import app.foxochat.service.*;
-import app.foxochat.util.OTPGenerator;
-import app.foxochat.util.PasswordHasher;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
@@ -37,15 +35,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final APIConfig apiConfig;
 
+    private final PasswordService passwordService;
+
     public AuthenticationServiceImpl(UserService userService, EmailService emailService, JwtService jwtService,
-                                     OTPService otpService, APIConfig apiConfig) {
+                                     OTPService otpService, APIConfig apiConfig, PasswordService passwordService) {
         this.userService = userService;
         this.emailService = emailService;
         this.jwtService = jwtService;
         this.otpService = otpService;
         this.apiConfig = apiConfig;
+        this.passwordService = passwordService;
     }
 
+    @Override
     public User getUser(
             String token,
             boolean ignoreEmailVerification,
@@ -79,6 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return user;
     }
 
+    @Override
     public String register(String username, String email, String password) throws UserCredentialsDuplicateException {
         User user = userService.add(username, email, password);
 
@@ -93,9 +96,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return jwtService.generate(user);
     }
 
-    private void sendConfirmationEmail(User user) {
+    @Override
+    public void sendConfirmationEmail(User user) {
         String emailType = EmailConstant.Type.EMAIL_VERIFY.getValue();
-        String digitCode = OTPGenerator.generateDigitCode();
+        String digitCode = otpService.generate();
         long issuedAt = System.currentTimeMillis();
         long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
         String accessToken = jwtService.generate(user);
@@ -104,14 +108,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 expiresAt, accessToken);
     }
 
+    @Override
     public String login(String email, String password) throws UserCredentialsIsInvalidException {
         User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
-        if (!PasswordHasher.verifyPassword(password, user.getPassword())) throw new UserCredentialsIsInvalidException();
+        if (!passwordService.verify(password, user.getPassword())) throw new UserCredentialsIsInvalidException();
 
         log.debug("User ({}) login successfully", user.getUsername());
         return jwtService.generate(user);
     }
 
+    @Override
     public void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException {
         OTP OTP = otpService.validate(pathCode);
 
@@ -121,6 +127,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         otpService.delete(OTP);
     }
 
+    @Override
     public void resendEmail(User user, String accessToken)
             throws OTPsInvalidException, NeedToWaitBeforeResendException {
         if (apiConfig.isDevelopment()) return;
@@ -138,11 +145,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 System.currentTimeMillis(), OTP.getExpiresAt(), accessToken);
     }
 
+    @Override
     public void resetPassword(UserResetPasswordDTO body) throws UserCredentialsIsInvalidException {
         User user = userService.getByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
 
         String type = EmailConstant.Type.EMAIL_VERIFY.getValue();
-        String value = OTPGenerator.generateDigitCode();
+        String value = otpService.generate();
         long issuedAt = System.currentTimeMillis();
         long expiresAt = issuedAt + OTPConstant.Lifetime.BASE.getValue();
 
@@ -154,13 +162,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("User ({}) reset password requested successfully", user.getUsername());
     }
 
+    @Override
     public void confirmResetPassword(
             UserResetPasswordConfirmDTO body
     ) throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException {
         User user = userService.getByEmail(body.getEmail()).orElseThrow(UserCredentialsIsInvalidException::new);
         OTP OTP = otpService.validate(body.getOTP());
 
-        user.setPassword(PasswordHasher.hashPassword(body.getNewPassword()));
+        user.setPassword(passwordService.hash(body.getNewPassword()));
         user.setTokenVersion(user.getTokenVersion() + 1);
         userService.save(user);
         user.removeFlag(UserConstant.Flags.AWAITING_CONFIRMATION);
@@ -169,6 +178,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("User ({}) password reset successfully", user.getUsername());
     }
 
+    @Override
     public User authUser(
             String accessToken,
             boolean ignoreEmailVerification
