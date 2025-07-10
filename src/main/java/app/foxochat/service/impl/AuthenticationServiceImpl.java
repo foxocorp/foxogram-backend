@@ -19,7 +19,11 @@ import app.foxochat.service.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -47,8 +51,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.passwordService = passwordService;
     }
 
+    @Async
     @Override
-    public User getUser(
+    public CompletableFuture<User> getUser(
             String token,
             boolean ignoreEmailVerification,
             boolean removeBearerFromString
@@ -78,7 +83,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 UserConstant.Flags.EMAIL_VERIFIED))
             throw new UserEmailNotVerifiedException();
 
-        return user;
+        return CompletableFuture.completedFuture(user);
     }
 
     @Override
@@ -178,15 +183,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("User ({}) password reset successfully", user.getUsername());
     }
 
+    @Async
     @Override
-    public User authUser(
+    public CompletableFuture<User> authUser(
             String accessToken,
             boolean ignoreEmailVerification
-    ) throws UserUnauthorizedException, UserEmailNotVerifiedException {
+    ) throws UserUnauthorizedException, UserEmailNotVerifiedException, ExecutionException, InterruptedException {
         if (accessToken == null) throw new UserUnauthorizedException();
 
         if (!accessToken.startsWith("Bearer ")) throw new UserUnauthorizedException();
 
-        return getUser(accessToken, ignoreEmailVerification, true);
+        return CompletableFuture.completedFuture(getUser(accessToken, ignoreEmailVerification, true).get());
     }
 }

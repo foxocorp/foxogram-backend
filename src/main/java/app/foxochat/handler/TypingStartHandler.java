@@ -52,7 +52,8 @@ public class TypingStartHandler implements BaseHandler {
 
         if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
 
-        List<Long> recipients = channelService.getById(channelId).getMembers().stream().map(Member::getId).toList();
+        List<Long> recipients =
+                channelService.getById(channelId).get().getMembers().stream().map(Member::getId).toList();
 
         gatewayService.sendToSpecificSessions(recipients,
                 GatewayConstant.Opcode.DISPATCH.ordinal(),

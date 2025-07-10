@@ -11,9 +11,12 @@ import app.foxochat.exception.user.UserEmailNotVerifiedException;
 import app.foxochat.exception.user.UserUnauthorizedException;
 import app.foxochat.model.User;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 public interface AuthenticationService {
 
-    User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString)
+    CompletableFuture<User> getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString)
             throws UserUnauthorizedException, UserEmailNotVerifiedException;
 
     String register(String username, String email, String password) throws UserCredentialsDuplicateException;
@@ -31,6 +34,6 @@ public interface AuthenticationService {
     void confirmResetPassword(UserResetPasswordConfirmDTO body)
             throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException;
 
-    User authUser(String accessToken, boolean ignoreEmailVerification)
-            throws UserUnauthorizedException, UserEmailNotVerifiedException;
+    CompletableFuture<User> authUser(String accessToken, boolean ignoreEmailVerification)
+            throws UserUnauthorizedException, UserEmailNotVerifiedException, ExecutionException, InterruptedException;
 }

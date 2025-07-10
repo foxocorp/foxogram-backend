@@ -26,11 +26,13 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -95,12 +97,14 @@ public class ChannelServiceImpl implements ChannelService {
         return channel;
     }
 
+    @Async
     @Override
     @Caching(put = {
             @CachePut(value = "channelsById", key = "#id")
     })
-    public Channel getById(long id) throws ChannelNotFoundException {
-        return channelRepository.findById(id).orElseThrow(ChannelNotFoundException::new);
+    public CompletableFuture<Channel> getById(long id) throws ChannelNotFoundException {
+        return CompletableFuture.completedFuture(channelRepository.findById(id)
+                .orElseThrow(ChannelNotFoundException::new));
     }
 
     @Override
@@ -160,7 +164,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void delete(Channel channel, User user) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
                 .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER, MemberConstant.Permissions.ADMIN))
@@ -176,7 +180,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void addMember(Channel channel, User user) throws Exception {
-        if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).isPresent())
+        if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get().isPresent())
             throw new MemberAlreadyExistException();
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
@@ -193,7 +197,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void removeMember(Channel channel, User user) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
                 .orElseThrow(MemberNotFoundException::new);
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();

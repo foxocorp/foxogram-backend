@@ -9,11 +9,13 @@ import app.foxochat.model.Channel;
 import app.foxochat.model.Member;
 import app.foxochat.model.User;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface ChannelService {
     Channel add(User user, long partnerId, ChannelCreateDTO body)
             throws ChannelAlreadyExistException, UserNotFoundException;
 
-    Channel getById(long id) throws ChannelNotFoundException;
+    CompletableFuture<Channel> getById(long id) throws ChannelNotFoundException;
 
     Channel getByName(String name) throws ChannelNotFoundException;
 

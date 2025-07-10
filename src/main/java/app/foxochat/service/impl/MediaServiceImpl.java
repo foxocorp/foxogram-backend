@@ -20,10 +20,12 @@ import app.foxochat.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -159,11 +161,13 @@ public class MediaServiceImpl implements MediaService {
         return avatar;
     }
 
+    @Async
     @Override
     @Caching(put = {
             @CachePut(value = "attachmentsByUserId", key = "#user.id"),
     })
-    public List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws MediaNotFoundException {
+    public CompletableFuture<List<Attachment>> getAttachments(User user, List<Long> attachmentsIds)
+            throws MediaNotFoundException {
         List<Attachment> attachments = new ArrayList<>();
 
         if (!attachmentsIds.isEmpty()) {
@@ -177,7 +181,7 @@ public class MediaServiceImpl implements MediaService {
         }
 
         log.debug("Successfully got all attachments by user {}", user.getUsername());
-        return attachments;
+        return CompletableFuture.completedFuture(attachments);
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -193,12 +194,12 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @PathVariable String memberId
-    ) throws MemberNotFoundException {
+    ) throws MemberNotFoundException, ExecutionException, InterruptedException {
         if (Objects.equals(memberId, "@me")) {
             memberId = String.valueOf(user.getId());
         }
 
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId))
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId)).get()
                 .orElseThrow(MemberNotFoundException::new);
 
         return new MemberDTO(member, true);
@@ -271,7 +272,8 @@ public class ChannelController {
             @PathVariable String channelId,
             @RequestBody List<AttachmentUploadDTO> attachments
     )
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException,
+            ExecutionException, InterruptedException {
         if (attachments == null || attachments.isEmpty()) {
             throw new MediaCannotBeEmptyException();
         }

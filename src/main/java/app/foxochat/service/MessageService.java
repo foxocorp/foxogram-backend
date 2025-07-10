@@ -13,6 +13,7 @@ import app.foxochat.model.Message;
 import app.foxochat.model.User;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface MessageService {
 
@@ -23,7 +24,8 @@ public interface MessageService {
     void add(Channel channel, User user, MessageCreateDTO body) throws Exception;
 
     List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException;
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException,
+            ExecutionException, InterruptedException;
 
     void delete(long id, Member member, Channel channel) throws Exception;
 

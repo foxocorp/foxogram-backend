@@ -12,14 +12,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 @Component
-public class ChannelInterceptor implements HandlerInterceptor {
+public class ChannelInterceptor implements AsyncHandlerInterceptor {
 
     private static final Pattern CHANNEL_ID_PATTERN = Pattern.compile("/channels/(\\d+)");
 
@@ -34,7 +35,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull Object handler
-    ) throws ChannelNotFoundException {
+    ) throws ChannelNotFoundException, ExecutionException, InterruptedException {
         if (HttpMethod.OPTIONS.matches(request.getMethod())) return true;
 
         String uri = request.getRequestURI();
@@ -45,7 +46,7 @@ public class ChannelInterceptor implements HandlerInterceptor {
         }
 
         long id = Long.parseLong(matcher.group(1));
-        Channel channel = channelService.getById(id);
+        Channel channel = channelService.getById(id).get();
 
         User user = (User) request.getAttribute(AttributeConstant.USER);
 

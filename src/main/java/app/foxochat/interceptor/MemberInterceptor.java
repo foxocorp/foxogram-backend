@@ -12,13 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
-public class MemberInterceptor implements HandlerInterceptor {
+public class MemberInterceptor implements AsyncHandlerInterceptor {
 
     private final MemberService memberService;
 
@@ -31,7 +32,7 @@ public class MemberInterceptor implements HandlerInterceptor {
             HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull Object handler
-    ) throws ChannelNotFoundException {
+    ) throws ChannelNotFoundException, ExecutionException, InterruptedException {
         if (Objects.equals(request.getMethod(), HttpMethod.OPTIONS.name())) return true;
 
         if (Objects.equals(request.getMethod(), HttpMethod.PUT.name()) && request.getRequestURI()
@@ -42,7 +43,7 @@ public class MemberInterceptor implements HandlerInterceptor {
         User user = (User) request.getAttribute(AttributeConstant.USER);
         Channel channel = (Channel) request.getAttribute(AttributeConstant.CHANNEL);
 
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
                 .orElseThrow(ChannelNotFoundException::new);
 
         request.setAttribute(AttributeConstant.MEMBER, member);

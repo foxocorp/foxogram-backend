@@ -13,6 +13,7 @@ import app.foxochat.model.Channel;
 import app.foxochat.model.User;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface MediaService {
 
@@ -29,7 +30,8 @@ public interface MediaService {
 
     Avatar getAvatar(User user, Channel channel, long id) throws MediaNotFoundException;
 
-    List<Attachment> getAttachments(User user, List<Long> attachmentsIds) throws MediaNotFoundException;
+    CompletableFuture<List<Attachment>> getAttachments(User user, List<Long> attachmentsIds)
+            throws MediaNotFoundException;
 
     Avatar getAvatarById(long id) throws MediaNotFoundException;
 

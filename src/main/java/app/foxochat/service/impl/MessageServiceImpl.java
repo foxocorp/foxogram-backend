@@ -18,11 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -73,13 +75,14 @@ public class MessageServiceImpl implements MessageService {
         return message;
     }
 
+    @Async
     @Override
     @Caching(put = {
             @CachePut(value = "messagesByChannelId", key = "#channel.id"),
             @CachePut(value = "messagesByUserId", key = "#user.id")
     })
     public void add(Channel channel, User user, MessageCreateDTO body) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
                 .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
@@ -88,7 +91,7 @@ public class MessageServiceImpl implements MessageService {
             throw new MissingPermissionsException();
 
         List<Attachment> attachments = new ArrayList<>();
-        if (body.getAttachments() != null) attachments = mediaService.getAttachments(user, body.getAttachments());
+        if (body.getAttachments() != null) attachments = mediaService.getAttachments(user, body.getAttachments()).get();
 
         Message message = new Message(channel, body.getContent(), member, attachments);
         messageRepository.save(message);
@@ -98,15 +101,15 @@ public class MessageServiceImpl implements MessageService {
                 new MessageDTO(message, true),
                 GatewayConstant.Event.MESSAGE_CREATE.getValue());
         log.debug("Message {} to channel {} created successfully", message.getId(), channel.getId());
-
     }
 
     @Override
     public List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
-            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException {
+            throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException,
+            ExecutionException, InterruptedException {
         if (attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
                 .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
@@ -167,8 +170,9 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.getLastMessageByChannel(channel).orElse(null);
     }
 
-    private List<Long> getRecipients(Channel channel) throws ChannelNotFoundException {
-        return channelService.getById(channel.getId())
+    private List<Long> getRecipients(Channel channel)
+            throws ChannelNotFoundException, ExecutionException, InterruptedException {
+        return channelService.getById(channel.getId()).get()
                 .getMembers().stream()
                 .map(Member::getUser)
                 .map(User::getId)
