@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DiffGenerationConfig" />
+  <component name="DiffGenerationConfig">
+    <option name="targetDbValue" value="9d8d1255-4af7-463d-ba62-a61e2fd1b15d" />
+  </component>
 </project>

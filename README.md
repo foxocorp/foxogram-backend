@@ -14,7 +14,7 @@
 
 We would like to thank the following people and organizations for their valuable input and support in the development of the backend:
 
-- **Java** for making it possible for this project to exist
+- **Golang** for making it possible for this project to exist
 - **Foxes** they are just so cute :3
 
 Without your help, the **FoxoChat Backend** project would not have been possible. We are grateful for your participation
