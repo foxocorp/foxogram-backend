@@ -1,23 +1,22 @@
 package app.foxochat.model;
 
 import app.foxochat.constant.ChannelConstant;
-import jakarta.persistence.*;
+import io.github.joselion.springr2dbcrelationships.annotations.ManyToOne;
+import io.github.joselion.springr2dbcrelationships.annotations.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "channels", indexes = {
-        @Index(name = "idx_channel_id", columnList = "id", unique = true),
-        @Index(name = "idx_channel_name", columnList = "name", unique = true)
-})
+@Table(name = "channels")
 public class Channel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
     @Column
@@ -26,12 +25,12 @@ public class Channel {
     @Column
     public String name;
 
-    @JoinColumn(name = "avatar_id")
-    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Column
+    @ManyToOne(foreignKey = "avatar")
     public Avatar avatar;
 
-    @JoinColumn(name = "banner_id")
-    @ManyToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Column
+    @ManyToOne(foreignKey = "banner")
     public Avatar banner;
 
     @Column
@@ -43,10 +42,10 @@ public class Channel {
     @Column
     public long createdAt;
 
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "channel")
     private List<Member> members;
 
-    @OneToMany(mappedBy = "channel", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "channel")
     private List<Message> messages;
 
     public Channel() {

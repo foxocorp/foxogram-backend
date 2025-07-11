@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
@@ -37,7 +38,7 @@ public class AuthenticationController {
         String username = body.getUsername();
         String email = body.getEmail();
         String password = body.getPassword();
-        String accessToken = authenticationService.register(username, email, password);
+        Mono<String> accessToken = authenticationService.register(username, email, password).flatMap(Mono::just);
 
         return new TokenDTO(accessToken);
     }
@@ -49,7 +50,7 @@ public class AuthenticationController {
         String email = body.getEmail();
         String password = body.getPassword();
 
-        String accessToken = authenticationService.login(email, password);
+        Mono<String> accessToken = authenticationService.login(email, password).flatMap(Mono::just);
 
         return new TokenDTO(accessToken);
     }

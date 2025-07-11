@@ -19,10 +19,9 @@ import app.foxochat.service.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -51,9 +50,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.passwordService = passwordService;
     }
 
-    @Async
     @Override
-    public CompletableFuture<User> getUser(
+    public User getUser(
             String token,
             boolean ignoreEmailVerification,
             boolean removeBearerFromString
@@ -83,22 +81,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 UserConstant.Flags.EMAIL_VERIFIED))
             throw new UserEmailNotVerifiedException();
 
-        return CompletableFuture.completedFuture(user);
+        return user;
     }
 
     @Override
-    public String register(String username, String email, String password) throws UserCredentialsDuplicateException {
-        User user = userService.add(username, email, password);
+    public Mono<String> register(String username, String email, String password)
+            throws UserCredentialsDuplicateException {
+        return userService.add(username, email, password).flatMap(u -> {
+            log.debug("User ({}) created successfully", u.getUsername());
 
-        log.debug("User ({}) created successfully", user.getUsername());
+            if (!apiConfig.isDevelopment()) {
+                sendConfirmationEmail(u);
 
-        if (!apiConfig.isDevelopment()) {
-            sendConfirmationEmail(user);
+                log.debug("User ({}) email verification message sent successfully", u.getUsername());
+            }
 
-            log.debug("User ({}) email verification message sent successfully", user.getUsername());
-        }
-
-        return jwtService.generate(user);
+            return Mono.just(jwtService.generate(u));
+        });
     }
 
     @Override
@@ -114,12 +113,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String login(String email, String password) throws UserCredentialsIsInvalidException {
+    public Mono<String> login(String email, String password) throws UserCredentialsIsInvalidException {
         User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
         if (!passwordService.verify(password, user.getPassword())) throw new UserCredentialsIsInvalidException();
 
         log.debug("User ({}) login successfully", user.getUsername());
-        return jwtService.generate(user);
+        return Mono.just(jwtService.generate(user));
     }
 
     @Override
@@ -183,9 +182,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("User ({}) password reset successfully", user.getUsername());
     }
 
-    @Async
     @Override
-    public CompletableFuture<User> authUser(
+    public User authUser(
             String accessToken,
             boolean ignoreEmailVerification
     ) throws UserUnauthorizedException, UserEmailNotVerifiedException, ExecutionException, InterruptedException {
@@ -193,6 +191,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!accessToken.startsWith("Bearer ")) throw new UserUnauthorizedException();
 
-        return CompletableFuture.completedFuture(getUser(accessToken, ignoreEmailVerification, true).get());
+        return getUser(accessToken, ignoreEmailVerification, true);
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "usersById", key = "#id")
     })
     public Optional<User> getById(long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).blockOptional();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "usersByUsername", key = "#username")
     })
     public Optional<User> getByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).blockOptional();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "usersByEmail", key = "#email"),
     })
     public Optional<User> getByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).blockOptional();
     }
 
     @Override
@@ -110,21 +111,15 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "usersByUsername", key = "#username"),
             @CachePut(value = "usersByEmail", key = "#email")
     })
-    public User add(String username, String email, String password) throws UserCredentialsDuplicateException {
+    public Mono<User> add(String username, String email, String password) throws UserCredentialsDuplicateException {
         long flags = UserConstant.Flags.AWAITING_CONFIRMATION.getBit();
         if (apiConfig.isDevelopment()) flags = UserConstant.Flags.EMAIL_VERIFIED.getBit();
         int type = UserConstant.Type.USER.getType();
 
         User user = new User(username, email, passwordService.hash(password), flags, type);
 
-        try {
-            userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new UserCredentialsDuplicateException();
-        }
-
         log.debug("Successfully created new user {}, {}", user.getId(), user.getUsername());
-        return user;
+        return userRepository.save(user);
     }
 
     @Override

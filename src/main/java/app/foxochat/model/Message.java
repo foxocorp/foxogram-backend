@@ -1,40 +1,40 @@
 package app.foxochat.model;
 
-import jakarta.persistence.*;
+import io.github.joselion.springr2dbcrelationships.annotations.ManyToOne;
+import io.github.joselion.springr2dbcrelationships.annotations.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Setter
 @Getter
-@Entity
-@Table(name = "messages", indexes = {
-        @Index(name = "idx_message_id", columnList = "id", unique = true),
-        @Index(name = "idx_message_id_channel_id", columnList = "id, channel_id")
-})
+@Table(name = "messages")
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
-    @Column(columnDefinition = "TEXT")
+    @Column
     public String content;
 
-    @ManyToOne
-    @JoinColumn(name = "author", nullable = false)
+    @Column
+    @ManyToOne(foreignKey = "author")
     public Member author;
 
     @Column
     public long timestamp;
 
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Column
+    @OneToMany(mappedBy = "message")
     public List<MessageAttachment> attachments;
 
-    @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
+    @Column
+    @ManyToOne(foreignKey = "channel")
     private Channel channel;
 
     public Message() {

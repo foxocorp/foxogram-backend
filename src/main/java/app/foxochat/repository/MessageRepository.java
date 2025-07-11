@@ -2,20 +2,20 @@ package app.foxochat.repository;
 
 import app.foxochat.model.Channel;
 import app.foxochat.model.Message;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MessageRepository extends CrudRepository<Message, Long> {
+public interface MessageRepository extends ReactiveCrudRepository<Message, Long> {
 
     @Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.timestamp < :before ORDER BY m.id DESC LIMIT :limit")
-    List<Message> findAllByChannel(@Param("ch") Channel channel, @Param("before") long before,
+    Flux<Message> findAllByChannel(@Param("ch") Channel channel, @Param("before") long before,
                                    @Param("limit") int limit);
 
     @Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.id = :id")
@@ -25,5 +25,5 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
     Optional<Message> getLastMessageByChannel(@Param("ch") Channel channel);
 
     @NonNull
-    List<Message> findAll();
+    Flux<Message> findAll();
 }

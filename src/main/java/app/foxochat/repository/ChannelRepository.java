@@ -1,15 +1,14 @@
 package app.foxochat.repository;
 
 import app.foxochat.model.Channel;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 @Repository
-public interface ChannelRepository extends CrudRepository<Channel, Long> {
+public interface ChannelRepository extends ReactiveCrudRepository<Channel, Long> {
 
-    Optional<Channel> findById(long id);
+    Mono<Channel> findById(long id);
 
-    Optional<Channel> findByName(String name);
+    Mono<Channel> findByName(String name);
 }

@@ -1,27 +1,27 @@
 package app.foxochat.model;
 
-import jakarta.persistence.*;
+import io.github.joselion.springr2dbcrelationships.annotations.ManyToOne;
+import io.github.joselion.springr2dbcrelationships.annotations.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Setter
 @Getter
-@Entity
-@Table(name = "message_attachments", indexes = {
-        @Index(name = "idx_message_attachment", columnList = "message_id, attachment_id")
-})
+@Table(name = "message_attachments")
 public class MessageAttachment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id", nullable = false)
+    @Column
+    @ManyToOne(foreignKey = "message_id")
     private Message message;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "attachment_id", nullable = false, unique = true)
+    @Column
+    @OneToOne(mappedBy = "attachment_id")
     private Attachment attachment;
 
     public MessageAttachment() {

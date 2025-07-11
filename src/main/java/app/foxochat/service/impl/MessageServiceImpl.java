@@ -6,7 +6,6 @@ import app.foxochat.dto.api.request.AttachmentUploadDTO;
 import app.foxochat.dto.api.request.MessageCreateDTO;
 import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.MessageDTO;
-import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
 import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
@@ -56,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
             @CachePut(value = "messagesByChannelId", key = "#channel.id")
     })
     public List<Message> getAllByChannel(long before, int limit, Channel channel) {
-        List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit);
+        List<Message> messagesArray = messageRepository.findAllByChannel(channel, before, limit).toStream().toList();
 
         log.debug("Messages ({}, {}) in channel ({}) found successfully", limit, before, channel.getId());
 
@@ -118,7 +117,7 @@ public class MessageServiceImpl implements MessageService {
             ExecutionException, InterruptedException {
         if (attachments.isEmpty()) throw new MediaCannotBeEmptyException();
 
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
@@ -179,12 +178,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.getLastMessageByChannel(channel).orElse(null);
     }
 
-    private List<Long> getRecipients(Channel channel)
-            throws ChannelNotFoundException, ExecutionException, InterruptedException {
-        return channelService.getById(channel.getId()).get()
-                .getMembers().stream()
-                .map(Member::getUser)
-                .map(User::getId)
-                .collect(Collectors.toList());
+    private List<Long> getRecipients(Channel channel) {
+        return channel.getMembers().stream().map(Member::getUser).map(User::getId).collect(Collectors.toList());
     }
 }

@@ -9,6 +9,7 @@ import app.foxochat.model.Member;
 import app.foxochat.model.Session;
 import app.foxochat.service.ChannelService;
 import app.foxochat.service.GatewayService;
+import app.foxochat.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -28,11 +29,14 @@ public class TypingStartHandler implements BaseHandler {
 
     private final ChannelService channelService;
 
+    private final MemberService memberService;
+
     public TypingStartHandler(@Lazy GatewayService gatewayService, ObjectMapper objectMapper,
-                              ChannelService channelService) {
+                              ChannelService channelService, MemberService memberService) {
         this.gatewayService = gatewayService;
         this.objectMapper = objectMapper;
         this.channelService = channelService;
+        this.memberService = memberService;
     }
 
     @Override
@@ -52,8 +56,10 @@ public class TypingStartHandler implements BaseHandler {
 
         if (!userSession.isAuthenticated()) session.close(CloseCodeConstant.UNAUTHORIZED);
 
-        List<Long> recipients =
-                channelService.getById(channelId).get().getMembers().stream().map(Member::getId).toList();
+
+        List<Long> recipients = memberService.getAllByChannelId(channelId).stream().map(Member::getId).toList();
+//        List<Long> recipients =
+//                channelService.getById(channelId).switchIfEmpty(Mono.error(ChannelNotFoundException::new)).expand(c -> c.getMembers().stream().map(Member::getId).toList());
 
         gatewayService.sendToSpecificSessions(recipients,
                 GatewayConstant.Opcode.DISPATCH.ordinal(),

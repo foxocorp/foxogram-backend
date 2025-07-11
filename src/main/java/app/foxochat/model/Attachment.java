@@ -1,24 +1,21 @@
 package app.foxochat.model;
 
-import jakarta.persistence.*;
+import io.github.joselion.springr2dbcrelationships.annotations.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Entity
 @Getter
 @Setter
-@Table(name = "attachments", indexes = {
-        @Index(name = "idx_attachment_id", columnList = "id", unique = true),
-        @Index(name = "idx_attachment_user_id", columnList = "id, user_id")
-})
+@Table(name = "attachments")
 public class Attachment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(foreignKey = "user_id")
     private User user;
 
     @Column

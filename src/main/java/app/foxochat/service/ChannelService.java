@@ -8,16 +8,16 @@ import app.foxochat.exception.user.UserNotFoundException;
 import app.foxochat.model.Channel;
 import app.foxochat.model.Member;
 import app.foxochat.model.User;
-
-import java.util.concurrent.CompletableFuture;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ChannelService {
     Channel add(User user, long partnerId, ChannelCreateDTO body)
             throws ChannelAlreadyExistException, UserNotFoundException;
 
-    CompletableFuture<Channel> getById(long id) throws ChannelNotFoundException;
+    Mono<Channel> getById(long id) throws ChannelNotFoundException;
 
-    Channel getByName(String name) throws ChannelNotFoundException;
+    Flux<Channel> getByName(String name) throws ChannelNotFoundException;
 
     Channel update(Member member, Channel channel, ChannelEditDTO body) throws Exception;
 

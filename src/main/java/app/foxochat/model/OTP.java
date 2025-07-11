@@ -1,16 +1,14 @@
 package app.foxochat.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "otps", indexes = {
-        @Index(name = "idx_otp_user_id", columnList = "userId", unique = true),
-        @Index(name = "idx_otp_value", columnList = "value", unique = true)
-})
+@Table(name = "otps")
 public class OTP {
 
     @Id

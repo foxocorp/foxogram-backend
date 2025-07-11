@@ -25,9 +25,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -97,26 +100,46 @@ public class ChannelController {
         return dto;
     }
 
-    @Operation(summary = "Get channel by name")
     @GetMapping("/@{name}")
-    public ChannelDTO getByName(
+    public Flux<ChannelDTO> getByName(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable String name
-    ) throws ChannelNotFoundException, MemberNotFoundException {
-        Channel channel = channelService.getByName(name);
-        ChannelDTO dto = new ChannelDTO(channel, null, name, null, null);
+    ) throws ChannelNotFoundException {
+        return channelService.getByName(name)
+                .switchIfEmpty(Mono.error(ChannelNotFoundException::new))
+                .flatMap(c -> {
+                    ChannelDTO dto;
+                    try {
+                        dto = new ChannelDTO(c, null, name, null, null);
+                    } catch (MemberNotFoundException e) {
+                        return Mono.error(MemberNotFoundException::new);
+                    }
 
-        if (channel.getType() != ChannelConstant.Type.DM.getType()) {
-            User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
-                    .findFirst().get().getUser();
-            dto = new ChannelDTO(channel,
-                    null,
-                    partnerUser.getDisplayName(),
-                    partnerUser.getUsername(),
-                    partnerUser.getAvatar());
-        }
+                    if (c.getType() != ChannelConstant.Type.DM.getType()) {
+                        Optional<Member> partner = c.getMembers().stream()
+                                .filter(m -> m.getUser().getId() != user.getId())
+                                .findFirst();
 
-        return dto;
+                        if (partner.isEmpty()) {
+                            return Mono.error(MemberNotFoundException::new);
+                        }
+
+                        User partnerUser = partner.get().getUser();
+                        try {
+                            dto = new ChannelDTO(
+                                    c,
+                                    null,
+                                    partnerUser.getDisplayName(),
+                                    partnerUser.getUsername(),
+                                    partnerUser.getAvatar()
+                            );
+                        } catch (MemberNotFoundException e) {
+                            return Mono.error(MemberNotFoundException::new);
+                        }
+                    }
+
+                    return Mono.just(dto);
+                });
     }
 
     @Operation(summary = "Edit channel")
@@ -199,7 +222,7 @@ public class ChannelController {
             memberId = String.valueOf(user.getId());
         }
 
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId)).get()
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId))
                 .orElseThrow(MemberNotFoundException::new);
 
         return new MemberDTO(member, true);

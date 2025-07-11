@@ -10,20 +10,20 @@ import app.foxochat.exception.user.UserCredentialsIsInvalidException;
 import app.foxochat.exception.user.UserEmailNotVerifiedException;
 import app.foxochat.exception.user.UserUnauthorizedException;
 import app.foxochat.model.User;
+import reactor.core.publisher.Mono;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public interface AuthenticationService {
 
-    CompletableFuture<User> getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString)
+    User getUser(String token, boolean ignoreEmailVerification, boolean removeBearerFromString)
             throws UserUnauthorizedException, UserEmailNotVerifiedException;
 
-    String register(String username, String email, String password) throws UserCredentialsDuplicateException;
+    Mono<String> register(String username, String email, String password) throws UserCredentialsDuplicateException;
 
     void sendConfirmationEmail(User user);
 
-    String login(String email, String password) throws UserCredentialsIsInvalidException;
+    Mono<String> login(String email, String password) throws UserCredentialsIsInvalidException;
 
     void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
 
@@ -34,6 +34,6 @@ public interface AuthenticationService {
     void confirmResetPassword(UserResetPasswordConfirmDTO body)
             throws OTPExpiredException, OTPsInvalidException, UserCredentialsIsInvalidException;
 
-    CompletableFuture<User> authUser(String accessToken, boolean ignoreEmailVerification)
+    User authUser(String accessToken, boolean ignoreEmailVerification)
             throws UserUnauthorizedException, UserEmailNotVerifiedException, ExecutionException, InterruptedException;
 }

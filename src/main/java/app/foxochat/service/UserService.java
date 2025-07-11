@@ -9,6 +9,7 @@ import app.foxochat.exception.user.ContactNotFoundException;
 import app.foxochat.exception.user.UserCredentialsDuplicateException;
 import app.foxochat.exception.user.UserCredentialsIsInvalidException;
 import app.foxochat.model.User;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public interface UserService {
 
     void updateFlags(User user, UserConstant.Flags removeFlag, UserConstant.Flags addFlag);
 
-    User add(String username, String email, String password) throws UserCredentialsDuplicateException;
+    Mono<User> add(String username, String email, String password) throws UserCredentialsDuplicateException;
 
     User update(User user, UserEditDTO body) throws Exception;
 

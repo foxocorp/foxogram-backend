@@ -53,11 +53,11 @@ public class MediaServiceImpl implements MediaService {
         if (attachment != null) {
             try {
                 MediaPresignedURLDTO dto = storageService.getPresignedUrl(StorageConstant.ATTACHMENTS_BUCKET);
-                Attachment obj = attachmentRepository.save(new Attachment(user,
+                Attachment obj = new Attachment(user,
                         dto.getUuid(),
                         attachment.getFilename(),
                         attachment.getContentType(),
-                        flags));
+                        flags);
 
                 attachmentRepository.save(obj);
                 log.debug("Successfully got presigned url and saved attachment {}", dto.getUuid());
@@ -172,7 +172,7 @@ public class MediaServiceImpl implements MediaService {
 
         if (!attachmentsIds.isEmpty()) {
             attachmentsIds.stream().map(a -> {
-                Optional<Attachment> attachment = attachmentRepository.findById(a);
+                Optional<Attachment> attachment = attachmentRepository.findById(a).blockOptional();
 
                 if (attachment.isEmpty()) return new MediaNotFoundException();
 

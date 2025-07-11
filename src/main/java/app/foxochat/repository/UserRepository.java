@@ -1,17 +1,16 @@
 package app.foxochat.repository;
 
 import app.foxochat.model.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
-    Optional<User> findById(long id);
+    Mono<User> findById(long id);
 
-    Optional<User> findByUsername(String username);
+    Mono<User> findByUsername(String username);
 
-    Optional<User> findByEmail(String email);
+    Mono<User> findByEmail(String email);
 }

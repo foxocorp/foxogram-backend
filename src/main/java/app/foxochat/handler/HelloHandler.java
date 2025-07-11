@@ -48,7 +48,7 @@ public class HelloHandler implements BaseHandler {
         @SuppressWarnings("unchecked")
         String accessToken = ((Map<String, String>) payload.getD()).get("token");
 
-        long userId = authenticationService.getUser(accessToken, true, false).get().getId();
+        long userId = authenticationService.getUser(accessToken, true, false).getId();
         Session userSession = sessions.get(session.getId());
         userSession.setUserId(userId);
         userSession.setLastPingTimestamp(System.currentTimeMillis());

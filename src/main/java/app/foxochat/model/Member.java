@@ -2,23 +2,21 @@ package app.foxochat.model;
 
 import app.foxochat.constant.MemberConstant;
 import app.foxochat.exception.member.MissingPermissionsException;
-import jakarta.persistence.*;
+import io.github.joselion.springr2dbcrelationships.annotations.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Arrays;
 
 @Setter
 @Getter
-@Entity
-@Table(name = "members", indexes = {
-        @Index(name = "idx_member_id", columnList = "id", unique = true),
-        @Index(name = "idx_member_user_channel", columnList = "user_id, channel_id")
-})
+@Table(name = "members")
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
     @Column
@@ -27,12 +25,12 @@ public class Member {
     @Column
     public long joinedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @Column
+    @ManyToOne(foreignKey = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
+    @Column
+    @ManyToOne(foreignKey = "channel_id")
     private Channel channel;
 
     public Member() {

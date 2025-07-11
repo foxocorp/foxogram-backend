@@ -6,12 +6,10 @@ import app.foxochat.repository.MemberRepository;
 import app.foxochat.service.MemberService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +27,7 @@ public class MemberServiceImpl implements MemberService {
     })
     public List<Channel> getChannelsByUserId(long userId) {
         return memberRepository.findAllByUserId(userId)
-                .stream()
+                .toStream()
                 .map(Member::getChannel)
                 .collect(Collectors.toList());
     }
@@ -39,17 +37,16 @@ public class MemberServiceImpl implements MemberService {
             @CachePut(value = "membersByChannelId", key = "#channelId"),
     })
     public List<Member> getAllByChannelId(long channelId) {
-        return memberRepository.findAllByChannelId(channelId);
+        return memberRepository.findAllByChannelId(channelId).toStream().toList();
     }
 
-    @Async
     @Override
     @Caching(put = {
             @CachePut(value = "membersByChannelId", key = "#channelId"),
             @CachePut(value = "membersByUserId", key = "#userId")
     })
-    public CompletableFuture<Optional<Member>> getByChannelIdAndUserId(long channelId, long userId) {
-        return CompletableFuture.completedFuture(memberRepository.findByChannelIdAndUserId(channelId, userId));
+    public Optional<Member> getByChannelIdAndUserId(long channelId, long userId) {
+        return memberRepository.findByChannelIdAndUserId(channelId, userId);
     }
 
     @Override

@@ -26,13 +26,12 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -97,24 +96,26 @@ public class ChannelServiceImpl implements ChannelService {
         return channel;
     }
 
-    @Async
     @Override
     @Caching(put = {
             @CachePut(value = "channelsById", key = "#id")
     })
-    public CompletableFuture<Channel> getById(long id) throws ChannelNotFoundException {
-        return CompletableFuture.completedFuture(channelRepository.findById(id)
-                .orElseThrow(ChannelNotFoundException::new));
+    public Mono<Channel> getById(long id) throws ChannelNotFoundException {
+        return channelRepository.findById(id)
+                .switchIfEmpty(Mono.error(ChannelNotFoundException::new));
     }
 
     @Override
     @Caching(put = {
             @CachePut(value = "channelsByName", key = "#name")
     })
-    public Channel getByName(String name) throws ChannelNotFoundException {
-        Channel channel = channelRepository.findByName(name).orElseThrow(ChannelNotFoundException::new);
-        if (channel.hasFlag(ChannelConstant.Flags.PUBLIC)) return channel;
-        throw new ChannelNotFoundException();
+    public Flux<Channel> getByName(String name) {
+        Mono<Channel> channel =
+                channelRepository.findByName(name).switchIfEmpty(Mono.error(ChannelNotFoundException::new));
+        return channel.expand(c -> {
+            if (c.hasFlag(ChannelConstant.Flags.PUBLIC)) return Mono.just(c);
+            else return Mono.error(ChannelNotFoundException::new);
+        });
     }
 
     @Override
@@ -164,7 +165,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void delete(Channel channel, User user) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER, MemberConstant.Permissions.ADMIN))
@@ -180,7 +181,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void addMember(Channel channel, User user) throws Exception {
-        if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get().isPresent())
+        if (memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).isPresent())
             throw new MemberAlreadyExistException();
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
@@ -197,7 +198,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void removeMember(Channel channel, User user) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
+        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId())
                 .orElseThrow(MemberNotFoundException::new);
 
         if (channel.getType() == ChannelConstant.Type.DM.getType()) throw new ChannelNotFoundException();
@@ -211,10 +212,6 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     private List<Long> getRecipients(Channel channel) {
-        Optional<Channel> optChannel = channelRepository.findById(channel.getId());
-
-        if (optChannel.isPresent()) channel = optChannel.get();
-
         return channel.getMembers().stream().map(Member::getUser).map(User::getId).collect(Collectors.toList());
     }
 }
