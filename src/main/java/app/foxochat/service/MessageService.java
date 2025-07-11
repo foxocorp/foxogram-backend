@@ -21,7 +21,7 @@ public interface MessageService {
 
     Message getByIdAndChannel(long id, Channel channel) throws MessageNotFoundException;
 
-    void add(Channel channel, User user, MessageCreateDTO body) throws Exception;
+    void add(Channel channel, Member member, User user, MessageCreateDTO body) throws Exception;
 
     List<MediaUploadDTO> addAttachments(Channel channel, User user, List<AttachmentUploadDTO> attachments)
             throws MissingPermissionsException, MediaCannotBeEmptyException, MemberNotFoundException,

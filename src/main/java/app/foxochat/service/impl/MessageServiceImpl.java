@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,19 +82,27 @@ public class MessageServiceImpl implements MessageService {
             @CachePut(value = "messagesByChannelId", key = "#channel.id"),
             @CachePut(value = "messagesByUserId", key = "#user.id")
     })
-    public void add(Channel channel, User user, MessageCreateDTO body) throws Exception {
-        Member member = memberService.getByChannelIdAndUserId(channel.getId(), user.getId()).get()
-                .orElseThrow(MemberNotFoundException::new);
+    public void add(Channel channel, Member member, User user, MessageCreateDTO body) throws Exception {
+        if (member == null) throw new MemberNotFoundException();
 
         if (!member.hasAnyPermission(MemberConstant.Permissions.OWNER,
                 MemberConstant.Permissions.ADMIN,
                 MemberConstant.Permissions.SEND_MESSAGES))
             throw new MissingPermissionsException();
 
-        List<Attachment> attachments = new ArrayList<>();
-        if (body.getAttachments() != null) attachments = mediaService.getAttachments(user, body.getAttachments()).get();
+        AtomicReference<List<Attachment>> attachments = new AtomicReference<>();
+        if (body.getAttachments() != null) {
+            AtomicReference<List<Attachment>> finalAttachments = attachments;
+            mediaService.getAttachments(user, body.getAttachments()).thenApply(a -> {
+                finalAttachments.set(a);
+                return null;
+            });
+        } else {
+            attachments = null;
+        }
 
-        Message message = new Message(channel, body.getContent(), member, attachments);
+        Message message = new Message(channel, body.getContent(), member, attachments != null ?
+                attachments.get() : new ArrayList<>());
         messageRepository.save(message);
 
         gatewayService.sendToSpecificSessions(getRecipients(channel),

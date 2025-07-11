@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,8 +16,8 @@ public class MessagesDTO {
     private List<MessageDTO> messages;
 
     public MessagesDTO(List<Message> messages) {
-        for (Message message : messages) {
-            this.messages.add(new MessageDTO(message, true));
-        }
+        this.messages = messages.stream()
+                .map(m -> new MessageDTO(m, true))
+                .collect(Collectors.toList());
     }
 }

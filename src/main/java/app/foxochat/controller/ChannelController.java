@@ -251,6 +251,7 @@ public class ChannelController {
     @PostMapping("/{channelId}/messages")
     public OkDTO createMessage(
             @RequestAttribute(value = AttributeConstant.USER) User user,
+            @RequestAttribute(value = AttributeConstant.MEMBER) Member member,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @RequestBody MessageCreateDTO body
@@ -259,7 +260,7 @@ public class ChannelController {
             throw new MessageCannotBeEmpty();
         }
 
-        messageService.add(channel, user, body);
+        messageService.add(channel, member, user, body);
 
         return new OkDTO(true);
     }

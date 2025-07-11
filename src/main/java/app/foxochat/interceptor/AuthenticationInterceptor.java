@@ -4,7 +4,6 @@ import app.foxochat.config.APIConfig;
 import app.foxochat.constant.AttributeConstant;
 import app.foxochat.exception.user.UserEmailNotVerifiedException;
 import app.foxochat.exception.user.UserUnauthorizedException;
-import app.foxochat.model.User;
 import app.foxochat.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,12 +51,14 @@ public class AuthenticationInterceptor implements AsyncHandlerInterceptor {
 
         String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        User user = authenticationService.authUser(accessToken, ignoreEmailVerification).get();
+        authenticationService.authUser(accessToken, ignoreEmailVerification).thenApply(u -> {
+            request.setAttribute(AttributeConstant.USER, u);
+            request.setAttribute(AttributeConstant.ACCESS_TOKEN, accessToken);
 
-        request.setAttribute(AttributeConstant.USER, user);
-        request.setAttribute(AttributeConstant.ACCESS_TOKEN, accessToken);
+            log.debug("Authenticated user {} successfully", u.getUsername());
+            return null;
+        });
 
-        log.debug("Authenticated user {} successfully", user.getUsername());
         return true;
     }
 }

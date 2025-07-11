@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 @Setter
 @Getter
 @Entity
@@ -80,12 +82,6 @@ public class Member {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasAnyPermission(MemberConstant.Permissions... permissions) {
-        for (MemberConstant.Permissions permission : permissions) {
-            if ((this.permissions & permission.getBit()) != 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return Arrays.stream(permissions).map(p -> (this.permissions & p.getBit()) != 0).findFirst().get();
     }
 }

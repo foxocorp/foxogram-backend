@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -166,18 +167,19 @@ public class MediaServiceImpl implements MediaService {
     @Caching(put = {
             @CachePut(value = "attachmentsByUserId", key = "#user.id"),
     })
-    public CompletableFuture<List<Attachment>> getAttachments(User user, List<Long> attachmentsIds)
-            throws MediaNotFoundException {
+    public CompletableFuture<List<Attachment>> getAttachments(User user, List<Long> attachmentsIds) {
         List<Attachment> attachments = new ArrayList<>();
 
         if (!attachmentsIds.isEmpty()) {
-            for (Long id : attachmentsIds) {
-                Attachment attachment = attachmentRepository.findById(id).orElseThrow(MediaNotFoundException::new);
+            attachmentsIds.stream().map(a -> {
+                Optional<Attachment> attachment = attachmentRepository.findById(a);
 
-                if (attachment.getUser().getId() != user.getId()) throw new MediaNotFoundException();
+                if (attachment.isEmpty()) return new MediaNotFoundException();
 
-                attachments.add(attachment);
-            }
+                if (attachment.get().getUser().getId() != user.getId()) return new MediaNotFoundException();
+
+                return attachments.add(attachment.get());
+            });
         }
 
         log.debug("Successfully got all attachments by user {}", user.getUsername());
