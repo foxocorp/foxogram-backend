@@ -30,7 +30,7 @@ public class Message {
     @Column
     public long timestamp;
 
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     public List<MessageAttachment> attachments;
 
     @ManyToOne

@@ -170,12 +170,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.getLastMessageByChannel(channel).orElse(null);
     }
 
-    private List<Long> getRecipients(Channel channel)
-            throws ChannelNotFoundException, ExecutionException, InterruptedException {
-        return channelService.getById(channel.getId()).get()
-                .getMembers().stream()
-                .map(Member::getUser)
-                .map(User::getId)
-                .collect(Collectors.toList());
+    private List<Long> getRecipients(Channel channel) {
+        return memberService.getAllByChannelId(channel.getId()).stream().map(Member::getUser).map(User::getId).toList();
     }
 }
