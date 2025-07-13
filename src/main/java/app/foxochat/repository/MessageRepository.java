@@ -2,6 +2,7 @@ package app.foxochat.repository;
 
 import app.foxochat.model.Channel;
 import app.foxochat.model.Message;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MessageRepository extends CrudRepository<Message, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT m FROM Message m WHERE m.channel = :ch AND m.timestamp < :before ORDER BY m.id DESC LIMIT :limit")
     List<Message> findAllByChannel(@Param("ch") Channel channel, @Param("before") long before,
