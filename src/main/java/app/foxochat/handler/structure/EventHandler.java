@@ -52,7 +52,6 @@ public class EventHandler extends TextWebSocketHandler {
             if (lastPingTimestamp < (System.currentTimeMillis() - timeout)) {
                 try {
                     session.getWebSocketSession().close(CloseCodeConstant.HEARTBEAT_TIMEOUT);
-                    log.debug("Session closed due to heartbeat timeout: {}", session.getWebSocketSession().getId());
                 } catch (IOException e) {
                     log.error("Error closing session: {}", session.getWebSocketSession().getId(), e);
                     throw new RuntimeException(e);
