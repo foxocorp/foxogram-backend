@@ -135,7 +135,7 @@ public class ChannelController {
     ) throws Exception {
         channel = channelService.update(member, channel, body);
 
-        return new ChannelShortDTO(channel, true, true, true);
+        return new ChannelShortDTO(channel, null, true, true, true);
     }
 
     @Operation(summary = "Upload icon")

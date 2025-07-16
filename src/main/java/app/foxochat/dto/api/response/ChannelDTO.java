@@ -37,7 +37,7 @@ public class ChannelDTO {
     private long createdAt;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private long lastMessage;
+    private Message lastMessage;
 
     public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar,
                       boolean withAvatar, boolean withBanner, boolean withOwner)
@@ -61,7 +61,7 @@ public class ChannelDTO {
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
                     .findFirst().get(), false, false);
         }
-        if (lastMessage != null) this.lastMessage = lastMessage.getId();
+        if (lastMessage != null) this.lastMessage = lastMessage;
         this.createdAt = channel.getCreatedAt();
     }
 }

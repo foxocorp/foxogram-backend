@@ -100,7 +100,7 @@ public class UserController {
 
     @Operation(summary = "Get user channels")
     @GetMapping("/@me/channels")
-    public List<ChannelDTO> getChannels(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
+    public List<ChannelShortDTO> getChannels(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
                                         @RequestParam boolean withAvatar,
                                         @RequestParam boolean withBanner,
                                         @RequestParam boolean withOwner
@@ -109,11 +109,7 @@ public class UserController {
                 .stream()
                 .map(channel -> {
                     Message lastMessage = messageService.getLastByChannel(channel);
-                    try {
-                        return new ChannelDTO(channel, lastMessage, null, null, null, withAvatar, withBanner, withOwner);
-                    } catch (MemberNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
+                    return new ChannelShortDTO(channel, lastMessage, withAvatar, withBanner, withOwner);
                 })
                 .collect(Collectors.toList());
     }
@@ -182,7 +178,7 @@ public class UserController {
 
     @Operation(summary = "Get contacts")
     @GetMapping("/@me/contacts")
-    public List<UserDTO> getContacts(
+    public List<UserShortDTO> getContacts(
             @RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
             @RequestParam boolean withAvatar,
             @RequestParam boolean withBanner
@@ -190,7 +186,8 @@ public class UserController {
         User user = userService.getById(authenticatedUser.getId()).orElseThrow(UserNotFoundException::new);
         return user.getContacts()
                 .stream()
-                .map(contact -> new UserDTO(contact.getContact(), null, null, false, false, false, withAvatar, withBanner))
+                .map(contact -> new UserShortDTO(contact.getContact(), withAvatar,
+                        withBanner))
                 .collect(Collectors.toList());
     }
 

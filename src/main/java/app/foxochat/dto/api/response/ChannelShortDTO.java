@@ -2,6 +2,8 @@ package app.foxochat.dto.api.response;
 
 import app.foxochat.constant.MemberConstant;
 import app.foxochat.model.Channel;
+import app.foxochat.model.Message;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,20 +31,24 @@ public class ChannelShortDTO {
 
     private long flags;
 
-    public ChannelShortDTO(Channel channel, boolean withAvatar, boolean withBanner, boolean withOwner) {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Message lastMessage;
+
+    public ChannelShortDTO(Channel channel, Message lastMessage, boolean withAvatar, boolean withBanner, boolean withOwner) {
         this.id = channel.getId();
         this.displayName = channel.getDisplayName();
         this.name = channel.getName();
-        if (channel.getAvatar() != null) {
+        if (channel.getAvatar() != null && withAvatar) {
             this.avatar = new AvatarDTO(channel.getAvatar());
         }
-        if (channel.getBanner() != null) {
+        if (channel.getBanner() != null && withBanner) {
             this.banner = new AvatarDTO(channel.getBanner());
         }
         this.type = channel.getType();
         this.flags = channel.getFlags();
         this.memberCount = channel.getMembers().size();
-        this.owner = new UserShortDTO(channel.getMembers().stream()
+        this.lastMessage = lastMessage;
+        if (withOwner) this.owner = new UserShortDTO(channel.getMembers().stream()
                 .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
                 .findFirst().get().getUser(), true, true);
     }
