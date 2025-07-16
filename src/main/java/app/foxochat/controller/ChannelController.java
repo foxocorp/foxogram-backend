@@ -81,9 +81,9 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
-            @RequestParam boolean withAvatar,
-            @RequestParam boolean withBanner,
-            @RequestParam boolean withOwner
+            @RequestParam(defaultValue = "false") boolean withAvatar,
+            @RequestParam(defaultValue = "false") boolean withBanner,
+            @RequestParam(defaultValue = "false") boolean withOwner
     ) throws UserNotFoundException, MemberNotFoundException {
         ChannelDTO dto = new ChannelDTO(channel, null, null, null, null, withAvatar, withBanner, withOwner);
 
@@ -105,9 +105,9 @@ public class ChannelController {
     public ChannelDTO getByName(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @PathVariable String name,
-            @RequestParam boolean withAvatar,
-            @RequestParam boolean withBanner,
-            @RequestParam boolean withOwner
+            @RequestParam(defaultValue = "false") boolean withAvatar,
+            @RequestParam(defaultValue = "false") boolean withBanner,
+            @RequestParam(defaultValue = "false") boolean withOwner
     ) throws ChannelNotFoundException, MemberNotFoundException {
         Channel channel = channelService.getByName(name);
         ChannelDTO dto = new ChannelDTO(channel, null, name, null, null, withAvatar, withBanner, withOwner);
@@ -200,8 +200,8 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @PathVariable String memberId,
-            @RequestParam boolean withChannel,
-            @RequestParam boolean withUser
+            @RequestParam(defaultValue = "false") boolean withChannel,
+            @RequestParam(defaultValue = "false") boolean withUser
     ) throws MemberNotFoundException, ExecutionException, InterruptedException {
         if (Objects.equals(memberId, "@me")) {
             memberId = String.valueOf(user.getId());
@@ -218,8 +218,8 @@ public class ChannelController {
     public List<MemberDTO> getMembers(
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
-            @RequestParam boolean withChannel,
-            @RequestParam boolean withUser
+            @RequestParam(defaultValue = "false") boolean withChannel,
+            @RequestParam(defaultValue = "false") boolean withUser
     ) {
         return memberService.getAllByChannelId(channel.getId()).stream()
                 .map(member -> new MemberDTO(member, withChannel, withUser))
@@ -233,9 +233,9 @@ public class ChannelController {
             @PathVariable long channelId,
             @RequestParam(defaultValue = "0") long before,
             @RequestParam(defaultValue = "25") int limit,
-            @RequestParam boolean withChannel,
-            @RequestParam boolean withAttachments,
-            @RequestParam boolean withAuthor
+            @RequestParam(defaultValue = "false") boolean withChannel,
+            @RequestParam(defaultValue = "false") boolean withAttachments,
+            @RequestParam(defaultValue = "false") boolean withAuthor
     ) {
         if (before <= 0) {
             before = System.currentTimeMillis();
@@ -256,9 +256,9 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @PathVariable long messageId,
-            @RequestParam boolean withChannel,
-            @RequestParam boolean withAttachments,
-            @RequestParam boolean withAuthor
+            @RequestParam(defaultValue = "false") boolean withChannel,
+            @RequestParam(defaultValue = "false") boolean withAttachments,
+            @RequestParam(defaultValue = "false") boolean withAuthor
     ) throws MessageNotFoundException {
         return new MessageDTO(messageService.getByIdAndChannel(messageId, channel), withChannel, withAuthor, withAttachments);
     }

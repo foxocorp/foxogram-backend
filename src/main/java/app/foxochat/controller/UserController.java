@@ -56,10 +56,10 @@ public class UserController {
     @Operation(summary = "Get me")
     @GetMapping("/@me")
     public UserDTO getMe(@RequestAttribute(value = AttributeConstant.USER) User user,
-                         @RequestParam boolean withChannels,
-                         @RequestParam boolean withContacts,
-                         @RequestParam boolean withAvatar,
-                         @RequestParam boolean withBanner
+                         @RequestParam(defaultValue = "false") boolean withChannels,
+                         @RequestParam(defaultValue = "false") boolean withContacts,
+                         @RequestParam(defaultValue = "false") boolean withAvatar,
+                         @RequestParam(defaultValue = "false") boolean withBanner
     ) {
         List<Long> channels = memberService.getChannelsByUserId(user.getId())
                 .stream()
@@ -75,8 +75,8 @@ public class UserController {
     @Operation(summary = "Get user by id")
     @GetMapping("/{id}")
     public UserDTO getById(@PathVariable long id,
-                           @RequestParam boolean withAvatar,
-                           @RequestParam boolean withBanner
+                           @RequestParam(defaultValue = "false") boolean withAvatar,
+                           @RequestParam(defaultValue = "false") boolean withBanner
     ) throws UserNotFoundException {
         return new UserDTO(userService.getById(id).orElseThrow(UserNotFoundException::new),
                 null,
@@ -87,8 +87,8 @@ public class UserController {
     @Operation(summary = "Get user by username")
     @GetMapping("/@{username}")
     public UserDTO getByUsername(@PathVariable String username,
-                                 @RequestParam boolean withAvatar,
-                                 @RequestParam boolean withBanner
+                                 @RequestParam(defaultValue = "false") boolean withAvatar,
+                                 @RequestParam(defaultValue = "false") boolean withBanner
     ) throws UserNotFoundException {
         return new UserDTO(userService.getByUsername(username).orElseThrow(UserNotFoundException::new),
                 null,
@@ -101,9 +101,9 @@ public class UserController {
     @Operation(summary = "Get user channels")
     @GetMapping("/@me/channels")
     public List<ChannelShortDTO> getChannels(@RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
-                                        @RequestParam boolean withAvatar,
-                                        @RequestParam boolean withBanner,
-                                        @RequestParam boolean withOwner
+                                        @RequestParam(defaultValue = "false") boolean withAvatar,
+                                        @RequestParam(defaultValue = "false") boolean withBanner,
+                                        @RequestParam(defaultValue = "false") boolean withOwner
     ) {
         return memberService.getChannelsByUserId(authenticatedUser.getId())
                 .stream()
@@ -180,8 +180,8 @@ public class UserController {
     @GetMapping("/@me/contacts")
     public List<UserShortDTO> getContacts(
             @RequestAttribute(value = AttributeConstant.USER) User authenticatedUser,
-            @RequestParam boolean withAvatar,
-            @RequestParam boolean withBanner
+            @RequestParam(defaultValue = "false") boolean withAvatar,
+            @RequestParam(defaultValue = "false") boolean withBanner
     ) throws UserNotFoundException {
         User user = userService.getById(authenticatedUser.getId()).orElseThrow(UserNotFoundException::new);
         return user.getContacts()
