@@ -134,6 +134,7 @@ public class ChannelServiceImpl implements ChannelService {
         String displayName = body.getDisplayName();
         Long avatar = body.getAvatar();
         Long banner = body.getBanner();
+        Boolean isPublic = body.getIsPublic();
 
         try {
             if (name != null) channel.setName(name);
@@ -145,6 +146,10 @@ public class ChannelServiceImpl implements ChannelService {
             if (banner != null) {
                 if (banner == 0) channel.setBanner(null);
                 else channel.setBanner(mediaService.getAvatarById(banner));
+            }
+            if (isPublic != null) {
+                if (isPublic) channel.addFlag(ChannelConstant.Flags.PUBLIC);
+                else channel.removeFlag(ChannelConstant.Flags.PUBLIC);
             }
 
             channelRepository.save(channel);

@@ -2,6 +2,7 @@ package app.foxochat.dto.api.request;
 
 import app.foxochat.constant.ValidationConstant;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -27,4 +28,7 @@ public class ChannelEditDTO {
 
     @PositiveOrZero(message = "Banner" + ValidationConstant.Messages.MUST_BE_POSITIVE_OR_ZERO)
     private Long banner;
+
+    @NotNull(message = "isPublic" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    private Boolean isPublic;
 }
