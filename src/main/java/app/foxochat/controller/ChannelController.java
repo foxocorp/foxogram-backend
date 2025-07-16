@@ -61,7 +61,7 @@ public class ChannelController {
     ) throws ChannelAlreadyExistException, UserNotFoundException, MemberNotFoundException {
         Channel channel = channelService.add(user, 0, body);
 
-        return new ChannelDTO(channel, null, null, null, null);
+        return new ChannelDTO(channel, null, null, null, null, true, true, true);
     }
 
     @Operation(summary = "Create DM channel")
@@ -72,7 +72,7 @@ public class ChannelController {
     ) throws ChannelAlreadyExistException, UserNotFoundException, MemberNotFoundException {
         Channel channel = channelService.add(user, partnerId, body);
 
-        return new ChannelDTO(channel, null, null, null, null);
+        return new ChannelDTO(channel, null, null, null, null, true, true, true);
     }
 
     @Operation(summary = "Get channel by id")
@@ -80,9 +80,12 @@ public class ChannelController {
     public ChannelDTO getById(
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
-            @PathVariable long channelId
+            @PathVariable long channelId,
+            @RequestParam boolean withAvatar,
+            @RequestParam boolean withBanner,
+            @RequestParam boolean withOwner
     ) throws UserNotFoundException, MemberNotFoundException {
-        ChannelDTO dto = new ChannelDTO(channel, null, null, null, null);
+        ChannelDTO dto = new ChannelDTO(channel, null, null, null, null, withAvatar, withBanner, withOwner);
 
         if (channel.getType() != ChannelConstant.Type.DM.getType()) {
             User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
@@ -91,7 +94,7 @@ public class ChannelController {
                     null,
                     partnerUser.getDisplayName(),
                     partnerUser.getUsername(),
-                    partnerUser.getAvatar());
+                    partnerUser.getAvatar(), withAvatar, withBanner, withOwner);
         }
 
         return dto;
@@ -101,10 +104,13 @@ public class ChannelController {
     @GetMapping("/@{name}")
     public ChannelDTO getByName(
             @RequestAttribute(value = AttributeConstant.USER) User user,
-            @PathVariable String name
+            @PathVariable String name,
+            @RequestParam boolean withAvatar,
+            @RequestParam boolean withBanner,
+            @RequestParam boolean withOwner
     ) throws ChannelNotFoundException, MemberNotFoundException {
         Channel channel = channelService.getByName(name);
-        ChannelDTO dto = new ChannelDTO(channel, null, name, null, null);
+        ChannelDTO dto = new ChannelDTO(channel, null, name, null, null, withAvatar, withBanner, withOwner);
 
         if (channel.getType() != ChannelConstant.Type.DM.getType()) {
             User partnerUser = channel.getMembers().stream().filter(m -> m.getUser().getId() != user.getId())
@@ -113,7 +119,7 @@ public class ChannelController {
                     null,
                     partnerUser.getDisplayName(),
                     partnerUser.getUsername(),
-                    partnerUser.getAvatar());
+                    partnerUser.getAvatar(), withAvatar, withBanner, withOwner);
         }
 
         return dto;
@@ -129,7 +135,7 @@ public class ChannelController {
     ) throws Exception {
         channel = channelService.update(member, channel, body);
 
-        return new ChannelShortDTO(channel);
+        return new ChannelShortDTO(channel, true, true, true);
     }
 
     @Operation(summary = "Upload icon")
@@ -193,7 +199,9 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.USER) User user,
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
-            @PathVariable String memberId
+            @PathVariable String memberId,
+            @RequestParam boolean withChannel,
+            @RequestParam boolean withUser
     ) throws MemberNotFoundException, ExecutionException, InterruptedException {
         if (Objects.equals(memberId, "@me")) {
             memberId = String.valueOf(user.getId());
@@ -202,17 +210,19 @@ public class ChannelController {
         Member member = memberService.getByChannelIdAndUserId(channel.getId(), Long.parseLong(memberId)).get()
                 .orElseThrow(MemberNotFoundException::new);
 
-        return new MemberDTO(member, true);
+        return new MemberDTO(member, withChannel, withUser);
     }
 
     @Operation(summary = "Get members")
     @GetMapping("/{channelId}/members")
     public List<MemberDTO> getMembers(
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
-            @PathVariable long channelId
+            @PathVariable long channelId,
+            @RequestParam boolean withChannel,
+            @RequestParam boolean withUser
     ) {
         return memberService.getAllByChannelId(channel.getId()).stream()
-                .map(member -> new MemberDTO(member, false))
+                .map(member -> new MemberDTO(member, withChannel, withUser))
                 .toList();
     }
 
@@ -222,7 +232,10 @@ public class ChannelController {
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
             @RequestParam(defaultValue = "0") long before,
-            @RequestParam(defaultValue = "25") int limit
+            @RequestParam(defaultValue = "25") int limit,
+            @RequestParam boolean withChannel,
+            @RequestParam boolean withAttachments,
+            @RequestParam boolean withAuthor
     ) {
         if (before <= 0) {
             before = System.currentTimeMillis();
@@ -233,7 +246,7 @@ public class ChannelController {
         }
 
         return messageService.getAllByChannel(before, limit, channel).stream()
-                .map(message -> new MessageDTO(message, false))
+                .map(message -> new MessageDTO(message, withChannel, withAuthor, withAttachments))
                 .collect(Collectors.toList());
     }
 
@@ -242,9 +255,12 @@ public class ChannelController {
     public MessageDTO getMessage(
             @RequestAttribute(value = AttributeConstant.CHANNEL) Channel channel,
             @PathVariable long channelId,
-            @PathVariable long messageId
+            @PathVariable long messageId,
+            @RequestParam boolean withChannel,
+            @RequestParam boolean withAttachments,
+            @RequestParam boolean withAuthor
     ) throws MessageNotFoundException {
-        return new MessageDTO(messageService.getByIdAndChannel(messageId, channel), true);
+        return new MessageDTO(messageService.getByIdAndChannel(messageId, channel), withChannel, withAuthor, withAttachments);
     }
 
     @Operation(summary = "Create message")

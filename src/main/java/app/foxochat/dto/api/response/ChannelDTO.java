@@ -39,7 +39,8 @@ public class ChannelDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private long lastMessage;
 
-    public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar)
+    public ChannelDTO(Channel channel, Message lastMessage, String displayName, String username, Avatar avatar,
+                      boolean withAvatar, boolean withBanner, boolean withOwner)
             throws MemberNotFoundException {
         this.id = channel.getId();
         if (channel.getType() == ChannelConstant.Type.DM.getType()) {
@@ -50,23 +51,17 @@ public class ChannelDTO {
             this.displayName = channel.getDisplayName();
             this.name = channel.getName();
         }
-        if (channel.getAvatar() != null) {
-            this.avatar = new AvatarDTO(channel.getAvatar());
-        }
-        if (channel.getBanner() != null) {
-            this.banner = new AvatarDTO(channel.getBanner());
-        }
+        if (channel.getAvatar() != null && withAvatar) this.avatar = new AvatarDTO(channel.getAvatar());
+        if (channel.getBanner() != null && withBanner) this.banner = new AvatarDTO(channel.getBanner());
         this.type = channel.getType();
         this.flags = channel.getFlags();
         if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
             this.memberCount = channel.getMembers().size();
-            this.owner = new MemberDTO(channel.getMembers().stream()
+            if (withOwner) this.owner = new MemberDTO(channel.getMembers().stream()
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                    .findFirst().get(), false);
+                    .findFirst().get(), false, false);
         }
-        if (lastMessage != null) {
-            this.lastMessage = lastMessage.getId();
-        }
+        if (lastMessage != null) this.lastMessage = lastMessage.getId();
         this.createdAt = channel.getCreatedAt();
     }
 }

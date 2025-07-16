@@ -190,7 +190,7 @@ public class ChannelServiceImpl implements ChannelService {
         log.debug("Member ({}) joined channel ({}) successfully", member.getUser().getUsername(), channel.getName());
         gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
-                new MemberDTO(member, true),
+                new MemberDTO(member, true, false),
                 GatewayConstant.Event.MEMBER_ADD.getValue());
         memberService.add(member);
     }
@@ -205,7 +205,7 @@ public class ChannelServiceImpl implements ChannelService {
         memberService.delete(member);
         gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
-                new MemberDTO(member, true),
+                new MemberDTO(member, true, false),
                 GatewayConstant.Event.MEMBER_REMOVE.getValue());
         log.debug("Member ({}) left channel ({}) successfully", member.getUser().getUsername(), channel.getName());
     }

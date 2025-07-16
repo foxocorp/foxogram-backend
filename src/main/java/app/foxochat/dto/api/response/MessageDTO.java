@@ -28,12 +28,12 @@ public class MessageDTO {
 
     private long createdAt;
 
-    public MessageDTO(Message message, boolean includeChannel) {
+    public MessageDTO(Message message, boolean withChannel, boolean withAuthor, boolean withAttachments) {
         this.id = message.getId();
         this.content = message.getContent();
-        this.author = new MemberDTO(message.getAuthor(), false);
-        if (includeChannel) this.channel = new ChannelShortDTO(message.getChannel());
-        if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
+        if (withAuthor) this.author = new MemberDTO(message.getAuthor(), false, false);
+        if (withChannel) this.channel = new ChannelShortDTO(message.getChannel(), false, false, false);
+        if (message.getAttachments() != null && withAttachments) this.attachments = message.getAttachments().stream()
                 .map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
                 .collect(Collectors.toList());
         else this.attachments = new ArrayList<>();

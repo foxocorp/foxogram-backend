@@ -48,25 +48,25 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean includeEmail, boolean includeChannels,
-                   boolean includeContacts) {
+    public UserDTO(User user, List<Long> channels, List<Long> contacts, boolean withEmail, boolean withChannels,
+                   boolean withContacts, boolean withAvatar, boolean withBanner) {
         this.id = user.getId();
-        if (user.getAvatar() != null) {
+        if (user.getAvatar() != null && withAvatar) {
             this.avatar = new AvatarDTO(user.getAvatar());
         }
-        if (user.getBanner() != null) {
+        if (user.getBanner() != null && withBanner) {
             this.banner = new AvatarDTO(user.getBanner());
         }
         this.displayName = user.getDisplayName();
         this.username = user.getUsername();
         this.bio = user.getBio();
-        if (includeEmail) {
+        if (withEmail) {
             this.email = user.getEmail();
         }
-        if (includeChannels) {
+        if (withChannels) {
             this.channels = channels;
         }
-        if (includeContacts) {
+        if (withContacts) {
             this.contacts = contacts;
         }
         this.status = user.getStatus();

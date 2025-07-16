@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
 
             gatewayService.sendToSpecificSessions(Collections.singletonList(contact.getId()),
                     GatewayConstant.Opcode.DISPATCH.ordinal(),
-                    new UserShortDTO(user),
+                    new UserShortDTO(user, true, true),
                     GatewayConstant.Event.CONTACT_ADD.getValue());
             log.debug("Successfully added contact {} to user {}", contact.getId(), user.getId());
             return contact;

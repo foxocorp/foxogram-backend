@@ -22,11 +22,10 @@ public class MemberDTO {
 
     private long joinedAt;
 
-    public MemberDTO(Member member, boolean includeChannel) {
+    public MemberDTO(Member member, boolean withChannel, boolean withUser) {
         this.id = member.getId();
-        this.user = new UserShortDTO(member.getUser());
-        if (includeChannel)
-            this.channel = new ChannelShortDTO(member.getChannel());
+        if (withUser) this.user = new UserShortDTO(member.getUser(), true, true);
+        if (withChannel) this.channel = new ChannelShortDTO(member.getChannel(), false, false, false);
         this.permissions = member.getPermissions();
         this.joinedAt = member.getJoinedAt();
     }

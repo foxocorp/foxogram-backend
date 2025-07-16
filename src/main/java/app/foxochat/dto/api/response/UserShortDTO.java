@@ -14,6 +14,8 @@ public class UserShortDTO {
 
     private AvatarDTO avatar;
 
+    private AvatarDTO banner;
+
     private String displayName;
 
     private String username;
@@ -26,10 +28,13 @@ public class UserShortDTO {
     public UserShortDTO() {
     }
 
-    public UserShortDTO(User user) {
+    public UserShortDTO(User user, boolean withAvatar, boolean withBanner) {
         this.id = user.getId();
-        if (user.getAvatar() != null) {
+        if (user.getAvatar() != null && withAvatar) {
             this.avatar = new AvatarDTO(user.getAvatar());
+        }
+        if (user.getBanner() != null && withBanner) {
+            this.banner = new AvatarDTO(user.getBanner());
         }
         this.displayName = user.getDisplayName();
         this.username = user.getUsername();

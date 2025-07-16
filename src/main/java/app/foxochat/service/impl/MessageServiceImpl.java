@@ -6,7 +6,6 @@ import app.foxochat.dto.api.request.AttachmentUploadDTO;
 import app.foxochat.dto.api.request.MessageCreateDTO;
 import app.foxochat.dto.api.response.MediaUploadDTO;
 import app.foxochat.dto.api.response.MessageDTO;
-import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.exception.media.MediaCannotBeEmptyException;
 import app.foxochat.exception.member.MemberNotFoundException;
 import app.foxochat.exception.member.MissingPermissionsException;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -98,7 +96,7 @@ public class MessageServiceImpl implements MessageService {
 
         gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
-                new MessageDTO(message, true),
+                new MessageDTO(message, true, false, false),
                 GatewayConstant.Event.MESSAGE_CREATE.getValue());
         log.debug("Message {} to channel {} created successfully", message.getId(), channel.getId());
     }
@@ -155,7 +153,7 @@ public class MessageServiceImpl implements MessageService {
 
         gatewayService.sendToSpecificSessions(getRecipients(channel),
                 GatewayConstant.Opcode.DISPATCH.ordinal(),
-                new MessageDTO(message, true),
+                new MessageDTO(message, true, false, false),
                 GatewayConstant.Event.MESSAGE_UPDATE.getValue());
         log.debug("Message {} in channel {} edited successfully", id, channel.getId());
 
