@@ -23,7 +23,7 @@ public interface AuthenticationService {
 
     void sendConfirmationEmail(User user);
 
-    String login(String email, String password) throws UserCredentialsIsInvalidException;
+    String login(String identity, String password) throws UserCredentialsIsInvalidException;
 
     void verifyEmail(User user, String pathCode) throws OTPsInvalidException, OTPExpiredException;
 

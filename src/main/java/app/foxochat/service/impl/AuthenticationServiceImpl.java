@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -114,8 +115,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String login(String email, String password) throws UserCredentialsIsInvalidException {
-        User user = userService.getByEmail(email).orElseThrow(UserCredentialsIsInvalidException::new);
+    public String login(String identity, String password) throws UserCredentialsIsInvalidException {
+        Optional<User> mustBeUser = userService.getByEmail(identity);
+
+        if (mustBeUser.isEmpty()) mustBeUser =
+                userService.getByUsername(identity);
+
+        User user = mustBeUser.orElseThrow(UserCredentialsIsInvalidException::new);
+
         if (!passwordService.verify(password, user.getPassword())) throw new UserCredentialsIsInvalidException();
 
         log.debug("User ({}) login successfully", user.getUsername());

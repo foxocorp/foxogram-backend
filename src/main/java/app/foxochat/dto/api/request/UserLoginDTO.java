@@ -13,11 +13,10 @@ import lombok.Setter;
 @Schema(name = "UserLogin")
 public class UserLoginDTO {
 
-    @NotNull(message = "Email" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
+    @NotNull(message = "Email/Username" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.EMAIL,
-            message = "Email" + ValidationConstant.Messages.WRONG_LENGTH)
-    @Pattern(regexp = ValidationConstant.Regex.EMAIL_REGEX, message = "Email" + ValidationConstant.Messages.INCORRECT)
-    private String email;
+            message = "Email/Username" + ValidationConstant.Messages.WRONG_LENGTH)
+    private String identity;
 
     @NotNull(message = "Password" + ValidationConstant.Messages.MUST_NOT_BE_NULL)
     @Size(min = ValidationConstant.Lengths.MIN, max = ValidationConstant.Lengths.PASSWORD,

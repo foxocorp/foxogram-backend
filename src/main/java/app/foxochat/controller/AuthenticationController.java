@@ -46,10 +46,10 @@ public class AuthenticationController {
     @SecurityRequirements
     @PostMapping("/login")
     public TokenDTO login(@RequestBody UserLoginDTO body) throws UserCredentialsIsInvalidException {
-        String email = body.getEmail();
+        String identity = body.getIdentity();
         String password = body.getPassword();
 
-        String accessToken = authenticationService.login(email, password);
+        String accessToken = authenticationService.login(identity, password);
 
         return new TokenDTO(accessToken);
     }
