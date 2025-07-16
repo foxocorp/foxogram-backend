@@ -32,7 +32,7 @@ public class ChannelDTO {
 
     private int memberCount;
 
-    private long ownerId;
+    private MemberDTO owner;
 
     private long createdAt;
 
@@ -60,9 +60,9 @@ public class ChannelDTO {
         this.flags = channel.getFlags();
         if (channel.getMembers() != null && channel.getType() != ChannelConstant.Type.DM.getType()) {
             this.memberCount = channel.getMembers().size();
-            this.ownerId = channel.getMembers().stream()
+            this.owner = new MemberDTO(channel.getMembers().stream()
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                    .findFirst().orElseThrow(MemberNotFoundException::new).getUser().getId();
+                    .findFirst().get(), false);
         }
         if (lastMessage != null) {
             this.lastMessage = lastMessage.getId();

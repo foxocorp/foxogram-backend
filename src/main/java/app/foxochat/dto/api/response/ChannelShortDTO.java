@@ -22,7 +22,7 @@ public class ChannelShortDTO {
 
     private AvatarDTO banner;
 
-    private long ownerId;
+    private UserShortDTO owner;
 
     private int memberCount;
 
@@ -30,7 +30,7 @@ public class ChannelShortDTO {
 
     private long flags;
 
-    public ChannelShortDTO(Channel channel) throws MemberNotFoundException {
+    public ChannelShortDTO(Channel channel) {
         this.id = channel.getId();
         this.displayName = channel.getDisplayName();
         this.name = channel.getName();
@@ -43,8 +43,8 @@ public class ChannelShortDTO {
         this.type = channel.getType();
         this.flags = channel.getFlags();
         this.memberCount = channel.getMembers().size();
-        this.ownerId = channel.getMembers().stream()
+        this.owner = new UserShortDTO(channel.getMembers().stream()
                 .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
-                .findFirst().orElseThrow(MemberNotFoundException::new).getUser().getId();
+                .findFirst().get().getUser());
     }
 }

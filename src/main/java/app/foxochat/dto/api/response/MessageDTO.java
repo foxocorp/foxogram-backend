@@ -19,10 +19,10 @@ public class MessageDTO {
 
     private String content;
 
-    private long authorId;
+    private MemberDTO author;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private long channelId;
+    private ChannelShortDTO channel;
 
     private List<AttachmentDTO> attachments;
 
@@ -31,8 +31,8 @@ public class MessageDTO {
     public MessageDTO(Message message, boolean includeChannel) {
         this.id = message.getId();
         this.content = message.getContent();
-        this.authorId = message.getAuthor().getId();
-        if (includeChannel) this.channelId = message.getChannel().getId();
+        this.author = new MemberDTO(message.getAuthor(), false);
+        if (includeChannel) this.channel = new ChannelShortDTO(message.getChannel());
         if (message.getAttachments() != null) this.attachments = message.getAttachments().stream()
                 .map(messageAttachment -> new AttachmentDTO(messageAttachment.getAttachment()))
                 .collect(Collectors.toList());

@@ -13,10 +13,10 @@ public class MemberDTO {
 
     private long id;
 
-    private long userId;
+    private UserShortDTO user;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private long channelId;
+    private ChannelShortDTO channel;
 
     private long permissions;
 
@@ -24,9 +24,9 @@ public class MemberDTO {
 
     public MemberDTO(Member member, boolean includeChannel) {
         this.id = member.getId();
-        this.userId = member.getUser().getId();
+        this.user = new UserShortDTO(member.getUser());
         if (includeChannel)
-            this.channelId = member.getChannel().getId();
+            this.channel = new ChannelShortDTO(member.getChannel());
         this.permissions = member.getPermissions();
         this.joinedAt = member.getJoinedAt();
     }
