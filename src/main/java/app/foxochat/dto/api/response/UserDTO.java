@@ -63,10 +63,10 @@ public class UserDTO {
         if (withEmail) {
             this.email = user.getEmail();
         }
-        if (withChannels) {
+        if (channels != null && withChannels) {
             this.channels = channels;
         }
-        if (withContacts) {
+        if (contacts != null && withContacts) {
             this.contacts = contacts;
         }
         this.status = user.getStatus();

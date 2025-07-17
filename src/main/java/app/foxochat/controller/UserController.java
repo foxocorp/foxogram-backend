@@ -61,12 +61,14 @@ public class UserController {
                          @RequestParam(defaultValue = "false") boolean withAvatar,
                          @RequestParam(defaultValue = "false") boolean withBanner
     ) {
-        List<Long> channels = memberService.getChannelsByUserId(user.getId())
+        List<Long> channels = null;
+        if (withChannels) channels = memberService.getChannelsByUserId(user.getId())
                 .stream()
                 .map(Channel::getId)
                 .collect(Collectors.toList());
 
-        List<Long> contacts = user.getContacts().stream()
+        List<Long> contacts = null;
+        if (withContacts) contacts = user.getContacts().stream()
                 .map(userContact -> userContact.getContact().getId()).toList();
 
         return new UserDTO(user, channels, contacts, true, withChannels, withContacts, withAvatar, withBanner);
