@@ -61,7 +61,8 @@ public class ChannelDTO {
                     .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
                     .findFirst().get(), false, false);
         }
-        if (lastMessage != null) this.lastMessage = new MessageDTO(lastMessage, false, true, false);
+        if (lastMessage != null)
+            this.lastMessage = new MessageDTO(lastMessage, false, true, false);
         this.createdAt = channel.getCreatedAt();
     }
 }
