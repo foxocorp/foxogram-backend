@@ -6,6 +6,7 @@ import app.foxochat.exception.channel.ChannelNotFoundException;
 import app.foxochat.model.Channel;
 import app.foxochat.model.User;
 import app.foxochat.service.ChannelService;
+import app.foxochat.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,11 @@ public class ChannelInterceptor implements AsyncHandlerInterceptor {
 
     private final ChannelService channelService;
 
-    public ChannelInterceptor(ChannelService channelService) {
+    private final MemberService memberService;
+
+    public ChannelInterceptor(ChannelService channelService, MemberService memberService) {
         this.channelService = channelService;
+        this.memberService = memberService;
     }
 
     @Override
@@ -50,8 +54,8 @@ public class ChannelInterceptor implements AsyncHandlerInterceptor {
 
         User user = (User) request.getAttribute(AttributeConstant.USER);
 
-        if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && channel.getMembers().stream()
-                .noneMatch(u -> u.getUser().getId() == user.getId())) {
+        if (!channel.hasFlag(ChannelConstant.Flags.PUBLIC) && memberService.getByChannelIdAndUserId(channel.getId(),
+                user.getId()).get().isEmpty()) {
             throw new ChannelNotFoundException();
         }
 
