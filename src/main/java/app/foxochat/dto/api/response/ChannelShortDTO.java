@@ -32,7 +32,7 @@ public class ChannelShortDTO {
     private long flags;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Message lastMessage;
+    private MessageDTO lastMessage;
 
     public ChannelShortDTO(Channel channel, Message lastMessage, boolean withAvatar, boolean withBanner, boolean withOwner) {
         this.id = channel.getId();
@@ -47,7 +47,7 @@ public class ChannelShortDTO {
         this.type = channel.getType();
         this.flags = channel.getFlags();
         this.memberCount = channel.getMembers().size();
-        this.lastMessage = lastMessage;
+        this.lastMessage = new MessageDTO(lastMessage, false, true, false);
         if (withOwner) this.owner = new UserShortDTO(channel.getMembers().stream()
                 .filter(m -> m.hasPermission(MemberConstant.Permissions.OWNER))
                 .findFirst().get().getUser(), true, true);
